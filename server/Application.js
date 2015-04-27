@@ -216,7 +216,7 @@ Application.prototype.getApp = function (config, session) {
 	app.use(methodOverride());
 	app.use(cookieParser(config.secret));
 	app.use(session);
-	app.use(csrf());
+	//app.use(csrf());
 
 	return app;
 

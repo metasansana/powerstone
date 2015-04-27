@@ -11,7 +11,7 @@ module.exports = {
 	 * @returns {Promise}
 	 */
 	loadFromDirectory: function(absPath, list) {
-		
+
 		return new Promise(function (resolve, reject) {
 
 			list = list || {};
@@ -22,7 +22,8 @@ module.exports = {
 
 				if(files)
 				files.forEach(function (pathToFile) {
-					list[path.basename(pathToFile, '.js')] = require(pathToFile);
+
+					list[path.basename(pathToFile, '.js')] = require(absPath+'/'+pathToFile);
 				});
 
 				resolve(list);

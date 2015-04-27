@@ -236,7 +236,7 @@ Application.prototype.getRouter = function () {
  * @param {Address} address
  * @returns {Promise} Should be the result of PowerServer#start()
  */
-Application.prototype.server = function (app, address) {
+Application.prototype.startServer = function (app, address) {
 	var pwr = new PowerServer(app, address, this);
 	return pwr.start();
 };
@@ -264,13 +264,13 @@ Application.prototype.run = function () {
 			return self.loadTasks(self.config.path + '/tasks', self.tasks);
 		}).
         then(function(tasks) {
-            return TaskRunner.run()
+            return TaskRunner.run();
         }).
 		then(function () {
 
 			var app = self.getApp(self.config, self.session(self.config, self.databases));
 			
-			app.use(function(req, res, next) {res.cookie('x-csrf-token', req.csrfToken());next();});
+			app.use(function(req, res, next) {res.set('x-csrf-token', req.csrfToken()); res.cookie('x-csrf-token', req.csrfToken());next();});
             app.use(function(req, res, next) {res.locals._csrf = req.csrfToken();next();});
 			
 			var router = self.getRouter();
@@ -294,17 +294,53 @@ Application.prototype.run = function () {
 					router.get(route.href, render(route.view));
 			});
 
+
 			self.engine(self.config, app);
 			app.use(self.config.mountPoint || '/', router);
+            app.use(function(req, res, next) {res.status(404).send('404');});
 
-
-
-
-			return self.server(app, self.config.address);
+            return self.startServer(app, self.config.address).
+                then(function(server) {
+                    self.server = server;
+                    return server;
+                });
 
 		});
 };
 
+/**
+ * shutdown
+ */
+Application.prototype.shutdown = function () {
+
+    var self = this;
+
+    return new Promise(function(resolve, reject) {
+
+        self.server.shutdown().
+            then(function() {
+
+                for(var key in self.databases)
+                    if(self.databases.hasOwnProperty(key)) {
+                        self.databases[key].close(function() {
+                            resolve();
+                        })
+                    }
+
+
+            }).
+            catch(function(err) {
+
+                reject(err);
+                return err;
+
+            });
+
+    });
+
+
+
+};
 /**
  * databaseConnected is called when a database has been connected to.
  * @param {String} name The name given to the database definition

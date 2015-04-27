@@ -16,6 +16,13 @@ var noopr = function (resolve) {
 
 function get_controller(controllers, path) {
 	path = path.split('.');
+
+	if(!controllers[path[0]])
+	throw new Error('Unregistered controller '+path[0]+'!');
+
+	if(!controllers[path[0]][path[1]])
+		throw new Error('The controller '+path[0]+' has no method '+path[1]+'!');
+
 	return controllers[path[0]][path[1]].bind(controllers[path[0]]);
 }
 

@@ -1,11 +1,13 @@
 var Promise = require('bluebird');
 var express = require('express');
 var crypto = require('crypto');
+var merge = require('merge');
 
 var PowerServer = require('./PowerServer');
 var MongoDriver = require('./MongoDriver');
 var Loader = require('./Loader');
 var Builtin = require('./Builtin');
+var TaskRunner = require('./TaskRunner');
 
 
 var noop = function () {
@@ -44,7 +46,9 @@ var render = function (view, locals) {
 /**
  * Application
  */
-function Application() {
+function Application(config) {
+
+    config = config || {};
 
 	this.name = 'default';
 	this.databases = {};
@@ -52,21 +56,21 @@ function Application() {
 	this.models = {};
 	this.routes = {};
 	this.tasks = {};
-	this.config = {
+	this.config = merge({
 		path: '.',
 		address: {
 			host: '0.0.0.0',
 			port: 3000
 		},
 		session: {
-			name: 'PHPSESSIONID',
+			name: 'PHPSESSIONID'
 		},
 		connectMongo: {
 			connection: 'default'
 		},
 		mountPoint: '',
 		secret: crypto.randomBytes(64).toString('hex')
-	};
+	}, config);
 
 	this.config.views = this.config.path+'/views';
 	this.config.static = this.config.path+'/public';
@@ -259,11 +263,15 @@ Application.prototype.run = function () {
 		then(function () {
 			return self.loadTasks(self.config.path + '/tasks', self.tasks);
 		}).
+        then(function(tasks) {
+            return TaskRunner.run()
+        }).
 		then(function () {
 
 			var app = self.getApp(self.config, self.session(self.config, self.databases));
 			
 			app.use(function(req, res, next) {res.cookie('x-csrf-token', req.csrfToken());next();});
+            app.use(function(req, res, next) {res.locals._csrf = req.csrfToken();next();});
 			
 			var router = self.getRouter();
 
@@ -288,6 +296,10 @@ Application.prototype.run = function () {
 
 			self.engine(self.config, app);
 			app.use(self.config.mountPoint || '/', router);
+
+
+
+
 			return self.server(app, self.config.address);
 
 		});

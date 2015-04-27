@@ -33,7 +33,6 @@ PowerServer.prototype.connection = function (socket) {
 
 	socket.on('close', function () {
 		delete self.connections[this._serverId];
-		console.log('bye!');
 	});
 
 	self.connections[socket._serverId] = socket;

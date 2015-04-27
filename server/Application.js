@@ -65,9 +65,11 @@ function Application() {
 			connection: 'default'
 		},
 		mountPoint: '',
-		views: 'views',
 		secret: crypto.randomBytes(64).toString('hex')
 	};
+
+	this.config.views = this.config.path+'/views';
+	this.config.static = this.config.path+'/public';
 
 }
 
@@ -204,6 +206,7 @@ Application.prototype.getApp = function (config, session) {
 	var bodyParser = require('body-parser');
 	var csrf = require('csurf');
 
+	app.use(express.static(config.static));
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({extended: true}));
 	app.use(methodOverride());

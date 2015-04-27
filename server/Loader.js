@@ -4,33 +4,38 @@ var path = require('path');
 
 module.exports = {
 
-	/**
-	 * loadFromDirectory resolves with a list of modules that have been loaded from a directory.
-	 * @param {String} absPath
-	 * @pararm {Object} list
-	 * @returns {Promise}
-	 */
-	loadFromDirectory: function(absPath, list) {
+    /**
+     * loadFromDirectory resolves with a list of modules that have been loaded from a directory.
+     * @param {String} absPath
+     * @pararm {Object} list
+     * @returns {Promise}
+     */
+    loadFromDirectory: function (absPath, list, throwError) {
 
-		return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
 
-			list = list || {};
+            list = list || {};
 
-			fs.readdir(absPath, function (err, files) {
+            fs.readdir(absPath, function (err, files) {
 
-				if(err)	reject(err);
+                if (err)
+                    if (throwError)
+                        reject(err);
 
-				if(files)
-				files.forEach(function (pathToFile) {
+                if (files)
+                    files.forEach(function (pathToFile) {
 
-					list[path.basename(pathToFile, '.js')] = require(absPath+'/'+pathToFile);
-				});
+                        if(path.extname(pathToFile) !== '.js')
+                        return;
 
-				resolve(list);
+                        list[path.basename(pathToFile, '.js')] = require(absPath + '/' + pathToFile);
+                    });
 
-			});
-		});
-		
-	}
-	
+                resolve(list);
+
+            });
+        });
+
+    }
+
 };

@@ -20,6 +20,7 @@ MongoDriver.prototype.connect = function (url, opts) {
 	return new Bluebird(function(resolve, reject) {
 
 		self.connection = mongoose.createConnection(url, opts);
+		self.connection.Schema = mongoose.Schema;
 		self.connection.on('open', function(){resolve(self.connection)});
 		self.connection.on('error', function(err) {
 			throw err;

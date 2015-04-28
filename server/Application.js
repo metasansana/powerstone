@@ -270,8 +270,8 @@ Application.prototype.run = function () {
 
 			var app = self.getApp(self.config, self.session(self.config, self.databases));
 			
-			app.use(function(req, res, next) {res.set('x-csrf-token', req.csrfToken()); res.cookie('x-csrf-token', req.csrfToken());next();});
-            app.use(function(req, res, next) {res.locals._csrf = req.csrfToken();next();});
+			//app.use(function(req, res, next) {res.set('x-csrf-token', req.csrfToken()); res.cookie('x-csrf-token', req.csrfToken());next();});
+            //app.use(function(req, res, next) {res.locals._csrf = req.csrfToken();next();});
 			
 			var router = self.getRouter();
 

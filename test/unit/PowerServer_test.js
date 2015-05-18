@@ -1,7 +1,7 @@
 var must = require('must');
 var supertest = require('supertest');
 var express = require('express');
-var PowerServer = require('../../server/PowerServer');
+var PowerServer = require('.././PowerServer');
 var Reactor = require('../helpers/MockHttpReactor');
 
 var server;

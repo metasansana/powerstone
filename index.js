@@ -1,7 +1,8 @@
 
 module.exports = {
 	
-	Application: require('./server/Application'),
-	Task: require('./server/Task'),
+	Application: require('./lib/Application'),
+	Task: require('./lib/Task'),
+	Pool: require('./lib/connections/Pool'),
 	apps:{}
 }

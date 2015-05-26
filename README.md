@@ -44,6 +44,7 @@ A powerstone app has the following directory layout:
 │   └── users.json
 ├── conf
 │   ├── conf.json
+│   └── connectors.js
 ├── controllers
 │   └── UserController.js
 ├── middleware
@@ -59,6 +60,22 @@ A powerstone app has the following directory layout:
 │   └── index.html
 └── apps
     ├── reports
+    │   ├── routes
+    │   │   └── accounting.json
+    │   ├── controllers
+    │   │   └── AccountingReportController.js
+    │   ├── middleware
+    │   │   └── isAccountingUser.js
+    │   ├── models
+    │   │   └── User.js
+    │   ├── queries
+    │   │   ├── getOneUser.js
+    │   │   └── getUsersWithNameLike.js
+    │   ├── tasks
+    │   │    └── CreateUserTask.js
+    │   ├── views
+    │       └── index.html
+    │
     └── monitor
      
 ```

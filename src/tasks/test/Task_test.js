@@ -13,18 +13,22 @@ class SomeTask extends Task {
 
 }
 
-describe('Task', function(done) {
+describe('Task', function() {
 
-    var task = new SomeTask();
-    var report = {
-        taskStarted: function() {
-            this.called = true;
+    it('should work ', function(done) {
+
+        var task = new SomeTask();
+        var report = {
+            taskStarted: function() {
+                this.called = true;
+            }
         }
-    }
 
-    task.run(report, function(){
-        must(report.called).be.true();
-        done();
+        task.run(report, function(){
+            must(report.called).be.true();
+            done();
+        });
+
     });
 
 });

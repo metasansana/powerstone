@@ -2,6 +2,3 @@
 --require must
 --growl
 --reporter progress
---compilers js:babel/register
---timeout 10000
-

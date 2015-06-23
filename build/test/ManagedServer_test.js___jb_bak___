@@ -1,0 +1,87 @@
+var must = require('must');
+var supertest = require('supertest');
+var express = require('express');
+var ManagedServer = require('../ManagedServer');
+
+var server;
+var app;
+var request;
+var impl;
+
+describe('ManagedServer', function () {
+
+    beforeEach(function (done) {
+
+        app = express();
+
+        app.get('/', function (req, res) {
+            res.send('Test');
+        });
+
+        impl = {
+
+            server: app.listen(7777),
+
+            listen: function () {
+
+            },
+
+            on: function () {
+                this.server.on.apply(this.server, arguments);
+            },
+
+            close: function () {
+                this.server.close();
+            }
+        };
+
+        request = supertest(app);
+        server = new ManagedServer(impl);
+        done();
+
+    });
+
+    afterEach(function (done) {
+        if (impl.server)
+            return impl.server.close(done);
+    });
+
+    it('must be able to start', function (done) {
+        server.start().
+            then(function () {
+                request.get('/').
+                    expect(200).
+                    end(done);
+            });
+    });
+
+    it('must be able to restart', function (done) {
+
+        server.start().
+            then(function (server) {
+                return server.restart();
+            }).
+            then(function () {
+                request.get('/').
+                    expect(200).
+                    end(done);
+            });
+
+    });
+
+    xit('must be able to be shutdown', function (done) {
+
+        return server.start().
+            then(function (server) {
+                return server.shutdown();
+            }).
+            then(function () {
+
+                request.get('/').
+                    end(function (err) {
+                        must(true).be.true();
+                        done();
+                    });
+            })
+    });
+});

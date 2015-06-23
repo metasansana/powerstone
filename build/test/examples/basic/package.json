@@ -1,0 +1,9 @@
+{
+  "name": "basic-powerstone-app",
+  "version": "0.0.1",
+  "main":"server/build/BasicApplication",
+  "scripts": {
+    "build-server": "babel -D -w server/src -s inline -d server/build",
+    "clean": "rm -Rf server/build"
+  }
+}

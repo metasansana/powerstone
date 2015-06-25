@@ -20,9 +20,7 @@ class Runner {
         var report = new Report(self.recorder);
 
         var ifErr = function(err){
-            if (err)  {
-                return cb(err);
-            }
+            if (err) return cb(err);
             self._nextTask(cb);
         };
 

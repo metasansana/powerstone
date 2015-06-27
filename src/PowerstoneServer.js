@@ -1,5 +1,5 @@
 import express from 'express';
-import ServerFactory from '../ServerFactory';
+import ServerFactory from './ServerFactory';
 
 /**
  * PowerstoneServer wraps around the frameworks server to provide

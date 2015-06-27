@@ -4,9 +4,8 @@
  */
 class ConsoleRecorder {
 
-    taskCompleted(report, cb) {
-        console.log(report);
-        cb();
+    taskCompleted(report) {
+        console.log('\n\n',report,'\n\n');
     }
 
 }

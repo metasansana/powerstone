@@ -21,7 +21,10 @@ describe('Task', function() {
         var report = {
             taskStarted: function() {
                 this.called = true;
+            },
+            taskCompleted: function() {
             }
+
         }
 
         task.run(report, function(){

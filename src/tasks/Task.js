@@ -33,7 +33,11 @@ class Task {
      */
     run(report, cb){
         report.taskStarted();
-        this.runTask(report, cb);
+        this.runTask(report, function(err, message){
+            if(err) return report.taskCompletedWithError(err);
+            report.taskCompleted(message);
+            cb();
+        });
     }
 
 }

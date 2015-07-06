@@ -15,16 +15,15 @@ class ScheduledTask extends Task {
 
     run(report, cb){
 
+        var self = this;
         new CronJob(this.schedule, function() {
-            report.taskStarted();
-            this.runTask(report, function(err, message){
-                if(err) return report.taskCompletedWithError(err);
-                report.taskCompleted(message);
+            report.taskStarted(self.taskID || self.constructor.name);
+            self.runTask(report, function(err, message){
+                (err)? report.taskCompletedWithError(err) : report.taskCompleted(message);
             });
-        }.bind(this),true);
+        }, function(){console.log('me');}, true);
 
         cb();
-
     }
 }
 

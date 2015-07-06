@@ -75,9 +75,11 @@ class WebApplication extends Application {
                     new PowerstoneServer(
                         WebServerFactory.create(app, conf.https)));
 
-                return server.start();
+                return server.start().
+                    then(self.serverStarted);
 
             });
+
     }
 
     shutdown() {

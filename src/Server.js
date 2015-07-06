@@ -14,9 +14,11 @@ class Server {
 
     /***
      * open starts listening for connections
-     * @param {Function} cb
+     * @param {Number} port
+     * @param {String} [host]
+     * @param {Function} [cb]
      */
-    listen(cb){}
+    listen(port, host, cb){}
 
     /**
      * close calls the close method on the server

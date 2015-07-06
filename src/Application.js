@@ -1,8 +1,8 @@
-var Promise = require('bluebird');
-
-var Loader = require('./Loader');
-var Connections = require('./connections/Connections');
-var TaskRunner = require('./TaskRunner');
+import Promise from 'bluebird';
+import Loader from './Loader';
+import Connections from './connections/Connections';
+import tasks from './tasks';
+import TaskRecorderFactory from './TaskRecorderFactory';
 
 var noop = function () {};
 
@@ -31,68 +31,60 @@ var flattenRoutes = function (routes) {
  * Application
  * @param {String} path
  */
-function Application(path) {
+class Application {
 
-    this.name = 'default';
-    this.path = path;
-    this.controllers = {};
-    this.models = {};
-    this.routes = [];
-    this.tasks = {};
-    this.middleware = {};
-    this.loader = new Loader(path);
-    this.connections = new Connections();
-    this.config = this.loader.loadFromConfWithDefaults('config.json', this._defaultConfig());
+    constructor(path) {
+        this.name = 'default';
+        this.parent = path;
+        this.controllers = {};
+        this.models = {};
+        this.routes = [];
+        this.tasks = {};
+        this.middleware = {};
+        this.loader = new Loader(path);
+        this.connections = new Connections();
+        this.config = this.loader.loadFromConfWithDefaults('config.json', this._defaultConfig());
 
+    }
+
+    /**
+     * getModelByName should be overwritten to provide models for queries.
+     */
+    getModelByName(name) {
+        throw new Error('getModelByName() must be overwritten before a target can be provided. Target: ' + name + '.');
+    }
+
+    /**
+     * run
+     * @return {Promise}
+     */
+    run() {
+
+        var self = this;
+
+        self.routes = flattenRoutes(self.loader.loadFromConf('routes.json'));
+
+        if (Array.isArray(self.config.connections))
+            self.config.connections.forEach(function (con) {
+                return self.connections.create(con.name, con.type, con.options);
+            });
+
+        return self.connections.open().
+            then(function () {
+                self.models = self.loader.requireModels();
+                self.controllers = self.loader.requireControllers();
+                self.taskRunner = new tasks.Runner(self.loader.requireTasks(), TaskRecorderFactory.create(self.config.taskRecorderType));
+                self.queries = self.loader.requireQueries();
+                self.middleware = self.loader.requireMiddleWare();
+            }).
+            then(function () {
+                return self.taskRunner.runAllTasks();
+            });
+    }
+
+    serverCreated(){}
+
+    serverStarted(){};
 }
 
-/**
- * defaultConfig
- */
-Application.prototype._defaultConfig = function () {
-    return {};
-};
-
-/**
- * getModelByName should be overwritten to provide models for queries.
- */
-Application.prototype.getModelByName = function (name) {
-    throw new Error('getModelByName() must be overwritten before a target can be provided. Target: ' + name + '.');
-};
-
-/**
- * run
- * @return {Promise}
- */
-Application.prototype.run = function () {
-
-    var self = this;
-
-    self.routes = flattenRoutes(self.loader.loadFromConf('routes.json'));
-
-    if (Array.isArray(self.config.connections))
-        self.config.connections.forEach(function (con) {
-            return self.connections.create(con.name, con.type, con.options);
-        });
-
-    return self.connections.open().
-        then(function () {
-
-            return Promise.reduce(['','models', 'controllers', 'tasks', 'queries', 'middleware'],
-                function (agg, target) {
-                    return self.loader.loadMap(target).
-                        then(function (hash) {
-                            self[target] = hash;
-                        });
-
-                });
-
-        }).
-        then(function () {
-            return TaskRunner.run();
-
-        });
-
-};
-
-module.exports = Application;
+export default Application

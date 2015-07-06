@@ -32,11 +32,10 @@ class Task {
      * @param {Function} cb
      */
     run(report, cb){
-        report.taskStarted();
+        report.taskStarted(this.taskID || this.constructor.name);
         this.runTask(report, function(err, message){
-            if(err) return report.taskCompletedWithError(err);
-            report.taskCompleted(message);
-            cb();
+            (err)? report.taskCompletedWithError(err) : report.taskCompleted(message);
+            cb(err);
         });
     }
 

@@ -9,13 +9,9 @@ import ServerFactory from './ServerFactory';
 class PowerstoneServer {
 
     /**
-     * @param {Number} port
-     * @param {String} host
      * @param {http.Server|https.Server} server
      */
-    constructor(port, host, server) {
-        this.port = port;
-        this.host = host;
+    constructor(server) {
         this.server = server;
     }
 
@@ -24,8 +20,8 @@ class PowerstoneServer {
         return this;
     }
 
-    listen(cb) {
-        return this.server.listen(this.port, this.host, cb);
+    listen(port, host, cb) {
+        return this.server.listen(port, host, cb);
     }
 
     close(cb){

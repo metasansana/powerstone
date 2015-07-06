@@ -1,4 +1,0 @@
-"use strict";
-
-var ServerFactory = require();
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy90ZXN0L3VuaXQvU2VydmVyRmFjdG9yeV90ZXN0LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsSUFBSSxhQUFhLEdBQUcsT0FBTyxFQUFFLENBQUEiLCJmaWxlIjoiU2VydmVyRmFjdG9yeV90ZXN0LmpzIiwic291cmNlc0NvbnRlbnQiOlsidmFyIFNlcnZlckZhY3RvcnkgPSByZXF1aXJlKCkiXX0=

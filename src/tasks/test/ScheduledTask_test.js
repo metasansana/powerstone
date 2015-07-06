@@ -8,9 +8,7 @@ class SomeTask extends ScheduledTask {
 
     runTask(report, cb){
 
-        setTimeout(function() {
-            cb();
-        }, 1000);
+        setTimeout(cb, 1000);
 
     }
 
@@ -85,9 +83,5 @@ describe('ScheduledTask', function(done) {
         });
 
     });
-
-
-
-
 
 });

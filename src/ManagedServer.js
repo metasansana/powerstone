@@ -10,12 +10,14 @@ import UnsupportedMethodError from './UnsupportedMethodError';
  * so node does not wait on them to end before calling the close() callback.
  * @implements Server
  */
-class ManagedServer{
+class ManagedServer {
 
     /**
      * @param Server server
      */
-    constructor(server) {
+    constructor(port, host, server) {
+        this.port = port;
+        this.host = host;
         this.server = server;
         this.connections = {};
         this.connectionId = 0;
@@ -55,12 +57,11 @@ class ManagedServer{
      * @return {Promise}
      */
     start() {
-
         var self = this;
         return new Promise(function (resolve) {
             self.server.on('connection', self._store.bind(self));
-            self.server.on('listening', x=>resolve(self));
-            self.server.listen();
+            self.server.on('listening', x=>resolve(self.port, self.host, self));
+            self.server.listen(self.port, self.host);
         });
     }
 
@@ -90,8 +91,8 @@ class ManagedServer{
         return this;
     }
 
-    listen(cb) {
-        this.server.listen(cb);
+    listen(port, hostname, callback) {
+        this.server.listen(port, hostname, callback);
     }
 
     close(cb) {

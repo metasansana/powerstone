@@ -12,7 +12,7 @@ function makeRunnableTask() {
         taskWillRun: function(yes, no){
             yes();
         },
-        run: function(done){
+        run: function(_, done){
             this.count++;
             done();
         }

@@ -17,7 +17,7 @@ class Report {
         this.report.timeEnded = process.hrtime();
         this.report.duration = process.hrtime(this.report.timeStarted);
         this.report.status = 'GOOD';
-        this.report.timesCompleted += 1;
+        this.report.timesCompleted = this.report.timesCompleted +1;
         this.report.message = message;
         this.recorder.taskCompleted(this.report);
         this.reset();
@@ -29,7 +29,7 @@ class Report {
         this.report.stack = err.stack;
         this.report.status = 'ERROR';
         this.report.message = err.message;
-        this.report.timesCompletedWithError += 1;
+        this.report.timesCompletedWithError = this.report.timesCompletedWithError+1;
         this.recorder.taskCompleted(this.report);
         this.reset();
     }

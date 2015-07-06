@@ -25,7 +25,7 @@ class Runner {
         };
 
         var onYes = function() {
-            next.run(ifErr, report);
+            next.run(report, ifErr);
         };
 
         var onNo = function() {
@@ -38,9 +38,16 @@ class Runner {
 
     }
 
-    runAllTasks() {
+    /**
+     * runAllTasks will run all the tasks in sequence.
+     * @param {Array} [tasks] Optional list of tasks instead of the
+     * ones this object was created with.
+     * @return {Promise}
+     */
+    runAllTasks(tasks) {
 
-        this.queue = this.tasks.slice();
+        tasks = tasks || this.tasks;
+        this.queue = tasks.slice();
 
         return new Promise(function(resolve, reject) {
 

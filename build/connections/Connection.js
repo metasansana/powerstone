@@ -1,0 +1,58 @@
+'use strict';
+
+var Promise = require('bluebird');
+var Pool = require('./Pool');
+
+/**
+ * A connection is an object that needs to open to something remotely on application boot time.
+ *
+ * This usually is a database or some kind of queue system.
+ * @param {String} name
+ * @param {Object} options
+ * @param {Array} list
+ * @constructor
+ */
+function Connection(name, options, list) {
+  this.name = name;
+  this.options = options || {};
+  list.push(this);
+  Pool[this.name] = this;
+}
+
+/**
+ * __open__ override this method to preform open/connect logic if the connection does
+ * not support promises by default.
+ *
+ * It is wrapped in a promise for cleaner flow control.
+ * @pararm {Function} resolve
+ * @param {Function} reject
+ */
+Connection.prototype.__open__ = function (reject, resolve) {
+  resolve();
+};
+
+/**
+ * __close__ override this method to preform close/disconnect logic if the connection does
+ * not support promises by default.
+ */
+Connection.prototype.__close__ = function (reject, resolve) {
+  resolve();
+};
+
+/**
+ * open the remote connection.
+ * @return {Promise}
+ */
+Connection.prototype.open = function () {
+  return new Promise(this.__open__.bind(this));
+};
+
+/**
+ * close the remote connection.
+ */
+Connection.prototype.close = function () {
+  return new Promise(this.__close__.bind(this));
+};
+
+module.exports = Connection;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9jb25uZWN0aW9ucy9Db25uZWN0aW9uLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsSUFBSSxPQUFPLEdBQUcsT0FBTyxDQUFDLFVBQVUsQ0FBQyxDQUFDO0FBQ2xDLElBQUksSUFBSSxHQUFHLE9BQU8sQ0FBQyxRQUFRLENBQUMsQ0FBQzs7Ozs7Ozs7Ozs7QUFXN0IsU0FBUyxVQUFVLENBQUMsSUFBSSxFQUFFLE9BQU8sRUFBRSxJQUFJLEVBQUM7QUFDcEMsTUFBSSxDQUFDLElBQUksR0FBRyxJQUFJLENBQUM7QUFDakIsTUFBSSxDQUFDLE9BQU8sR0FBRyxPQUFPLElBQUksRUFBRSxDQUFDO0FBQzdCLE1BQUksQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLENBQUM7QUFDaEIsTUFBSSxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsR0FBRyxJQUFJLENBQUM7Q0FDMUI7Ozs7Ozs7Ozs7QUFVRCxVQUFVLENBQUMsU0FBUyxDQUFDLFFBQVEsR0FBRyxVQUFVLE1BQU0sRUFBRSxPQUFPLEVBQUU7QUFDdkQsU0FBTyxFQUFFLENBQUM7Q0FDYixDQUFDOzs7Ozs7QUFNRixVQUFVLENBQUMsU0FBUyxDQUFDLFNBQVMsR0FBRyxVQUFVLE1BQU0sRUFBRSxPQUFPLEVBQUU7QUFDeEQsU0FBTyxFQUFFLENBQUM7Q0FDYixDQUFDOzs7Ozs7QUFNRixVQUFVLENBQUMsU0FBUyxDQUFDLElBQUksR0FBRyxZQUFZO0FBQ3BDLFNBQU8sSUFBSSxPQUFPLENBQUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQztDQUNoRCxDQUFDOzs7OztBQUtGLFVBQVUsQ0FBQyxTQUFTLENBQUMsS0FBSyxHQUFHLFlBQVk7QUFDckMsU0FBTyxJQUFJLE9BQU8sQ0FBQyxJQUFJLENBQUMsU0FBUyxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDO0NBQ2pELENBQUM7O0FBRUYsTUFBTSxDQUFDLE9BQU8sR0FBRyxVQUFVLENBQUMiLCJmaWxlIjoiQ29ubmVjdGlvbi5qcyIsInNvdXJjZXNDb250ZW50IjpbInZhciBQcm9taXNlID0gcmVxdWlyZSgnYmx1ZWJpcmQnKTtcbnZhciBQb29sID0gcmVxdWlyZSgnLi9Qb29sJyk7XG5cbi8qKlxuICogQSBjb25uZWN0aW9uIGlzIGFuIG9iamVjdCB0aGF0IG5lZWRzIHRvIG9wZW4gdG8gc29tZXRoaW5nIHJlbW90ZWx5IG9uIGFwcGxpY2F0aW9uIGJvb3QgdGltZS5cbiAqXG4gKiBUaGlzIHVzdWFsbHkgaXMgYSBkYXRhYmFzZSBvciBzb21lIGtpbmQgb2YgcXVldWUgc3lzdGVtLlxuICogQHBhcmFtIHtTdHJpbmd9IG5hbWVcbiAqIEBwYXJhbSB7T2JqZWN0fSBvcHRpb25zXG4gKiBAcGFyYW0ge0FycmF5fSBsaXN0XG4gKiBAY29uc3RydWN0b3JcbiAqL1xuZnVuY3Rpb24gQ29ubmVjdGlvbihuYW1lLCBvcHRpb25zLCBsaXN0KXtcbiAgICB0aGlzLm5hbWUgPSBuYW1lO1xuICAgIHRoaXMub3B0aW9ucyA9IG9wdGlvbnMgfHwge307XG4gICAgbGlzdC5wdXNoKHRoaXMpO1xuICAgIFBvb2xbdGhpcy5uYW1lXSA9IHRoaXM7XG59XG5cbi8qKlxuICogX19vcGVuX18gb3ZlcnJpZGUgdGhpcyBtZXRob2QgdG8gcHJlZm9ybSBvcGVuL2Nvbm5lY3QgbG9naWMgaWYgdGhlIGNvbm5lY3Rpb24gZG9lc1xuICogbm90IHN1cHBvcnQgcHJvbWlzZXMgYnkgZGVmYXVsdC5cbiAqXG4gKiBJdCBpcyB3cmFwcGVkIGluIGEgcHJvbWlzZSBmb3IgY2xlYW5lciBmbG93IGNvbnRyb2wuXG4gKiBAcGFyYXJtIHtGdW5jdGlvbn0gcmVzb2x2ZVxuICogQHBhcmFtIHtGdW5jdGlvbn0gcmVqZWN0XG4gKi9cbkNvbm5lY3Rpb24ucHJvdG90eXBlLl9fb3Blbl9fID0gZnVuY3Rpb24gKHJlamVjdCwgcmVzb2x2ZSkge1xuICAgIHJlc29sdmUoKTtcbn07XG5cbi8qKlxuICogX19jbG9zZV9fIG92ZXJyaWRlIHRoaXMgbWV0aG9kIHRvIHByZWZvcm0gY2xvc2UvZGlzY29ubmVjdCBsb2dpYyBpZiB0aGUgY29ubmVjdGlvbiBkb2VzXG4gKiBub3Qgc3VwcG9ydCBwcm9taXNlcyBieSBkZWZhdWx0LlxuICovXG5Db25uZWN0aW9uLnByb3RvdHlwZS5fX2Nsb3NlX18gPSBmdW5jdGlvbiAocmVqZWN0LCByZXNvbHZlKSB7XG4gICAgcmVzb2x2ZSgpO1xufTtcblxuLyoqXG4gKiBvcGVuIHRoZSByZW1vdGUgY29ubmVjdGlvbi5cbiAqIEByZXR1cm4ge1Byb21pc2V9XG4gKi9cbkNvbm5lY3Rpb24ucHJvdG90eXBlLm9wZW4gPSBmdW5jdGlvbiAoKSB7XG4gICAgcmV0dXJuIG5ldyBQcm9taXNlKHRoaXMuX19vcGVuX18uYmluZCh0aGlzKSk7XG59O1xuXG4vKipcbiAqIGNsb3NlIHRoZSByZW1vdGUgY29ubmVjdGlvbi5cbiAqL1xuQ29ubmVjdGlvbi5wcm90b3R5cGUuY2xvc2UgPSBmdW5jdGlvbiAoKSB7XG4gICAgcmV0dXJuIG5ldyBQcm9taXNlKHRoaXMuX19jbG9zZV9fLmJpbmQodGhpcykpO1xufTtcblxubW9kdWxlLmV4cG9ydHMgPSBDb25uZWN0aW9uOyJdfQ==

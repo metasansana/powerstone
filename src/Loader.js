@@ -57,11 +57,17 @@ class Loader {
      */
     requireDirSync(dir, extensions, merge) {
 
+        var files;
+
         dir = this._parentize(dir);
         merge = merge || {};
         extensions = extensions || ['.js', '.json'];
 
-            var files = fs.readdirSync(dir);
+        try {
+            files = fs.readdirSync(dir);
+        }catch(e) {
+            return merge || {};
+        }
 
                 if (Array.isArray(files))
                     files.forEach(function (pathToFile) {

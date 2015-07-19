@@ -86,4 +86,4 @@ Connections.prototype.close = function () {
     }));
 };
 
-module.exports = Connections;
+module.exports = new Connections();

@@ -17,7 +17,7 @@ class Connections {
      * @param {String} type
      * @param {String} name
      * @param {Object} options
-     * @returns {Connection}
+     * @returns {AbstractConnection}
      */
     create(type, name, options) {
 
@@ -35,7 +35,7 @@ class Connections {
     /**
      * getConnection
      * @param {String} name
-     * @return {Connection}
+     * @return {AbstractConnection}
      */
     getConnection(name) {
       return this.pool[name];

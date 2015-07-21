@@ -1,8 +1,9 @@
-var Promise = require('bluebird');
-var merge = require('deepmerge');
-var fs = require('fs');
-var path = require('path');
-var traverse = require('traverse');
+import Promise from 'bluebird';
+import merge from 'deepmerge';
+import fs from 'fs';
+import path from 'path';
+import traverse from 'traverse';
+import Configuration from './Configuration';
 
 /**
  * Loader
@@ -22,12 +23,32 @@ class Loader {
         return this.parent + '/' + dir;
     }
 
+    getConfiguration() {
+        return new Configuration(require(this.conf+'/config'));
+    }
+
+    getDirName() {
+        return path.basename(this.parent);
+    }
+
+    getPath() {
+        return this.parent;
+    }
+
     /**
      * loadFromConf
      */
     loadFromConf(file, defaults) {
 
-        var ret = require(this.conf + '/' + file);
+
+        var ret;
+        try {
+            ret = require(this.conf + '/' + file);
+        }catch(e){
+            if(defaults) return defaults;
+            throw e;
+        }
+
         var wd = path.dirname(this.conf + '/' + file) + '/';
 
         if ((!ret) && defaults) ret = defaults;
@@ -48,20 +69,25 @@ class Loader {
         return merge(defaults, this.loadFromConf(file));
     }
 
+    requireRelative(path) {
+        return require(this.parent+'/'+path);
+    }
     /**
      * requireDirSync requires all files in a sub-directory into a single object
      * @param {String} dir A name of a sub-directory in the current parent.
-     * @param {Array} [extensions=['.js','.json']] A list of extensions to load.
      * @param {Object} merge An optional object functions can be merged into.
+     * @param {String} [prefix] A prefix that will be concatenated to the object's keys
      * @returns {Object}
      */
-    requireDirSync(dir, extensions, merge) {
+    requireDirSync(dir, merge, prefix) {
 
         var files;
+        var extensions = extensions || ['.js', '.json'];
 
         dir = this._parentize(dir);
         merge = merge || {};
-        extensions = extensions || ['.js', '.json'];
+
+        prefix = prefix || '';
 
         try {
             files = fs.readdirSync(dir);
@@ -72,7 +98,8 @@ class Loader {
                 if (Array.isArray(files))
                     files.forEach(function (pathToFile) {
                         if (extensions.indexOf(path.extname(pathToFile)) < 0) return;
-                        merge[path.basename(pathToFile, path.extname(pathToFile))] = require(dir + '/' + pathToFile);
+                        merge[prefix+path.basename(pathToFile, path.extname(pathToFile))] =
+                            require(dir + '/' + pathToFile);
                     });
 
                 return merge;
@@ -81,29 +108,31 @@ class Loader {
     /**
      * requireTasks grabs all the tasks in the tasks folder
      * @param {Object} [merge]
-     * @returns {Array}
+     * @param {String} prefix
+     * @returns {Object}
      */
-    requireTasks(merge) {
-        var ret  = this.requireDirSync('tasks', null, merge);
-        return Object.keys(ret).map(key=>ret[key]);
+    requireTasks(merge, prefix) {
+        return this.requireDirSync('tasks', merge, prefix);
     }
 
     /**
      * requireModels grabs all the models in the models folder
      * @param {Object} [merge]
+     * @param {String} prefix
      * @returns {Object}
      */
-    requireModels(merge){
-        return this.requireDirSync('models', null, merge);
+    requireModels(merge, prefix){
+        return this.requireDirSync('models', merge, prefix);
     }
 
     /**
      * requireControllers grabs all the controllers in the controllers folder
      * @param {Object} [merge]
+     * @param {String} prefix
      * @returns {Object}
      */
-    requireControllers(merge){
-        return this.requireDirSync('controllers', null, merge);
+    requireControllers(merge, prefix){
+        return this.requireDirSync('controllers', merge, prefix);
     }
 
     /**
@@ -111,19 +140,20 @@ class Loader {
      * @param {Object} [merge]
      * @returns {Object}
      */
-    requireQueries(merge){
-        return this.requireDirSync('queries', null, merge);
+    requireQueries(merge, prefix){
+        return this.requireDirSync('queries', merge, prefix);
     }
 
     /**
      * requireMiddleware grabs all the middleware in the middlewares folder
      * @param {Object} [merge]
+     * @param {String} prefix
      * @returns {Object}
      */
-    requireMiddleWare(merge){
-        return this.requireDirSync('middleware', null, merge);
+    requireMiddleWare(merge, prefix){
+        return this.requireDirSync('middleware', merge, prefix);
     }
 
 }
 
-export default Loader;
+export default Loader

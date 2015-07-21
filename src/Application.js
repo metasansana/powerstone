@@ -1,10 +1,11 @@
 import Promise from 'bluebird';
-import Loader from './Loader';
-import Connections from './connections/Connections';
 import tasks from './tasks';
-import TaskRecorderFactory from './TaskRecorderFactory';
-
-var noop = function () {};
+import Loader from './Loader';
+import Configuration from './Configuration';
+import Connections from './conn/Connections';
+import Project from './Project';
+import ProjectRegistry from './ProjectRegistry';
+import TaskRecorders from './TaskRecorders';
 
 /**
  * flattenRoutes turns the conf/route.json file contents into one flat array.
@@ -21,7 +22,7 @@ var flattenRoutes = function (routes) {
             flat.push(entry);
 
         })
-    })
+    });
 
     return flat;
 
@@ -35,16 +36,11 @@ class Application {
 
     constructor(path) {
         this.name = 'default';
-        this.parent = path;
-        this.controllers = {};
-        this.models = {};
-        this.routes = [];
-        this.tasks = {};
-        this.middleware = {};
-        this.loader = new Loader(path);
-        this.connections = new Connections();
-        this.config = this.loader.loadFromConfWithDefaults('config.json', this._defaultConfig());
-
+        this.path = path;
+        this.loader = null;
+        this.config = null;
+        this.main = null;
+        this.projects = [];
     }
 
     /**
@@ -60,31 +56,34 @@ class Application {
      */
     run() {
 
-        var self = this;
+        this.loader = new Loader(this.path);
+        this.config = new Configuration(this.loader.loadFromConf('config'));
+        this.main = new Project('',this.config, this.loader);
+        this.projects.push(this.main);
+        this.projects = this.projects.concat(this.main.getSubProjects());
+        this.projects.forEach(project=>project.runPlugins());
+        this.projects.forEach(project=>project.setConnections(Connections));
 
-        self.routes = flattenRoutes(self.loader.loadFromConf('routes.json'));
-
-        if (Array.isArray(self.config.connections))
-            self.config.connections.forEach(function (con) {
-                return self.connections.create(con.name, con.type, con.options);
-            });
-
-        return self.connections.open().
-            then(function () {
-                self.models = self.loader.requireModels();
-                self.controllers = self.loader.requireControllers();
-                self.taskRunner = new tasks.Runner(self.loader.requireTasks(), TaskRecorderFactory.create(self.config.taskRecorderType));
-                self.queries = self.loader.requireQueries();
-                self.middleware = self.loader.requireMiddleWare();
+        return Connections.open().
+            then(()=> {
+                this.projects.forEach(project=>project.register(ProjectRegistry));
             }).
-            then(function () {
-                return self.taskRunner.runAllTasks();
+            then(()=> {
+
+                 var runner = new tasks.Runner(
+                    ProjectRegistry.getTasks(),
+                    TaskRecorders.create(this.config.
+                        readWithDefaults('tasks.recorder', 'console')));
+
+                return runner.runAllTasks();
+
             });
     }
 
-    serverCreated(){}
+    serverCreated() {}
 
-    serverStarted(){};
+    serverStarted() {}
+
 }
 
 export default Application

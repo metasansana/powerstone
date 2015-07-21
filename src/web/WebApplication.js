@@ -1,85 +1,51 @@
 import Promise from  'bluebird';
 import express from 'express';
-import crypto from 'crypto';
-import nunjucks from 'nunjucks';
 import Application from '../Application';
 import PowerstoneServer from '../PowerstoneServer';
 import ManagedServer from '../ManagedServer';
 import Builtin from './Builtin';
-import WebAppRoutingFramework from './WebAppRoutingFramework';
-import WebAppFramework from './WebAppFramework';
-import StringConversion from'./StringConversion';
-import defaultConfig from './defaultConfig';
 import WebServerFactory from './WebServerFactory';
+import WebRouting from './WebRouting';
+import WebMiddleWareRegistry from './WebMiddleWareRegistry';
+import WebViewRegistry from './WebViewRegistry';
+
+var mainMWare = ['public', 'method-override', 'morgan',
+    'body-parser', 'cookie-parser', 'session', 'csrf'];
+
+var subMWare = [];
 
 class WebApplication extends Application {
 
-    _defaultConfig() {
-        return defaultConfig;
-    }
-
-    getAppViewEngine(path, app) {
-
-        return nunjucks.configure(path, {
-            autoescape: true,
-            express: app
-        });
-
-    }
-
     run() {
 
-        var self = this;
-
-        //If the session config describes a store we use it to configure a connection.
-        if (self.config.session)
-            if (self.config.session.store)
-                self.connections.create('session',
-                    self.config.session.store.type, self.config.session.store.options);
-
         return Application.prototype.run.call(this).
-            then(function () {
+            then(() => {
+
                 var app = express();
-                var routingFramework = new WebAppRoutingFramework(express.Router(), new StringConversion());
-                var appFramework = new WebAppFramework(app, self.config);
-                var conf = self.config;
 
-                conf.views = conf.views || 'views';
-                conf.views = self.parent + '/' + conf.views;
-                conf.public = conf.public || 'public';
+                this.config.
+                    readWithDefaults('middleware', mainMWare).
+                    forEach(mware=>
+                        WebMiddleWareRegistry.get(mware)
+                        (this.config.readWithDefaults('mount', ''), app, this.main));
 
-                appFramework.
-                    usePublic(self.parent).
-                    useMethodOverride().
-                    useLogging().
-                    useBodyParser().
-                    useCookieParser().
-                    useSessions(self.connections).
-                    useCSRF();
+                WebRouting.configure(app,
+                    this.main.getLoader().
+                        loadFromConf('routes', []), this.config);
 
-                self.routes.forEach(function (route) {
-                    routingFramework.configureSchema(route);
-                    routingFramework.configureMiddleWare(route, self.middleware);
-                    routingFramework.configureQueries(route, self.models, self.queries);
-                    routingFramework.configureControllers(route, self.controllers);
-                    routingFramework.configureViews(route);
-                });
-
-                self.getAppViewEngine(conf.views, app);
-                app.use('/', routingFramework.toRouter());
-                app.use(Builtin.send404Page);
+                WebViewRegistry.get(this.config.readWithDefaults('view_engine','nunjucks'))
+                (app, this.config, this.main);
 
                 var server = new ManagedServer(
-                    conf.port,
-                    conf.host,
+                    this.config.readWithDefaults('port', process.env.PORT || 3000),
+                    this.config.readWithDefaults('host', process.env.HOST || '0.0.0.0'),
                     new PowerstoneServer(
-                        WebServerFactory.create(app, conf.https)));
+                        WebServerFactory.create(app, this.config.https)));
 
                 return server.start().
-                    then(self.serverStarted);
+                    then(this.serverStarted);
 
             });
-
     }
 
     shutdown() {

@@ -16,6 +16,10 @@ class Connection {
      */
     close(){}
 
+    getRaw(){
+
+    }
+
 }
 
 export default Connection

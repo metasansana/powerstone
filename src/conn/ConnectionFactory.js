@@ -6,12 +6,12 @@ class ConnectionFactory {
 
     /**
      * create is called to create a new Connection implementation.
-     * @param {String} type
      * @param {String} name
+     * @param {String} type
      * @param {Object}options
      * @return {AbstractConnection}
      */
-    create(type, name, options) {
+    create(name, type, options) {
 
     }
 

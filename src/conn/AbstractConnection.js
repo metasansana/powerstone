@@ -45,6 +45,10 @@ class AbstractConnection {
     close() {
         return new Promise(this.__close__.bind(this));
     }
+
+    getRaw(){
+        return this.connection;
+    }
 }
 
 export default AbstractConnection

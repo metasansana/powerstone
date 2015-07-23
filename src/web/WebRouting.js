@@ -51,7 +51,7 @@ class WebRouting {
     configureSchema(router, route) {
 
         if (route.schema) {
-            router[route.method].call(router, route.href, validate(route.schema));
+            router[Routes.defaultMethod(route.method)].call(router, route.href, validate(route.schema));
             router.use(onValidatorError);
 
         }
@@ -67,7 +67,7 @@ class WebRouting {
         if (route.middleware) {
             var args = Strings.funcListToArray(route.middleware, ProjectRegistry.middleware);
             args.unshift(route.href);
-            router[route.method].apply(router, args);
+            router[Routes.defaultMethod(route.method)].apply(router, args);
 
         }
 
@@ -80,7 +80,7 @@ class WebRouting {
     configureQueries(router, route) {
 
         if (route.query) {
-            router[route.method](route.href, function (req, res, next) {
+            router[Routes.defaultMethod(route.method)](route.href, function (req, res, next) {
                 ProjectRegistry.queries[route.query.script]
                 (ProjectRegistry.models[route.query.model], req, res, next, route.query);
             });
@@ -100,7 +100,7 @@ class WebRouting {
                 ProjectRegistry.controllers);
             args.unshift(route.href);
 
-            router[(route.method)?route.method.toLowerCase():'get'].apply(router, args);
+            router[Routes.defaultMethod(route.method)].apply(router, args);
 
         }
         return this;

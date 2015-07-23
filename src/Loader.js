@@ -45,8 +45,13 @@ class Loader {
         try {
             ret = require(this.conf + '/' + file);
         }catch(e){
-            if(defaults) return defaults;
-            throw e;
+
+            try {
+                ret = require(this.conf+'/../'+file)
+            }catch(e) {
+                if (defaults) return defaults;
+                throw e;
+            }
         }
 
         var wd = path.dirname(this.conf + '/' + file) + '/';

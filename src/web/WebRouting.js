@@ -1,6 +1,7 @@
 import {validate}  from 'express-jsonschema';
 import Strings from '../Strings';
 import ProjectRegistry from '../ProjectRegistry';
+import Routes from '../Routes';
 
 var onValidatorError = function (err, req, res, next) {
 
@@ -25,23 +26,6 @@ var onValidatorError = function (err, req, res, next) {
     }
 };
 
-var flattenRoutes = function (routes) {
-
-    var flat = [];
-
-    if(Array.isArray(routes)) {
-        routes.forEach((route)=> {
-            if (!Array.isArray(route.routes)) return flat.push(route);
-            route.routes.forEach((entry)=>flat.push(entry));
-        });
-    }else{
-        flat.push(routes);
-    }
-
-    return flat;
-
-};
-
 /**
  * WebRouting
  */
@@ -49,7 +33,7 @@ class WebRouting {
 
     configure(app, routes, config) {
 
-        flattenRoutes(routes).forEach((route)=> {
+        Routes.flatten(routes).forEach((route)=> {
 
             this.configureSchema(app, route, config);
             this.configureMiddleWare(app, route, config);

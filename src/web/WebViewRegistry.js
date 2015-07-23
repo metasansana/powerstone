@@ -19,14 +19,18 @@ var WebViewRegistry  = {
 
 };
 
-WebViewRegistry.set('nunjucks', function (app, config, project) {
+WebViewRegistry.set('nunjucks', function (app, config, loader, project) {
 
-    nunjucks.configure(project.getLoader().getPath() + '/'+
+    nunjucks.configure(loader.getPath() + '/'+
         config.readWithDefaults('views', 'views'),
         config.readAndMerge('view_options', {
         autoescape: true,
         express: app
     }));
+
+});
+
+WebViewRegistry.set('none', function (app, config, project){
 
 });
 

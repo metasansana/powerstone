@@ -1,4 +1,4 @@
-import AbstractConnection from '../../../connectionsConnection';
+import AbstractConnection from '../../../conn/AbstractConnection';
 import session from 'express-session';
 import cmongo from  'connect-mongo';
 
@@ -12,14 +12,14 @@ class ConnectMongoConnection extends AbstractConnection {
     }
 
     __open__(resolve, reject) {
-        var MongoStore = cmongo(session);
-        this.store = new MongoStore(this.options);
-        resolve(this.store);
+        var MongoConnection = cmongo(session);
+        this.connection = new MongoConnection(this.options);
+        resolve(this.connection);
     }
 
     __close__(resolve, reject) {
 
-        resolve(this.store);
+        resolve(this.connection);
 
     }
 }

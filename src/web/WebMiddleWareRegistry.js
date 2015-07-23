@@ -38,18 +38,16 @@ var WebMiddleWareRegistry = {
 
 };
 
-WebMiddleWareRegistry.set('public', function _public_(mount, app, project) {
-    var config = project.getConfiguration();
+WebMiddleWareRegistry.set('public', function _public_(mount, app, config, loader, project) {
     config.readWithDefaults('public', ['public']).
-        forEach(path=>app.use(express.static(project.getLoader().getPath() + '/' + path)));
+        forEach(path=>app.use(express.static(loader.getPath() + '/' + path)));
 });
 
-WebMiddleWareRegistry.set('method-override', function _methodOverride_(mount, app, project) {
+WebMiddleWareRegistry.set('method-override', function _methodOverride_(mount, app, config, loader, project) {
     app.use(mount, methodOverride());
 });
 
-WebMiddleWareRegistry.set('morgan', function _morgan_(mount, app, project) {
-    var config = project.getConfiguration();
+WebMiddleWareRegistry.set('morgan', function _morgan_(mount, app, config, loader, project) {
 
     if (config.read('morgan') === false) return;
 
@@ -57,22 +55,20 @@ WebMiddleWareRegistry.set('morgan', function _morgan_(mount, app, project) {
         process.env.LOG_FORMAT || 'dev', config.read('morgan.options'))));
 });
 
-WebMiddleWareRegistry.set('body-parser', function _bodyParser_(mount, app, project) {
+WebMiddleWareRegistry.set('body-parser', function _bodyParser_(mount, app, config, loader, project) {
     app.use(mount, bodyParser.json());
     app.use(mount, bodyParser.urlencoded({extended: true}));
 
 });
 
-WebMiddleWareRegistry.set('cookie-parser', function _cookieParser_(mount, app, project) {
-    var config = project.getConfiguration();
+WebMiddleWareRegistry.set('cookie-parser', function _cookieParser_(mount, app, config, loader, project) {
     app.use(mount, cookieParser(config.readWithDefaults('secret',
         process.env.SECRET || secret)));
 
 });
 
-WebMiddleWareRegistry.set('session', function _session_(mount, app, project) {
+WebMiddleWareRegistry.set('session', function _session_(mount, app, config, loader, project) {
 
-    var config = project.getConfiguration();
     var sessionConfig = config.readAndMerge('session', {
         name: 'PHPSESSIONID',
         secret: secret,
@@ -87,9 +83,7 @@ WebMiddleWareRegistry.set('session', function _session_(mount, app, project) {
 
 });
 
-WebMiddleWareRegistry.set('csrf', function _csrf_(mount, app, project) {
-
-    var config = project.getConfiguration();
+WebMiddleWareRegistry.set('csrf', function _csrf_(mount, app, config, loader, project) {
 
     if (config.read('csrf')) {
         app.use(mount, csrf());

@@ -1,4 +1,4 @@
-import AbstractConnection from '../../../connectionsConnection';
+import AbstractConnection from '../../../conn/AbstractConnection';
 import mongoose from 'mongoose';
 
 class MongooseConnection extends AbstractConnection {
@@ -30,6 +30,7 @@ class MongooseConnection extends AbstractConnection {
     __close__(resolve, reject) {
         this.connection.close(resolve);
     }
+
 }
 
 export default MongooseConnection;

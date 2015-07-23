@@ -9,43 +9,75 @@ import WebRouting from './WebRouting';
 import WebMiddleWareRegistry from './WebMiddleWareRegistry';
 import WebViewRegistry from './WebViewRegistry';
 
-var mainMWare = ['public', 'method-override', 'morgan',
+var mainWare = ['public', 'method-override', 'morgan',
     'body-parser', 'cookie-parser', 'session', 'csrf'];
-
-var subMWare = [];
+var subWare = ['public'];
 
 class WebApplication extends Application {
 
     run() {
 
         return Application.prototype.run.call(this).
-            then(() => {
+            then(()=> {
 
-                var app = express();
+                var app;
+                var config;
+                var loader;
+                var wareOrder;
+                var projects = this.projects.slice();
+                var mountain = [];
+                var mountPoint;
+                var isMain = true;
 
-                this.config.
-                    readWithDefaults('middleware', mainMWare).
-                    forEach(mware=>
-                        WebMiddleWareRegistry.get(mware)
-                        (this.config.readWithDefaults('mount', ''), app, this.main));
+                projects.unshift(this.main);
 
-                WebRouting.configure(app,
-                    this.main.getLoader().
-                        loadFromConf('routes', []), this.config);
+                projects.forEach((project)=> {
 
-                WebViewRegistry.get(this.config.readWithDefaults('view_engine','nunjucks'))
-                (app, this.config, this.main);
+                    config = project.getConfiguration();
+                    loader = project.getLoader();
+                    isMain = project.isMain();
+
+                    mountPoint = config.readWithDefaults('mount_point',
+                        (isMain)? '':'/'+loader.getDirName());
+
+                    wareOrder = (isMain)?
+                        config.readWithDefaults('middleware', mainWare) :
+                        config.readWithDefaults('middleware', subWare);
+
+                    app = (isMain)?
+                        express():(config.read('router')===true)?
+                        express.Router():express();
+
+                    wareOrder.
+                        forEach(mware=>
+                            WebMiddleWareRegistry.get(mware)
+                            (mountPoint, app, config, loader, project));
+
+                    WebRouting.configure(app,
+                        loader.
+                            loadFromConf('routes', []), config);
+
+                    WebViewRegistry.get(config.readWithDefaults('view_engine','nunjucks'))
+                    (app, config, loader, project);
+
+                    mountain.push({point:mountPoint, app:app});
+
+                });
+
+                var mainApp = mountain.shift()['app'];
+                mountain.forEach(mount=>mainApp.use(mount.point, mount.app));
 
                 var server = new ManagedServer(
                     this.config.readWithDefaults('port', process.env.PORT || 3000),
                     this.config.readWithDefaults('host', process.env.HOST || '0.0.0.0'),
                     new PowerstoneServer(
-                        WebServerFactory.create(app, this.config.https)));
+                        WebServerFactory.create(mainApp, this.config.https)));
 
                 return server.start().
                     then(this.serverStarted);
 
             });
+
     }
 
     shutdown() {

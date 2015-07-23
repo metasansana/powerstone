@@ -115,7 +115,8 @@ class WebRouting {
             var args = Strings.methodListToBoundFunctionArray(route.controller,
                 ProjectRegistry.controllers);
             args.unshift(route.href);
-            router[route.method].apply(router, args);
+
+            router[(route.method)?route.method.toLowerCase():'get'].apply(router, args);
 
         }
         return this;

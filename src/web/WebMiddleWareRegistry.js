@@ -71,7 +71,8 @@ WebMiddleWareRegistry.set('session', function _session_(mount, app, config, load
 
     var sessionConfig = config.readAndMerge('session', {
         name: 'PHPSESSIONID',
-        secret: secret,
+        secret: config.readWithDefaults('secret',
+            process.env.SECRET || secret),
         resave: false,
         saveUninitialized: true
     }, {});

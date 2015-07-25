@@ -38,7 +38,8 @@ class WebApplication extends Application {
                     isMain = project.isMain();
 
                     mountPoint = config.readWithDefaults('mount_point',
-                        (isMain)? '':'/'+loader.getDirName());
+                        (isMain)? '':(config.readWithDefaults('mount_root',false))?
+                        '':'/'+loader.getDirName());
 
                     wareOrder = (isMain)?
                         config.readWithDefaults('middleware', mainWare) :

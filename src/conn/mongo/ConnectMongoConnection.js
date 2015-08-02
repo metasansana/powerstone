@@ -17,7 +17,7 @@ class ConnectMongoConnection extends AbstractConnection {
         var MongoConnection = cmongo(session);
 
         if(typeof this.options.store === 'string')
-        this.options.store = Connections.getConnection(this.options.store).connection;
+        this.options.store = Connections.getConnection(this.options.store).getRaw();
 
         this.connection = new MongoConnection(this.options);
         resolve(this.connection);

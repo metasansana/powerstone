@@ -82,7 +82,9 @@ class Application {
 
     serverCreated() {}
 
-    serverStarted() {}
+    serverStarted(port) {
+        console.log('Server started on port '+port);
+    }
 
 }
 

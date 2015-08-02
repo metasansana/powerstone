@@ -1,4 +1,4 @@
-import AbstractConnection from '../../../conn/AbstractConnection';
+import AbstractConnection from '../AbstractConnection';
 import mongoose from 'mongoose';
 
 class MongooseConnection extends AbstractConnection {

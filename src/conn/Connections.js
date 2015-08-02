@@ -1,5 +1,6 @@
 import Promise from 'bluebird';
 import Pool from './Pool';
+import Factory from './mongo/Factory';
 import UnsupportedConnectionTypeError from  './UnsupportedConnectionTypeError';
 import UnknownConnectionError from './UnknownConnectionError';
 
@@ -82,4 +83,7 @@ class Connections {
     }
 }
 
-export default new Connections();
+var c = new Connections();
+c.set('mongoose', Factory);
+c.set('connect-mongo', Factory);
+export default c

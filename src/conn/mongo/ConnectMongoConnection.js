@@ -1,4 +1,4 @@
-import AbstractConnection from '../../../conn/AbstractConnection';
+import AbstractConnection from '../AbstractConnection';
 import session from 'express-session';
 import cmongo from  'connect-mongo';
 

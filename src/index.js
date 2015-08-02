@@ -3,5 +3,5 @@ module.exports = {
     web: require('./web'),
     tasks: require('./tasks'),
     Connections: require('./conn/Connections'),
-    Pool: require('./Pool')
+    Pool: require('./conn/Pool')
 };

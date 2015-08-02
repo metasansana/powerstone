@@ -1,6 +1,6 @@
 {
   "name": "powerstone",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Application framework for mongodb powered apps.",
   "main": "index.js",
   "repository": {
@@ -62,5 +62,7 @@
     "node": ">= 0.10.28",
     "npm": ">= 1.4.9"
   },
-  "files":["build"]
+  "files": [
+    "build"
+  ]
 }

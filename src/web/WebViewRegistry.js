@@ -28,10 +28,12 @@ WebViewRegistry.set('nunjucks', function (app, config, loader, project) {
         express: app
     }));
 
+    var opts = config.readWithDefaults('nunjucks', {filters:[], extensions:[], globals:[]});
+
 });
 
 WebViewRegistry.set('none', function (app, config, project){
 
 });
 
-export default WebViewRegistry
+export default WebViewRegistry;

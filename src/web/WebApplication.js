@@ -3,9 +3,8 @@ import express from 'express';
 import Application from '../Application';
 import PowerstoneServer from '../PowerstoneServer';
 import ManagedServer from '../ManagedServer';
-import Builtin from './Builtin';
 import WebServerFactory from './WebServerFactory';
-import WebRouting from './WebRouting';
+import Routing from './Routing';
 import WebMiddleWareRegistry from './WebMiddleWareRegistry';
 import WebViewRegistry from './WebViewRegistry';
 
@@ -54,7 +53,7 @@ class WebApplication extends Application {
                             WebMiddleWareRegistry.get(mware)
                             (mountPoint, app, config, loader, project));
 
-                    WebRouting.configure(app,
+                    Routing.configure(app,
                         loader.
                             loadFromConf('routes', []), config);
 

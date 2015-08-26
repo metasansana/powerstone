@@ -1,6 +1,7 @@
 import {validate}  from 'express-jsonschema';
 import Strings from './Strings';
 import ProjectRegistry from './ProjectRegistry';
+import Routes from './Routes';
 
 var onValidatorError = function (err, req, res, next) {
 

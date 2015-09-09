@@ -58,10 +58,15 @@ class GeneralRouting {
 	configureMiddleWare(router, route) {
 
 		if (route.middleware) {
-			var args = Strings.funcListToArray(route.middleware, ProjectRegistry.middleware);
-			args.unshift(route.href);
-			router[Routes.defaultMethod(route.method)].apply(router, args);
+                  route.middleware.split(',').
+                    forEach(mware=>{
+ 
+                      if (!ProjectRegistry.middleware.hasOwnProperty(mware))
+                       throw new Error('funcListToArray: Func: ' + mware + ' was not found!');
 
+                    router[Routes.defaultMethod(route.method)]((req, res,next)=> mware(req,res,next,route));
+
+                    });
 		}
 
 		return this;

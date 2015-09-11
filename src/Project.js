@@ -62,8 +62,8 @@ class Project {
     }
 
     register(registry) {
-        this.loader.requireModels(registry.models, this.prefix);
         this.loader.requireControllers(registry.controllers, this.prefix);
+        this.loader.requireModels(registry.models, this.prefix);
         this.loader.requireQueries(registry.queries, this.prefix);
         this.loader.requireMiddleWare(registry.middleware, this.prefix);
         this.loader.requireTasks(registry.tasks, this.prefix);

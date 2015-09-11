@@ -60,11 +60,12 @@ class GeneralRouting {
 		if (route.middleware) {
                   route.middleware.split(',').
                     forEach(mware=>{
- 
+
                       if (!ProjectRegistry.middleware.hasOwnProperty(mware))
                        throw new Error('funcListToArray: Func: ' + mware + ' was not found!');
 
-                    router[Routes.defaultMethod(route.method)]((req, res,next)=> mware(req,res,next,route));
+                    router[Routes.defaultMethod(route.method)].call(router, route.href,
+                      (req, res,next)=> ProjectRegistry.middleware[mware](req,res,next,route));
 
                     });
 		}

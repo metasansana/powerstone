@@ -65,3 +65,4 @@ var Task = (function () {
 
 exports['default'] = Task;
 module.exports = exports['default'];
+//# sourceMappingURL=Task.js.map

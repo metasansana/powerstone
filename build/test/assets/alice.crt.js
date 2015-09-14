@@ -7,3 +7,4 @@ var cert = "Certificate:\n    Data:\n        Version: 3 (0x2)\n        Serial Nu
 
 exports["default"] = cert;
 module.exports = exports["default"];
+//# sourceMappingURL=alice.crt.js.map

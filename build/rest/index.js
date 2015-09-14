@@ -21,3 +21,4 @@ exports['default'] = {
 
 };
 module.exports = exports['default'];
+//# sourceMappingURL=index.js.map

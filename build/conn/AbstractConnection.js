@@ -79,3 +79,4 @@ var AbstractConnection = (function () {
 
 exports['default'] = AbstractConnection;
 module.exports = exports['default'];
+//# sourceMappingURL=AbstractConnection.js.map

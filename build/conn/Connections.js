@@ -130,3 +130,4 @@ c.set('mongoose', _mongoFactory2['default']);
 c.set('connect-mongo', _mongoFactory2['default']);
 exports['default'] = c;
 module.exports = exports['default'];
+//# sourceMappingURL=Connections.js.map

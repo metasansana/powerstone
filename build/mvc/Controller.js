@@ -24,3 +24,4 @@ var Controller = function Controller() {
 
 exports['default'] = Controller;
 module.exports = exports['default'];
+//# sourceMappingURL=Controller.js.map

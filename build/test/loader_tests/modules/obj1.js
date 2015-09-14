@@ -5,3 +5,4 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = 1;
 module.exports = exports["default"];
+//# sourceMappingURL=obj1.js.map

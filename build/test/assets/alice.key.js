@@ -7,3 +7,4 @@ var key = "-----BEGIN RSA PRIVATE KEY-----\nMIIJKQIBAAKCAgEA3W29+ID6194bH6ejLrIC
 
 exports["default"] = key;
 module.exports = exports["default"];
+//# sourceMappingURL=alice.key.js.map

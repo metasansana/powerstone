@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../src/test/loader_tests/modules/obj1.js"],"names":[],"mappings":";;;;;qBAAe,CAAC","file":"obj1.js","sourcesContent":["export default 1;"]}

@@ -9,3 +9,4 @@ function UnsupportedConnectionTypeError(type) {
 UnsupportedConnectionTypeError.prototype = Object.create(Error.prototype);
 UnsupportedConnectionTypeError.prototype.constructor = UnsupportedConnectionTypeError;
 module.exports = UnsupportedConnectionTypeError;
+//# sourceMappingURL=UnsupportedConnectionTypeError.js.map

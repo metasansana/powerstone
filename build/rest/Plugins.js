@@ -62,3 +62,4 @@ var Plugins = (function () {
 
 exports['default'] = new Plugins();
 module.exports = exports['default'];
+//# sourceMappingURL=Plugins.js.map

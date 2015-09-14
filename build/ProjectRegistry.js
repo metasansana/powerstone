@@ -44,3 +44,4 @@ var ProjectRegistry = (function () {
 
 exports["default"] = new ProjectRegistry();
 module.exports = exports["default"];
+//# sourceMappingURL=ProjectRegistry.js.map

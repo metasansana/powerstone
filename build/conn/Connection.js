@@ -43,3 +43,4 @@ var Connection = (function () {
 
 exports["default"] = Connection;
 module.exports = exports["default"];
+//# sourceMappingURL=Connection.js.map

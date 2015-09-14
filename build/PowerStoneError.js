@@ -43,3 +43,4 @@ PowerStoneError.setup = function (message) {
 
 exports['default'] = PowerStoneError;
 module.exports = exports['default'];
+//# sourceMappingURL=PowerStoneError.js.map

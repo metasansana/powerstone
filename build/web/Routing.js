@@ -78,3 +78,4 @@ var Routing = (function (_GeneralRouting) {
 
 exports['default'] = new Routing();
 module.exports = exports['default'];
+//# sourceMappingURL=Routing.js.map

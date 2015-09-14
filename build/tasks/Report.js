@@ -60,3 +60,4 @@ var Report = (function () {
 
 exports['default'] = Report;
 module.exports = exports['default'];
+//# sourceMappingURL=Report.js.map

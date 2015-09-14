@@ -60,3 +60,4 @@ var MongooseConnection = (function (_AbstractConnection) {
 
 exports['default'] = MongooseConnection;
 module.exports = exports['default'];
+//# sourceMappingURL=MongooseConnection.js.map

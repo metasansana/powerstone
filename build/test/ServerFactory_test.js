@@ -43,3 +43,4 @@ describe('ServerFactory', function () {
         (0, _must2['default'])(_ServerFactory2['default'].createRESTServer((0, _express2['default'])())).to.be.instanceOf(require('restify/lib/server'));
     });
 });
+//# sourceMappingURL=ServerFactory_test.js.map

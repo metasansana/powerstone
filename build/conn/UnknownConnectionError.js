@@ -10,3 +10,4 @@ UnknownConnectionError.prototype = Object.create(Error.prototype);
 UnknownConnectionError.prototype.constructor = UnknownConnectionError;
 
 module.exports = UnknownConnectionError;
+//# sourceMappingURL=UnknownConnectionError.js.map

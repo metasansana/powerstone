@@ -59,3 +59,4 @@ var Strings = (function () {
 
 exports['default'] = new Strings();
 module.exports = exports['default'];
+//# sourceMappingURL=Strings.js.map

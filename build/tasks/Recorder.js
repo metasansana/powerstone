@@ -32,3 +32,4 @@ var Recorder = (function () {
 
 exports["default"] = Recorder;
 module.exports = exports["default"];
+//# sourceMappingURL=Recorder.js.map

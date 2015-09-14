@@ -121,3 +121,4 @@ WebMiddleWareRegistry.set('csrf', function _csrf_(mount, app, config, loader, pr
 
 exports['default'] = WebMiddleWareRegistry;
 module.exports = exports['default'];
+//# sourceMappingURL=WebMiddleWareRegistry.js.map

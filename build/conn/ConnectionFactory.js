@@ -35,3 +35,4 @@ var ConnectionFactory = (function () {
 
 exports["default"] = ConnectionFactory;
 module.exports = exports["default"];
+//# sourceMappingURL=ConnectionFactory.js.map

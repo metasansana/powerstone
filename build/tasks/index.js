@@ -39,3 +39,4 @@ exports['default'] = {
     Task: _Task2['default']
 };
 module.exports = exports['default'];
+//# sourceMappingURL=index.js.map

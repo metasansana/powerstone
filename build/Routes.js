@@ -57,3 +57,4 @@ var Routes = (function () {
 
 exports['default'] = new Routes();
 module.exports = exports['default'];
+//# sourceMappingURL=Routes.js.map

@@ -116,3 +116,4 @@ var RESTApplication = (function (_Application) {
 
 exports['default'] = RESTApplication;
 module.exports = exports['default'];
+//# sourceMappingURL=RESTApplication.js.map

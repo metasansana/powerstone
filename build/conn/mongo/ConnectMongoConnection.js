@@ -64,3 +64,4 @@ var ConnectMongoConnection = (function (_AbstractConnection) {
 
 exports['default'] = ConnectMongoConnection;
 module.exports = exports['default'];
+//# sourceMappingURL=ConnectMongoConnection.js.map

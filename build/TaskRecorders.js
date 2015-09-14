@@ -44,3 +44,4 @@ var TaskRecorders = (function () {
 
 exports['default'] = new TaskRecorders();
 module.exports = exports['default'];
+//# sourceMappingURL=TaskRecorders.js.map

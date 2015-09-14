@@ -29,3 +29,4 @@ var ConsoleRecorder = (function () {
 
 exports['default'] = ConsoleRecorder;
 module.exports = exports['default'];
+//# sourceMappingURL=ConsoleRecorder.js.map

@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
-    value: true
+	value: true
 });
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -54,90 +54,79 @@ var mainWare = ['public', 'method-override', 'morgan', 'body-parser', 'cookie-pa
 var subWare = ['public'];
 
 var WebApplication = (function (_Application) {
-    _inherits(WebApplication, _Application);
+	_inherits(WebApplication, _Application);
 
-    function WebApplication() {
-        _classCallCheck(this, WebApplication);
+	function WebApplication() {
+		_classCallCheck(this, WebApplication);
 
-        _get(Object.getPrototypeOf(WebApplication.prototype), 'constructor', this).apply(this, arguments);
-    }
+		_get(Object.getPrototypeOf(WebApplication.prototype), 'constructor', this).apply(this, arguments);
+	}
 
-    _createClass(WebApplication, [{
-        key: 'run',
-        value: function run() {
-            var _this = this;
+	_createClass(WebApplication, [{
+		key: 'run',
+		value: function run() {
+			var _this = this;
 
-            return _Application3['default'].prototype.run.call(this).then(function () {
+			return _Application3['default'].prototype.run.call(this).then(function () {
 
-                var app;
-                var config;
-                var loader;
-                var wareOrder;
-                var projects = _this.projects.slice();
-                var mountain = [];
-                var mountPoint;
-                var isMain = true;
+				var app;
+				var config;
+				var loader;
+				var wareOrder;
+				var projects = _this.projects.slice();
+				var mountain = [];
+				var mountPoint;
+				var isMain = true;
 
-                projects.unshift(_this.main);
+				projects.unshift(_this.main);
 
-                projects.forEach(function (project) {
+				projects.forEach(function (project) {
 
-                    config = project.getConfiguration();
-                    loader = project.getLoader();
-                    isMain = project.isMain();
+					config = project.getConfiguration();
+					loader = project.getLoader();
+					isMain = project.isMain();
 
-                    mountPoint = config.readWithDefaults('mount_point', isMain ? '' : config.readWithDefaults('mount_root', false) ? '' : '/' + loader.getDirName());
+					mountPoint = config.readWithDefaults('mount_point', isMain ? '' : config.readWithDefaults('mount_root', false) ? '' : '/' + loader.getDirName());
 
-                    wareOrder = isMain ? config.readWithDefaults('middleware', mainWare) : config.readWithDefaults('middleware', subWare);
+					wareOrder = isMain ? config.readWithDefaults('middleware', mainWare) : config.readWithDefaults('middleware', subWare);
 
-                    app = isMain ? (0, _express2['default'])() : config.read('router') === true ? _express2['default'].Router() : (0, _express2['default'])();
+					app = isMain ? (0, _express2['default'])() : config.read('router') === true ? _express2['default'].Router() : (0, _express2['default'])();
 
-                    wareOrder.forEach(function (mware) {
-                        return _WebMiddleWareRegistry2['default'].get(mware)(mountPoint, app, config, loader, project);
-                    });
+					wareOrder.forEach(function (mware) {
+						return _WebMiddleWareRegistry2['default'].get(mware)(mountPoint, app, config, loader, project);
+					});
 
-                    _Routing2['default'].configure(app, loader.loadFromConf('routes', []), config);
+					_Routing2['default'].configure(app, loader.loadFromConf('routes', []), config);
 
-                    _WebViewRegistry2['default'].get(config.readWithDefaults('view_engine', 'nunjucks'))(app, config, loader, project);
+					_WebViewRegistry2['default'].get(config.readWithDefaults('view_engine', 'nunjucks'))(app, config, loader, project);
 
-                    mountain.push({ point: mountPoint, app: app });
-                });
+					mountain.push({
+						point: mountPoint,
+						app: app
+					});
+				});
 
-                var mainApp = mountain.shift()['app'];
-                mountain.forEach(function (mount) {
-                    return mainApp.use(mount.point, mount.app);
-                });
+				var mainApp = mountain.shift()['app'];
+				mountain.forEach(function (mount) {
+					return mainApp.use(mount.point, mount.app);
+				});
 
-                var server = new _ManagedServer2['default'](_this.config.readWithDefaults('port', process.env.PORT || 3000), _this.config.readWithDefaults('host', process.env.HOST || '0.0.0.0'), new _PowerstoneServer2['default'](_WebServerFactory2['default'].create(mainApp, _this.config.https)));
+				_this.server = new _ManagedServer2['default'](_this.config.readWithDefaults('port', process.env.PORT || 3000), _this.config.readWithDefaults('host', process.env.HOST || '0.0.0.0'), new _PowerstoneServer2['default'](_WebServerFactory2['default'].create(mainApp, _this.config.https)));
 
-                return server.start().then(_this.serverStarted);
-            });
-        }
-    }, {
-        key: 'shutdown',
-        value: function shutdown() {
+				return _this.server.start().then(_this.serverStarted);
+			});
+		}
+	}, {
+		key: 'shutdown',
+		value: function shutdown() {
 
-            var self = this;
+			return this.server.shutdown();
+		}
+	}]);
 
-            return new _bluebird2['default'](function (resolve, reject) {
-
-                self.server.shutdown().then(function () {
-
-                    for (var key in self.databases) if (self.databases.hasOwnProperty(key)) {
-                        self.databases[key].close(function () {
-                            resolve();
-                        });
-                    }
-                })['catch'](function (err) {
-                    reject(err);
-                    return err;
-                });
-            });
-        }
-    }]);
-
-    return WebApplication;
+	return WebApplication;
 })(_Application3['default']);
 
 exports['default'] = WebApplication;
 module.exports = exports['default'];
+//# sourceMappingURL=WebApplication.js.map

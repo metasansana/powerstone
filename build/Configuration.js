@@ -54,3 +54,4 @@ var Configuration = (function () {
 
 exports['default'] = Configuration;
 module.exports = exports['default'];
+//# sourceMappingURL=Configuration.js.map

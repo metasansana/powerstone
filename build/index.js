@@ -7,3 +7,4 @@ module.exports = {
     Connections: require('./conn/Connections'),
     Pool: require('./conn/Pool')
 };
+//# sourceMappingURL=index.js.map

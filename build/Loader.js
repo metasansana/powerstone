@@ -216,3 +216,4 @@ var Loader = (function () {
 
 exports['default'] = Loader;
 module.exports = exports['default'];
+//# sourceMappingURL=Loader.js.map

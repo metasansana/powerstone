@@ -46,3 +46,4 @@ Factory.CONNECT_MONGO = 'connect-mongo';
 Factory.MONGOOSE = 'mongoose';
 exports['default'] = new Factory();
 module.exports = exports['default'];
+//# sourceMappingURL=Factory.js.map

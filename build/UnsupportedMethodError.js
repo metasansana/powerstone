@@ -47,3 +47,4 @@ var UnsupportedMethodError = (function (_PowerStoneError) {
 
 exports['default'] = UnsupportedMethodError;
 module.exports = exports['default'];
+//# sourceMappingURL=UnsupportedMethodError.js.map

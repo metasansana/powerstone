@@ -22,13 +22,13 @@ var _connConnections = require('./conn/Connections');
 
 var _connConnections2 = _interopRequireDefault(_connConnections);
 
-var _Project = require('./Project');
+var _Module = require('./Module');
 
-var _Project2 = _interopRequireDefault(_Project);
+var _Module2 = _interopRequireDefault(_Module);
 
-var _ProjectRegistry = require('./ProjectRegistry');
+var _ModuleRegistry = require('./ModuleRegistry');
 
-var _ProjectRegistry2 = _interopRequireDefault(_ProjectRegistry);
+var _ModuleRegistry2 = _interopRequireDefault(_ModuleRegistry);
 
 var _events = require('events');
 
@@ -56,30 +56,30 @@ var Application = (function () {
         };
     }
 
+    /**
+     * on 
+     */
+
     _createClass(Application, [{
         key: 'on',
-
-        /**
-         * on 
-         */
         value: function on() {
             this._events.on.apply(this._events, arguments);
         }
-    }, {
-        key: 'run',
 
         /**
          * run this Application
          * @return {Promise}
          */
+    }, {
+        key: 'run',
         value: function run() {
             var _this = this;
 
             this.loader = new _Loader2['default'](this.path);
             this.config = new _Configuration2['default'](this.loader.loadFromConf('config'));
-            this.main = new _Project2['default']('', this.config, this.loader);
+            this.main = new _Module2['default']('', this.config, this.loader);
             this.projects.push(this.main);
-            this.projects = this.projects.concat(this.main.getSubProjects());
+            this.projects = this.projects.concat(this.main.getSubModules());
             this.projects.forEach(function (project) {
                 return project.runPlugins();
             });
@@ -89,7 +89,7 @@ var Application = (function () {
 
             return _connConnections2['default'].open().then(function () {
                 return _this.projects.forEach(function (project) {
-                    return project.register(_ProjectRegistry2['default']);
+                    return project.register(_ModuleRegistry2['default']);
                 });
             });
         }

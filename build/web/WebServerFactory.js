@@ -10,9 +10,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _ServerFactory = require('../ServerFactory');
+var _commonServerFactory = require('../common/ServerFactory');
 
-var _ServerFactory2 = _interopRequireDefault(_ServerFactory);
+var _commonServerFactory2 = _interopRequireDefault(_commonServerFactory);
 
 /**
  * WebServerFactory
@@ -27,9 +27,9 @@ var WebServerFactory = (function () {
         key: 'create',
         value: function create(app, options) {
 
-            if (options) return _ServerFactory2['default'].createSecureNativeWebServer(options, app);
+            if (options) return _commonServerFactory2['default'].createSecureNativeWebServer(options, app);
 
-            return _ServerFactory2['default'].createNativeWebServer(app);
+            return _commonServerFactory2['default'].createNativeWebServer(app);
         }
     }]);
 

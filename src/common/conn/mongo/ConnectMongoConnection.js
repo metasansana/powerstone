@@ -1,6 +1,6 @@
 import AbstractConnection from '../AbstractConnection';
 import session from 'express-session';
-import cmongo from  'connect-mongo';
+import cmongo from 'connect-mongo';
 import Connections from '../Connections';
 
 class ConnectMongoConnection extends AbstractConnection {
@@ -8,7 +8,7 @@ class ConnectMongoConnection extends AbstractConnection {
     constructor(name, options) {
         super(name, options);
         this.options.url = this.options.url ||
-            process.env.MONGO_URI ||
+            process.env.MONGO_URL ||
             process.env.MONGO_URI;
     }
 
@@ -16,8 +16,8 @@ class ConnectMongoConnection extends AbstractConnection {
 
         var MongoConnection = cmongo(session);
 
-        if(typeof this.options.store === 'string')
-        this.options.store = Connections.getConnection(this.options.store).getRaw();
+        if (typeof this.options.store === 'string')
+            this.options.store = Connections.getConnection(this.options.store).getRaw();
 
         this.connection = new MongoConnection(this.options);
         resolve(this.connection);

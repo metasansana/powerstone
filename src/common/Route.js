@@ -1,6 +1,6 @@
 import expressJSONSchema from 'express-jsonschema';
 import json_schema_error_handler from './json_schema_error_handler';
-import ProjectRegistry from './ProjectRegistry';
+import ModuleRegistry from './ModuleRegistry';
 import Pipe from 'pipes/build/Pipe';
 
 var validate = expressJSONSchema.validate;
@@ -54,7 +54,7 @@ class Route {
     configurePipes(pipe, target) {
 
         if (!pipe) return this;
-        var p = new Pipe(pipe, ProjectRegistry.pipes);
+        var p = new Pipe(pipe, ModuleRegistry.pipes);
         this.fw[this.method](this.path, function(req, res, next) {
 
             p.run(req[target], function(err, o) {
@@ -78,7 +78,7 @@ class Route {
 
         if (!wares) return this;
 
-        ProjectRegistry.convertMiddleware(wares).
+        ModuleRegistry.convertMiddleware(wares).
         forEach(mwares =>
             this.fw[this.method](this.path, (req, res, next) =>
                 mwares(req, res, next, this)));
@@ -92,7 +92,7 @@ class Route {
      */
     configureAction(action) {
         if (!action) return this;
-        this.fw[this.method](this.path, ProjectRegistry.convertAction(action));
+        this.fw[this.method](this.path, ModuleRegistry.convertAction(action));
         return this;
     }
 

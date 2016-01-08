@@ -58,12 +58,12 @@ var ManagedServer = (function () {
 
             self.connections[socket._serverId] = socket;
         }
-    }, {
-        key: 'flush',
 
         /**
          * flush destroys all current open connections to the server.
          */
+    }, {
+        key: 'flush',
         value: function flush() {
 
             var self = this;
@@ -73,13 +73,13 @@ var ManagedServer = (function () {
                 if (socket) socket.destroy();
             });
         }
-    }, {
-        key: 'start',
 
         /**
          * start this server
          * @return {Promise}
          */
+    }, {
+        key: 'start',
         value: function start() {
             var self = this;
             return new _bluebird2['default'](function (resolve) {
@@ -90,13 +90,13 @@ var ManagedServer = (function () {
                 self.server.listen(self.port, self.host);
             });
         }
-    }, {
-        key: 'shutdown',
 
         /**
          * shutdown this server
          * @return {Promise}
          */
+    }, {
+        key: 'shutdown',
         value: function shutdown() {
             var self = this;
             return new _bluebird2['default'](function (resolve) {
@@ -106,13 +106,13 @@ var ManagedServer = (function () {
                 self.flush();
             });
         }
-    }, {
-        key: 'restart',
 
         /**
          * restart this server
          * @returns {Promise}
          */
+    }, {
+        key: 'restart',
         value: function restart() {
             return this.shutdown().then(this.start.bind(this));
         }

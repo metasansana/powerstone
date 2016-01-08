@@ -25,13 +25,13 @@ var Connection = (function () {
      * @return {Promise}
      */
     value: function open() {}
-  }, {
-    key: "close",
 
     /**
      * close the connection
      * @return {Promise}
      */
+  }, {
+    key: "close",
     value: function close() {}
   }, {
     key: "getRaw",

@@ -57,8 +57,6 @@ var Runner = (function () {
 
             next.taskWillRun(onYes, onNo, report);
         }
-    }, {
-        key: 'runAllTasks',
 
         /**
          * runAllTasks will run all the tasks in sequence.
@@ -66,6 +64,8 @@ var Runner = (function () {
          * ones this object was created with.
          * @return {Promise}
          */
+    }, {
+        key: 'runAllTasks',
         value: function runAllTasks(tasks) {
 
             tasks = tasks || this.tasks;

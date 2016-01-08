@@ -26,31 +26,31 @@ var Plugins = (function () {
     this.plugins = {};
   }
 
+  /**
+   * @callback provider
+   * @param {restify.Server} server
+   * @param {Configuration} config
+   * @param {Loader} loader
+   * @param {Project} project
+   *
+   * set a provider
+   * @param {string} name
+   * @param {function} provider
+   */
+
   _createClass(Plugins, [{
     key: 'set',
-
-    /**
-     * @callback provider
-     * @param {restify.Server} server
-     * @param {Configuration} config
-     * @param {Loader} loader
-     * @param {Project} project
-     *
-     * set a provider
-     * @param {string} name
-     * @param {function} provider
-     */
     value: function set(name, provider) {
       this.plugins[name] = provider;
       return this;
     }
-  }, {
-    key: 'get',
 
     /**
      * get returns a previously stored provider
      * @param  {string} name
      */
+  }, {
+    key: 'get',
     value: function get(name) {
       if (!this.plugins.hasOwnProperty(name)) throw new Error('Unknown restify plugin "' + name + '"!');
       return this.plugins[name];

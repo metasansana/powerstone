@@ -45,8 +45,6 @@ var ServerFactory = (function () {
     value: function createNativeWebServer(app) {
       return _http2['default'].createServer(app);
     }
-  }, {
-    key: 'createSecureNativeWebServer',
 
     /**
      * createSecureNativeWebServer creates and returns a https.Server
@@ -54,16 +52,18 @@ var ServerFactory = (function () {
      * @param {express.Application} app
      * @returns {*}
      */
+  }, {
+    key: 'createSecureNativeWebServer',
     value: function createSecureNativeWebServer(options, app) {
       return _https2['default'].createServer(options, app);
     }
-  }, {
-    key: 'createRestServer',
 
     /**
      * createRestServer creates and returns a restify.Server
      * @params {Object} options
      */
+  }, {
+    key: 'createRestServer',
     value: function createRestServer(options) {
       return _restify2['default'].createServer(options);
     }

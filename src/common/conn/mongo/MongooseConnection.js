@@ -7,7 +7,7 @@ class MongooseConnection extends AbstractConnection {
         super(name, options);
         this.options.url = this.options.url ||
             process.env.MONGO_URI ||
-            process.env.MONGO_URI;
+            process.env.MONGO_URL;
     }
 
     __open__(resolve, reject) {
@@ -15,12 +15,12 @@ class MongooseConnection extends AbstractConnection {
         this.connection = mongoose.createConnection(this.options.url, this.options);
         this.Schema = mongoose.Schema;
 
-        this.connection.on('open', function (err) {
+        this.connection.on('open', function(err) {
             if (err) return reject(err);
             resolve(this.connection);
         });
 
-        this.connection.on('error', function (err) {
+        this.connection.on('error', function(err) {
             throw err
         });
 

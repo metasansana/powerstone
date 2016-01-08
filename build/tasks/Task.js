@@ -31,8 +31,6 @@ var Task = (function () {
         value: function runTask(report, cb) {
             throw new Error('Task#runTask() must be overridden!');
         }
-    }, {
-        key: 'taskWillRun',
 
         /**
          * taskWillRun is called to determine if the task should be ran or not.
@@ -40,17 +38,19 @@ var Task = (function () {
          * @param {Function} no
          * @param {TaskReport} report
          */
+    }, {
+        key: 'taskWillRun',
         value: function taskWillRun(yes, no, report) {
             yes();
         }
-    }, {
-        key: 'run',
 
         /**
          * run this task
          * @param {TaskReport} report
          * @param {Function} cb
          */
+    }, {
+        key: 'run',
         value: function run(report, cb) {
             report.taskStarted(this.taskID || this.constructor.name);
             this.runTask(report, function (err, message) {

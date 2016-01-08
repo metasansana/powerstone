@@ -72,12 +72,12 @@ var Loader = (function () {
         value: function getPath() {
             return this.parent;
         }
-    }, {
-        key: 'loadFromConf',
 
         /**
          * loadFromConf
          */
+    }, {
+        key: 'loadFromConf',
         value: function loadFromConf(file, defaults) {
 
             var ret;
@@ -103,12 +103,12 @@ var Loader = (function () {
 
             return ret;
         }
-    }, {
-        key: 'loadFromConfWithDefaults',
 
         /**
          * loadFromConfWithDefaults
          */
+    }, {
+        key: 'loadFromConfWithDefaults',
         value: function loadFromConfWithDefaults(file, defaults) {
             return (0, _deepmerge2['default'])(defaults, this.loadFromConf(file));
         }
@@ -117,8 +117,6 @@ var Loader = (function () {
         value: function requireRelative(path) {
             return require(this.parent + '/' + path);
         }
-    }, {
-        key: 'requireDirSync',
 
         /**
          * requireDirSync requires all files in a sub-directory into a single object
@@ -127,6 +125,8 @@ var Loader = (function () {
          * @param {String} [prefix] A prefix that will be concatenated to the object's keys
          * @returns {Object}
          */
+    }, {
+        key: 'requireDirSync',
         value: function requireDirSync(dir, merge, prefix) {
 
             var files;
@@ -150,8 +150,6 @@ var Loader = (function () {
 
             return merge;
         }
-    }, {
-        key: 'requireTasks',
 
         /**
          * requireTasks grabs all the tasks in the tasks folder
@@ -159,11 +157,11 @@ var Loader = (function () {
          * @param {String} prefix
          * @returns {Object}
          */
+    }, {
+        key: 'requireTasks',
         value: function requireTasks(merge, prefix) {
             return this.requireDirSync('tasks', merge, prefix);
         }
-    }, {
-        key: 'requireModels',
 
         /**
          * requireModels grabs all the models in the models folder
@@ -171,11 +169,11 @@ var Loader = (function () {
          * @param {String} prefix
          * @returns {Object}
          */
+    }, {
+        key: 'requireModels',
         value: function requireModels(merge, prefix) {
             return this.requireDirSync('models', merge, prefix);
         }
-    }, {
-        key: 'requireControllers',
 
         /**
          * requireControllers grabs all the controllers in the controllers folder
@@ -183,22 +181,22 @@ var Loader = (function () {
          * @param {String} prefix
          * @returns {Object}
          */
+    }, {
+        key: 'requireControllers',
         value: function requireControllers(merge, prefix) {
             return this.requireDirSync('controllers', merge, prefix);
         }
-    }, {
-        key: 'requireQueries',
 
         /**
          * requireQueries grabs all the queries in the queries folder
          * @param {Object} [merge]
          * @returns {Object}
          */
+    }, {
+        key: 'requireQueries',
         value: function requireQueries(merge, prefix) {
             return this.requireDirSync('queries', merge, prefix);
         }
-    }, {
-        key: 'requireMiddleWare',
 
         /**
          * requireMiddleware grabs all the middleware in the middlewares folder
@@ -206,17 +204,19 @@ var Loader = (function () {
          * @param {String} prefix
          * @returns {Object}
          */
+    }, {
+        key: 'requireMiddleWare',
         value: function requireMiddleWare(merge, prefix) {
             return this.requireDirSync('middleware', merge, prefix);
         }
-    }, {
-        key: 'requirePipes',
 
         /**
          * requirePipes grabs up all the pipe definitions in the pipes folder
          * @param {Object} [merge]
          * @returns {Object}
          */
+    }, {
+        key: 'requirePipes',
         value: function requirePipes(merge, prefix) {
             return this.requireDirSync('pipes', merge, prefix);
         }

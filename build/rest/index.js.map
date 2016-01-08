@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/rest/index.js"],"names":[],"mappings":";;;;;;;;uBAAoB,WAAW;;;;+BACH,mBAAmB;;;;qBAEhC;;AAEb,SAAO,sBAAS;AAChB,aAAW,8BAAiB;;CAE7B","file":"index.js","sourcesContent":["import Plugins from './Plugins';\nimport RESTApplication from './RESTApplication';\n\nexport default {\n\n  Plugins: Plugins,\n  Application: RESTApplication\n\n}\n"]}

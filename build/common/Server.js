@@ -27,8 +27,6 @@ var Server = (function () {
      * @param {Function} handler
      */
     value: function on(event, handler) {}
-  }, {
-    key: "listen",
 
     /***
      * open starts listening for connections
@@ -36,22 +34,24 @@ var Server = (function () {
      * @param {String} [host]
      * @param {Function} [cb]
      */
-    value: function listen(port, host, cb) {}
   }, {
-    key: "close",
+    key: "listen",
+    value: function listen(port, host, cb) {}
 
     /**
      * close calls the close method on the server
      * @param {Function} cb
      */
-    value: function close(cb) {}
   }, {
-    key: "toFrameworkServer",
+    key: "close",
+    value: function close(cb) {}
 
     /**
      * toFrameworkServer returns the framework's server implementation.
      * @return {Object}
      */
+  }, {
+    key: "toFrameworkServer",
     value: function toFrameworkServer() {}
   }]);
 

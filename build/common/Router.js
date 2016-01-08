@@ -29,13 +29,13 @@ var Router = (function () {
         this.config = config;
     }
 
+    /**
+     * configure routing
+     * @param {object} routes 
+     */
+
     _createClass(Router, [{
         key: 'configure',
-
-        /**
-         * configure routing
-         * @param {object} routes 
-         */
         value: function configure(routes) {
             var _this = this;
 

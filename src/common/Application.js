@@ -1,8 +1,8 @@
 import Loader from './Loader';
 import Configuration from './Configuration';
 import Connections from './conn/Connections';
-import Project from './Project';
-import ProjectRegistry from './ProjectRegistry';
+import Module from './Module';
+import ModuleRegistry from './ModuleRegistry';
 import events from 'events';
 
 /**
@@ -41,14 +41,14 @@ class Application {
 
         this.loader = new Loader(this.path);
         this.config = new Configuration(this.loader.loadFromConf('config'));
-        this.main = new Project('', this.config, this.loader);
+        this.main = new Module('', this.config, this.loader);
         this.projects.push(this.main);
-        this.projects = this.projects.concat(this.main.getSubProjects());
+        this.projects = this.projects.concat(this.main.getSubModules());
         this.projects.forEach(project => project.runPlugins());
         this.projects.forEach(project => project.setConnections(Connections));
 
         return Connections.open().
-        then(() => this.projects.forEach(project => project.register(ProjectRegistry)));
+        then(() => this.projects.forEach(project => project.register(ModuleRegistry)));
     }
 
 }

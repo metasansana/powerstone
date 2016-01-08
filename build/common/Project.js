@@ -23,12 +23,12 @@ var _Configuration = require('./Configuration');
 var _Configuration2 = _interopRequireDefault(_Configuration);
 
 /**
- * Project
+ * Module
  */
 
-var Project = (function () {
-    function Project(prefix, config, loader) {
-        _classCallCheck(this, Project);
+var Module = (function () {
+    function Module(prefix, config, loader) {
+        _classCallCheck(this, Module);
 
         this.prefix = prefix;
         this.config = config;
@@ -36,14 +36,14 @@ var Project = (function () {
         this.projects = null;
     }
 
-    _createClass(Project, [{
+    _createClass(Module, [{
         key: 'isMain',
         value: function isMain() {
             return !this.prefix;
         }
     }, {
-        key: 'getSubProjects',
-        value: function getSubProjects() {
+        key: 'getSubModules',
+        value: function getSubModules() {
             var _this = this;
 
             var prefix;
@@ -60,7 +60,7 @@ var Project = (function () {
                 prefix = _this.prefix ? _this.prefix + '.' + prefix : prefix;
                 loader = new _Loader2['default'](_path);
                 config = loader.loadFromConf('config', {});
-                project = new Project(prefix, new _Configuration2['default'](config), new _Loader2['default'](_path));
+                project = new Module(prefix, new _Configuration2['default'](config), new _Loader2['default'](_path));
                 return project;
             });
 
@@ -104,9 +104,9 @@ var Project = (function () {
         }
     }]);
 
-    return Project;
+    return Module;
 })();
 
-exports['default'] = Project;
+exports['default'] = Module;
 module.exports = exports['default'];
 //# sourceMappingURL=Project.js.map

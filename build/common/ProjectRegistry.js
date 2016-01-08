@@ -22,15 +22,15 @@ var ProjectRegistry = (function () {
         this.pipes = Object.create(null);
     }
 
+    /**
+     * convertMiddleware turns an array of strings
+     * into an array of executable middleware functions
+     * @param {array} wares 
+     * @returns {array<string>}
+     */
+
     _createClass(ProjectRegistry, [{
         key: 'convertMiddleware',
-
-        /**
-         * convertMiddleware turns an array of strings
-         * into an array of executable middleware functions
-         * @param {array} wares 
-         * @returns {array<string>}
-         */
         value: function convertMiddleware(wares) {
             var _this = this;
 
@@ -41,12 +41,12 @@ var ProjectRegistry = (function () {
                 return _this.middleware[w];
             });
         }
-    }, {
-        key: 'convertAction',
 
         /**
          * convertAction makes an executable of an action decleration
          */
+    }, {
+        key: 'convertAction',
         value: function convertAction(action, route) {
 
             var Controller;

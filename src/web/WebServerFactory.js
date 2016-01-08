@@ -1,4 +1,4 @@
-import ServerFactory from '../ServerFactory';
+import ServerFactory from '../common/ServerFactory';
 
 /**
  * WebServerFactory

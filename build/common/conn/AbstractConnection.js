@@ -33,27 +33,27 @@ var AbstractConnection = (function () {
         this.options = options;
     }
 
+    /**
+     * __open__ override this method to preform open/connect logic if the connection does
+     * not support promises by default.
+     *
+     * It is wrapped in a promise for cleaner flow control.
+     * @pararm {Function} resolve
+     * @param {Function} reject
+     */
+
     _createClass(AbstractConnection, [{
         key: '__open__',
-
-        /**
-         * __open__ override this method to preform open/connect logic if the connection does
-         * not support promises by default.
-         *
-         * It is wrapped in a promise for cleaner flow control.
-         * @pararm {Function} resolve
-         * @param {Function} reject
-         */
         value: function __open__(reject, resolve) {
             resolve();
         }
-    }, {
-        key: '__close__',
 
         /**
          * __close__ override this method to preform close/disconnect logic if the connection does
          * not support promises by default.
          */
+    }, {
+        key: '__close__',
         value: function __close__(reject, resolve) {
             resolve();
         }

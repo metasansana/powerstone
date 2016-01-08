@@ -42,20 +42,18 @@ var Connections = (function () {
         this.pool = _Pool2['default'];
     }
 
+    /**
+     *
+     * @param {String} name
+     * @param {ConnectionFactory} factory
+     */
+
     _createClass(Connections, [{
         key: 'set',
-
-        /**
-         *
-         * @param {String} name
-         * @param {ConnectionFactory} factory
-         */
         value: function set(name, factory) {
             this.types[name] = factory;
             return this;
         }
-    }, {
-        key: 'create',
 
         /**
          * create will return an instance of the desired connection if found.
@@ -64,6 +62,8 @@ var Connections = (function () {
          * @param {Object} options
          * @returns {AbstractConnection}
          */
+    }, {
+        key: 'create',
         value: function create(name, type, options) {
 
             var conn;
@@ -80,27 +80,27 @@ var Connections = (function () {
         value: function hasConnection(name) {
             return this.pool.hasOwnProperty(name);
         }
-    }, {
-        key: 'getConnection',
 
         /**
          * getConnection
          * @param {String} name
          * @return {AbstractConnection}
          */
+    }, {
+        key: 'getConnection',
         value: function getConnection(name) {
 
             if (!this.pool.hasOwnProperty(name)) throw new _UnknownConnectionError2['default'](name);
 
             return this.pool[name];
         }
-    }, {
-        key: 'open',
 
         /**
          * open
          * @return {Promise}
          */
+    }, {
+        key: 'open',
         value: function open() {
             var _this = this;
 
@@ -108,13 +108,13 @@ var Connections = (function () {
                 _this.pool[key].open();
             }));
         }
-    }, {
-        key: 'close',
 
         /**
          * close all the connections
          * @return {Promise}
          */
+    }, {
+        key: 'close',
         value: function close() {
             return _bluebird2['default'].all(Object.keys(this.pool).map(function (connection) {
                 return connection.close();

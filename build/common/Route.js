@@ -18,9 +18,9 @@ var _json_schema_error_handler = require('./json_schema_error_handler');
 
 var _json_schema_error_handler2 = _interopRequireDefault(_json_schema_error_handler);
 
-var _ProjectRegistry = require('./ProjectRegistry');
+var _ModuleRegistry = require('./ModuleRegistry');
 
-var _ProjectRegistry2 = _interopRequireDefault(_ProjectRegistry);
+var _ModuleRegistry2 = _interopRequireDefault(_ModuleRegistry);
 
 var _pipesBuildPipe = require('pipes/build/Pipe');
 
@@ -45,25 +45,25 @@ var Route = (function () {
         this.config = config;
     }
 
+    /**
+     * configureDefault 
+     */
+
     _createClass(Route, [{
         key: 'configureDefault',
-
-        /**
-         * configureDefault 
-         */
         value: function configureDefault(spec) {
 
             if (typeof spec === 'string') return this.configureAction(spec);
 
             return this;
         }
-    }, {
-        key: 'configureSchema',
 
         /**
          * configureSchema sets up json-schema on the route.
          * @param {object} schema 
          */
+    }, {
+        key: 'configureSchema',
         value: function configureSchema(schema) {
 
             if (!schema) return this;
@@ -71,8 +71,6 @@ var Route = (function () {
             this.fw.use(_json_schema_error_handler2['default']);
             return this;
         }
-    }, {
-        key: 'configurePipes',
 
         /**
          * configurePipes uses the pipes library to 
@@ -80,10 +78,12 @@ var Route = (function () {
          * @param {object} pipe 
          * @param {string} target 
          */
+    }, {
+        key: 'configurePipes',
         value: function configurePipes(pipe, target) {
 
             if (!pipe) return this;
-            var p = new _pipesBuildPipe2['default'](pipe, _ProjectRegistry2['default'].pipes);
+            var p = new _pipesBuildPipe2['default'](pipe, _ModuleRegistry2['default'].pipes);
             this.fw[this.method](this.path, function (req, res, next) {
 
                 p.run(req[target], function (err, o) {
@@ -97,19 +97,19 @@ var Route = (function () {
             });
             return this;
         }
-    }, {
-        key: 'configureMiddleware',
 
         /**
          * configureMiddleware sets up middleware on the route
          * @param {array} wares 
          */
+    }, {
+        key: 'configureMiddleware',
         value: function configureMiddleware(wares) {
             var _this = this;
 
             if (!wares) return this;
 
-            _ProjectRegistry2['default'].convertMiddleware(wares).forEach(function (mwares) {
+            _ModuleRegistry2['default'].convertMiddleware(wares).forEach(function (mwares) {
                 return _this.fw[_this.method](_this.path, function (req, res, next) {
                     return mwares(req, res, next, _this);
                 });
@@ -117,16 +117,16 @@ var Route = (function () {
 
             return this;
         }
-    }, {
-        key: 'configureAction',
 
         /**
          * configureAction sets up controllers on the route
          * @param {string} action
          */
+    }, {
+        key: 'configureAction',
         value: function configureAction(action) {
             if (!action) return this;
-            this.fw[this.method](this.path, _ProjectRegistry2['default'].convertAction(action));
+            this.fw[this.method](this.path, _ModuleRegistry2['default'].convertAction(action));
             return this;
         }
     }, {

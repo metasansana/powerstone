@@ -6,9 +6,9 @@ var _must = require('must');
 
 var _must2 = _interopRequireDefault(_must);
 
-var _Project = require('../Project');
+var _commonProject = require('../common/Project');
 
-var _Project2 = _interopRequireDefault(_Project);
+var _commonProject2 = _interopRequireDefault(_commonProject);
 
 var project;
 var loader;
@@ -40,12 +40,12 @@ describe('Project', function () {
     describe('Project#isMain', function () {
 
         it('should return true with no prefix', function () {
-            project = new _Project2['default'](null, config, loader);
+            project = new _commonProject2['default'](null, config, loader);
             (0, _must2['default'])(project.isMain()).eql(true);
         });
 
         it('should return false with a prefix', function () {
-            project = new _Project2['default']('apps', config, loader);
+            project = new _commonProject2['default']('apps', config, loader);
             (0, _must2['default'])(project.isMain()).eql(false);
         });
     });
@@ -68,7 +68,7 @@ describe('Project', function () {
                 }
             };
 
-            project = new _Project2['default'](null, config, loader);
+            project = new _commonProject2['default'](null, config, loader);
             project.setConnections(Connections);
             (0, _must2['default'])(Connections.open).eql({ name: 'test-connection', type: 'test', options: [1, 2, 3] });
         });
@@ -82,11 +82,11 @@ describe('Project', function () {
                 projects: [__dirname + '/project_test/app1', __dirname + '/project_test/app2', __dirname + '/project_test/app3']
             };
 
-            project = new _Project2['default'](null, config, loader);
+            project = new _commonProject2['default'](null, config, loader);
             var projects = project.getSubProjects();
             (0, _must2['default'])(projects.length).be(3);
             projects.forEach(function (project) {
-                return (0, _must2['default'])(project).instanceOf(_Project2['default']);
+                return (0, _must2['default'])(project).instanceOf(_commonProject2['default']);
             });
         });
     });

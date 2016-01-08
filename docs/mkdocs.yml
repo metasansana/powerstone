@@ -1,0 +1,5 @@
+site_name: My Docs
+theme: readthedocs
+pages:
+  - Routing: routing.md
+  - Home: index.md

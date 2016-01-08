@@ -22,25 +22,25 @@ var _restify = require('restify');
 
 var _restify2 = _interopRequireDefault(_restify);
 
-var _ServerFactory = require('../ServerFactory');
+var _commonServerFactory = require('../common/ServerFactory');
 
-var _ServerFactory2 = _interopRequireDefault(_ServerFactory);
+var _commonServerFactory2 = _interopRequireDefault(_commonServerFactory);
 
-var _Application2 = require('../Application');
+var _commonApplication = require('../common/Application');
 
-var _Application3 = _interopRequireDefault(_Application2);
+var _commonApplication2 = _interopRequireDefault(_commonApplication);
 
-var _PowerstoneServer = require('../PowerstoneServer');
+var _commonPowerstoneServer = require('../common/PowerstoneServer');
 
-var _PowerstoneServer2 = _interopRequireDefault(_PowerstoneServer);
+var _commonPowerstoneServer2 = _interopRequireDefault(_commonPowerstoneServer);
 
-var _ManagedServer = require('../ManagedServer');
+var _commonManagedServer = require('../common/ManagedServer');
 
-var _ManagedServer2 = _interopRequireDefault(_ManagedServer);
+var _commonManagedServer2 = _interopRequireDefault(_commonManagedServer);
 
-var _RestRouting = require('./RestRouting');
+var _commonRouter = require('../common/Router');
 
-var _RestRouting2 = _interopRequireDefault(_RestRouting);
+var _commonRouter2 = _interopRequireDefault(_commonRouter);
 
 var _Plugins = require('./Plugins');
 
@@ -48,23 +48,23 @@ var _Plugins2 = _interopRequireDefault(_Plugins);
 
 var DEFAULT_PLUGINS = [];
 
-var RESTApplication = (function (_Application) {
-    _inherits(RESTApplication, _Application);
+var RestApplication = (function (_Application) {
+    _inherits(RestApplication, _Application);
 
-    function RESTApplication() {
-        _classCallCheck(this, RESTApplication);
+    function RestApplication() {
+        _classCallCheck(this, RestApplication);
 
-        _get(Object.getPrototypeOf(RESTApplication.prototype), 'constructor', this).apply(this, arguments);
+        _get(Object.getPrototypeOf(RestApplication.prototype), 'constructor', this).apply(this, arguments);
     }
 
-    _createClass(RESTApplication, [{
+    _createClass(RestApplication, [{
         key: 'run',
         value: function run() {
             var _this = this;
 
-            return _Application3['default'].prototype.run.call(this).then(function () {
+            return _get(Object.getPrototypeOf(RestApplication.prototype), 'run', this).call(this).then(function () {
 
-                var server = _ServerFactory2['default'].createRESTServer(_this.config.readWithDefaults('https', undefined));
+                var server = _commonServerFactory2['default'].createRestServer(_this.config.readWithDefaults('https', undefined));
                 var config;
                 var loader;
                 var projects = _this.projects.slice();
@@ -81,13 +81,16 @@ var RESTApplication = (function (_Application) {
                     plugins.forEach(function (plugin) {
                         return _Plugins2['default'].get(plugin)(server, config, loader, project);
                     });
-                    router = new _RestRouting2['default'](loader.loadFromConf('routes', []), server, config);
-                    router.configure();
+                    router = new _commonRouter2['default'](server, config);
+                    router.configure(loader.loadFromConf('routes', []));
                 });
 
-                var server = new _ManagedServer2['default'](_this.config.readWithDefaults('port', process.env.PORT || 3000), _this.config.readWithDefaults('host', process.env.HOST || '0.0.0.0'), new _PowerstoneServer2['default'](server));
-
-                return server.start().then(_this.serverStarted);
+                server = new _commonManagedServer2['default'](_this.config.readWithDefaults('port', process.env.PORT || 3000), _this.config.readWithDefaults('host', process.env.HOST || '0.0.0.0'), new _commonPowerstoneServer2['default'](server));
+                return server.start();
+            }).then(function (port) {
+                return _this._events.emit(_this.events.STARTED, port, _this);
+            })['catch'](function (err) {
+                return _this._events.emit(_this.events.ERROR, err, _this);
             });
         }
     }, {
@@ -100,11 +103,7 @@ var RESTApplication = (function (_Application) {
 
                 self.server.shutdown().then(function () {
 
-                    for (var key in self.databases) if (self.databases.hasOwnProperty(key)) {
-                        self.databases[key].close(function () {
-                            resolve();
-                        });
-                    }
+                    for (var key in self.databases) if (self.databases.hasOwnProperty(key)) self.databases[key].close(resolve);
                 })['catch'](function (err) {
                     reject(err);
                     return err;
@@ -113,9 +112,9 @@ var RESTApplication = (function (_Application) {
         }
     }]);
 
-    return RESTApplication;
-})(_Application3['default']);
+    return RestApplication;
+})(_commonApplication2['default']);
 
-exports['default'] = RESTApplication;
+exports['default'] = RestApplication;
 module.exports = exports['default'];
-//# sourceMappingURL=RESTApplication.js.map
+//# sourceMappingURL=RestApplication.js.map

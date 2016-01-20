@@ -36,7 +36,7 @@ class Application extends BaseApplication {
                 this.modules.main.configuration.readWithDefaults('port', process.env.PORT || 3000),
                 this.modules.main.configuration.readWithDefaults('host', process.env.HOST || '0.0.0.0'),
                 new PowerstoneServer(ServerFactory.createWebServer(app, this.modules.main)));
-console.log(this.middleware);
+
             return this.server.start();
 
         }).

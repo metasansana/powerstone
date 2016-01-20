@@ -83,7 +83,7 @@ var Application = (function (_BaseApplication) {
                 _this.modules.main.express(app, _express2['default'], defaultWares);
 
                 _this.server = new _commonManagedServer2['default'](_this.modules.main.configuration.readWithDefaults('port', process.env.PORT || 3000), _this.modules.main.configuration.readWithDefaults('host', process.env.HOST || '0.0.0.0'), new _commonPowerstoneServer2['default'](_commonServerFactory2['default'].createWebServer(app, _this.modules.main)));
-                console.log(_this.middleware);
+
                 return _this.server.start();
             }).then(function (port) {
                 return _this._events.emit(_this.events.STARTED, port, _this);

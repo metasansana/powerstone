@@ -53,7 +53,7 @@ export default {
         }, {});
 
         if (module.application.pool.session)
-            sessionConfig.store = app.pool.session;
+            sessionConfig.store = module.application.pool.session;
 
         router.use(module.path, session(sessionConfig));
 

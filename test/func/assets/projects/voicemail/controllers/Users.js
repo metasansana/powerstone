@@ -1,4 +1,4 @@
-import Controller from '../../../../../../src/mvc/Controller';
+import Controller from '../../../../../../build/mvc/Controller';
 /**
  * Users 
  */

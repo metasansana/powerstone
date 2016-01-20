@@ -81,7 +81,7 @@ exports['default'] = {
             saveUninitialized: true
         }, {});
 
-        if (module.application.pool.session) sessionConfig.store = app.pool.session;
+        if (module.application.pool.session) sessionConfig.store = module.application.pool.session;
 
         router.use(module.path, (0, _expressSession2['default'])(sessionConfig));
     },

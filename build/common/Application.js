@@ -140,13 +140,13 @@ var Application = (function () {
             Controller = this.controllers[split[0]];
             method = split[1] || method;
 
-            if (!Controller) throw new Error('Unknown controller: \'' + split[0] + '\'!');
+            if (typeof Controller !== 'function') throw new Error('Controller \'' + split[0] + '\' must be a constructor not' + ('a \'' + typeof Controller + '\'!'));
 
             return function (req, res) {
                 var instance = new Controller(req, res, definition);
                 if (typeof instance[method] !== 'function') {
                     res.status(500);
-                    return res.send('Unknown method \'' + method + '\' in route description for controller' + ('\'' + action[0] + '\'!'));
+                    return res.send('\n                    Unknown method \'' + method + '\' in route description\n                    for controller ' + ('\n                    \'' + action[0] + '\'!'));
                 }
 
                 instance[method]();

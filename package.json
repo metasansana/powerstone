@@ -51,7 +51,7 @@
         "api-docs": "rm -R docs/api; node_modules/.bin/jsdoc -c jsdoc.json"
     },
     "engines": {
-        "node": ">=4.x.x"
+        "node": "4.x.x"
     },
     "files": [
         "build"

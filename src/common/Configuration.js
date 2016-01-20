@@ -11,13 +11,13 @@ class Configuration {
         this.path = path;
     }
 
-    read(key){
+    read(key) {
         return Property.get(this.config, key);
     }
 
-    readWithDefaults(key, defaults){
-         var ret = Property.get(this.config, key);
-        if(ret) return ret;
+    readWithDefaults(key, defaults) {
+        var ret = Property.get(this.config, key);
+        if (ret) return ret;
         return defaults;
     }
 

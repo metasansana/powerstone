@@ -28,10 +28,6 @@ var _path2 = _interopRequireDefault(_path);
 
 var _path3 = _interopRequireDefault(_path);
 
-var _traverse = require('traverse');
-
-var _traverse2 = _interopRequireDefault(_traverse);
-
 var _Configuration = require('./Configuration');
 
 var _Configuration2 = _interopRequireDefault(_Configuration);

@@ -3,7 +3,6 @@ import merge from 'deepmerge';
 import fs from 'fs';
 import path from 'path';
 import Path from 'path';
-import traverse from 'traverse';
 import Configuration from './Configuration';
 
 /**

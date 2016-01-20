@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../../../../src/test/project_test/app1/conf/config.js"],"names":[],"mappings":";;AAAA;AACI,SAAK,EAAE,OAAO,CAAA;CACjB","file":"config.js","sourcesContent":["{\n    mount: '/app1'\n}"]}

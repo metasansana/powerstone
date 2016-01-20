@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
-  value: true
+    value: true
 });
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -18,10 +18,6 @@ var _https = require('https');
 
 var _https2 = _interopRequireDefault(_https);
 
-var _restify = require('restify');
-
-var _restify2 = _interopRequireDefault(_restify);
-
 /**
  * ServerFactory provides new instances for http.Server or the
  * framework's own wrapper.
@@ -30,46 +26,51 @@ var _restify2 = _interopRequireDefault(_restify);
  */
 
 var ServerFactory = (function () {
-  function ServerFactory() {
-    _classCallCheck(this, ServerFactory);
-  }
-
-  _createClass(ServerFactory, [{
-    key: 'createNativeWebServer',
-
-    /**
-     * createNativeWebServer creates and returns a http.Server
-     * @param {express.Application} app
-     * @returns {*}
-     */
-    value: function createNativeWebServer(app) {
-      return _http2['default'].createServer(app);
+    function ServerFactory() {
+        _classCallCheck(this, ServerFactory);
     }
 
-    /**
-     * createSecureNativeWebServer creates and returns a https.Server
-     * @param {Object} options
-     * @param {express.Application} app
-     * @returns {*}
-     */
-  }, {
-    key: 'createSecureNativeWebServer',
-    value: function createSecureNativeWebServer(options, app) {
-      return _https2['default'].createServer(options, app);
-    }
+    _createClass(ServerFactory, [{
+        key: 'createNativeWebServer',
 
-    /**
-     * createRestServer creates and returns a restify.Server
-     * @params {Object} options
-     */
-  }, {
-    key: 'createRestServer',
-    value: function createRestServer(options) {
-      return _restify2['default'].createServer(options);
-    }
-  }]);
+        /**
+         * createNativeWebServer creates and returns a http.Server
+         * @param {express.Application} app
+         * @returns {*}
+         */
+        value: function createNativeWebServer(app) {
+            return _http2['default'].createServer(app);
+        }
 
-  return ServerFactory;
+        /**
+         * createSecureNativeWebServer creates and returns a https.Server
+         * @param {Object} options
+         * @param {express.Application} app
+         * @returns {*}
+         */
+    }, {
+        key: 'createSecureNativeWebServer',
+        value: function createSecureNativeWebServer(options, app) {
+            return _https2['default'].createServer(options, app);
+        }
+    }, {
+        key: 'createApiServer',
+        value: function createApiServer(restify, module) {
+            return restify.createServer(module.configuration.readWithDefaults('api.options', null));
+        }
+    }, {
+        key: 'createWebServer',
+        value: function createWebServer(app, module) {
+
+            var options = module.configuration.readWithDefaults('web.https', null);
+
+            if (options) return this.createSecureNativeWebServer(options, app);
+
+            return this.createNativeWebServer(app);
+        }
+    }]);
+
+    return ServerFactory;
 })();
 
 exports['default'] = new ServerFactory();

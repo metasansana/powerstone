@@ -28,7 +28,7 @@ class PowerstoneServer {
         this.server.close(cb);
     }
 
-    toFrameworkServer(){
+    toFramework(){
         return this.server;
     }
 

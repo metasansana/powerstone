@@ -14,10 +14,6 @@ var _bluebird = require('bluebird');
 
 var _bluebird2 = _interopRequireDefault(_bluebird);
 
-var _UnsupportedMethodError = require('./UnsupportedMethodError');
-
-var _UnsupportedMethodError2 = _interopRequireDefault(_UnsupportedMethodError);
-
 /**
  * ManagedServer wraps around a Server to add additional features.
  *
@@ -133,9 +129,9 @@ var ManagedServer = (function () {
             this.server.close(cb);
         }
     }, {
-        key: 'toFrameworkServer',
-        value: function toFrameworkServer() {
-            return this.server.toFrameWorkServer();
+        key: 'toFramework',
+        value: function toFramework() {
+            return this.server.toFramework();
         }
     }]);
 

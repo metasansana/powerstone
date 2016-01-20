@@ -1,6 +1,5 @@
 import http from 'http';
 import https from 'https';
-import restify from 'restify';
 
 /**
  * ServerFactory provides new instances for http.Server or the
@@ -29,12 +28,18 @@ class ServerFactory {
         return https.createServer(options, app);
     }
 
-    /**
-     * createRestServer creates and returns a restify.Server
-     * @params {Object} options
-     */
-    createRestServer(options) {
-        return restify.createServer(options);
+    createApiServer(restify, module) {
+        return restify.createServer(module.configuration.readWithDefaults('api.options', null));
+    }
+
+    createWebServer(app, module) {
+
+      var options = module.configuration.readWithDefaults('web.https', null);
+
+        if (options)
+            return this.createSecureNativeWebServer(options, app);
+
+        return this.createNativeWebServer(app);
     }
 
 }

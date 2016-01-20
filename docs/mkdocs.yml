@@ -1,5 +1,14 @@
-site_name: My Docs
+site_name: Powerstone
 theme: readthedocs
+docs_dir: manual
+markdown_extensions:
+  - sane_lists
+  - smarty
 pages:
-  - Routing: routing.md
   - Home: index.md
+  - Getting Started: 
+     - 'Installing powerstone': 'guide/installing.md'
+     - 'Project Layout': 'guide/project-layout.md'
+     - 'Config File': 'guide/config.md'
+     - 'Route File': 'guide/routes.md'
+     - 'Modules': 'guide/modules.md'

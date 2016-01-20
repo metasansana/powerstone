@@ -1,13 +1,7 @@
-import Runtime from '../Runtime';
-/**
- * Controller
- */
-class Controller {
+import Results from './Results';
 
-    constructor() {
-        Runtime.controllers[this.constructor] = this;
-    }
+class Controller extends Results {
+
 
 }
-
-export default Controller
+export default Controller;

@@ -1,5 +1,4 @@
 import Promise from 'bluebird';
-import UnsupportedMethodError from './UnsupportedMethodError';
 
 /**
  * ManagedServer wraps around a Server to add additional features.
@@ -99,8 +98,8 @@ class ManagedServer {
         this.server.close(cb);
     }
 
-    toFrameworkServer() {
-        return this.server.toFrameWorkServer();
+    toFramework() {
+        return this.server.toFramework();
     }
 
 }

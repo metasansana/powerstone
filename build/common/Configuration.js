@@ -10,9 +10,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _dotAccess = require('dot-access');
+var _propertySeek = require('property-seek');
 
-var _dotAccess2 = _interopRequireDefault(_dotAccess);
+var _propertySeek2 = _interopRequireDefault(_propertySeek);
 
 var _merge = require('merge');
 
@@ -23,21 +23,22 @@ var _merge2 = _interopRequireDefault(_merge);
  */
 
 var Configuration = (function () {
-    function Configuration(config) {
+    function Configuration(config, path) {
         _classCallCheck(this, Configuration);
 
         this.config = config;
+        this.path = path;
     }
 
     _createClass(Configuration, [{
         key: 'read',
-        value: function read(key, defaults) {
-            return _dotAccess2['default'].get(this.config, key);
+        value: function read(key) {
+            return _propertySeek2['default'].get(this.config, key);
         }
     }, {
         key: 'readWithDefaults',
         value: function readWithDefaults(key, defaults) {
-            var ret = _dotAccess2['default'].get(this.config, key);
+            var ret = _propertySeek2['default'].get(this.config, key);
             if (ret) return ret;
             return defaults;
         }

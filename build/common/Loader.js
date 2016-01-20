@@ -26,6 +26,8 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
+var _path3 = _interopRequireDefault(_path);
+
 var _traverse = require('traverse');
 
 var _traverse2 = _interopRequireDefault(_traverse);
@@ -41,101 +43,84 @@ var _Configuration2 = _interopRequireDefault(_Configuration);
 var Loader = (function () {
 
     /**
-     *
-     * @param {String} parent The parent parent all load operations will operate from.
+     * @param {String} path The path where all requires will be relative to.
      */
 
-    function Loader(parent) {
+    function Loader(path) {
         _classCallCheck(this, Loader);
 
-        this.parent = parent;
-        this.conf = parent + '/conf';
+        this.path = path;
     }
 
+    /**
+     * basename returns the basename of this Loaders's path
+     * @returns {string}
+     */
+
     _createClass(Loader, [{
-        key: '_parentize',
-        value: function _parentize(dir) {
-            return this.parent + '/' + dir;
-        }
-    }, {
-        key: 'getConfiguration',
-        value: function getConfiguration() {
-            return new _Configuration2['default'](require(this.conf + '/config'));
-        }
-    }, {
-        key: 'getDirName',
-        value: function getDirName() {
-            return _path2['default'].basename(this.parent);
-        }
-    }, {
-        key: 'getPath',
-        value: function getPath() {
-            return this.parent;
+        key: 'basename',
+        value: function basename() {
+            return _path3['default'].basename(this.path);
         }
 
         /**
-         * loadFromConf
+         * join a value to the Loader's Path.
+         * @param {string} value 
+         * @returns {string}
          */
     }, {
-        key: 'loadFromConf',
-        value: function loadFromConf(file, defaults) {
+        key: 'join',
+        value: function join(value) {
+            return _path3['default'].join(this.path, value);
+        }
 
-            var ret;
+        /**
+         * load requires a single file into memory
+         * @param {string} path 
+         * @param {*} defaults 
+         * @returns {*}
+         */
+    }, {
+        key: 'load',
+        value: function load(path, defaults) {
+
             try {
-                ret = require(this.conf + '/' + file);
+                return require(this.join(path));
             } catch (e) {
-
-                try {
-                    ret = require(this.conf + '/../' + file);
-                } catch (e) {
-                    if (defaults) return defaults;
-                    throw e;
-                }
+                if (e.code !== 'MODULE_NOT_FOUND' || !defaults) throw e;
+                return defaults;
             }
-
-            var wd = _path2['default'].dirname(this.conf + '/' + file) + '/';
-
-            if (!ret && defaults) ret = defaults;
-
-            (0, _traverse2['default'])(ret).forEach(function (value) {
-                if (this.key === '$ref') this.parent.update(require(wd + value));
-            });
-
-            return ret;
         }
 
         /**
-         * loadFromConfWithDefaults
-         */
-    }, {
-        key: 'loadFromConfWithDefaults',
-        value: function loadFromConfWithDefaults(file, defaults) {
-            return (0, _deepmerge2['default'])(defaults, this.loadFromConf(file));
-        }
-    }, {
-        key: 'requireRelative',
-        value: function requireRelative(path) {
-            return require(this.parent + '/' + path);
-        }
-
-        /**
-         * requireDirSync requires all files in a sub-directory into a single object
-         * @param {String} dir A name of a sub-directory in the current parent.
+         * require requires all files in a sub-directory into a single object
+         * @param {String} dir A name of a sub-directory in the current path.
          * @param {Object} merge An optional object functions can be merged into.
          * @param {String} [prefix] A prefix that will be concatenated to the object's keys
          * @returns {Object}
          */
     }, {
-        key: 'requireDirSync',
-        value: function requireDirSync(dir, merge, prefix) {
+        key: 'require',
+        value: (function (_require) {
+            function require(_x, _x2, _x3) {
+                return _require.apply(this, arguments);
+            }
+
+            require.toString = function () {
+                return _require.toString();
+            };
+
+            return require;
+        })(function (dir, merge, prefix) {
 
             var files;
             var extensions = extensions || ['.js', '.json'];
 
-            dir = this._parentize(dir);
+            dir = this.path + '/' + dir;
             merge = merge || {};
 
             prefix = prefix || '';
+            prefix = prefix ? prefix + '.' : prefix;
 
             try {
                 files = _fs2['default'].readdirSync(dir);
@@ -144,82 +129,12 @@ var Loader = (function () {
             }
 
             if (Array.isArray(files)) files.forEach(function (pathToFile) {
-                if (extensions.indexOf(_path2['default'].extname(pathToFile)) < 0) return;
-                merge[prefix + _path2['default'].basename(pathToFile, _path2['default'].extname(pathToFile))] = require(dir + '/' + pathToFile);
+                if (extensions.indexOf(_path3['default'].extname(pathToFile)) < 0) return;
+                merge[prefix + _path3['default'].basename(pathToFile, _path3['default'].extname(pathToFile))] = require(dir + '/' + pathToFile);
             });
 
             return merge;
-        }
-
-        /**
-         * requireTasks grabs all the tasks in the tasks folder
-         * @param {Object} [merge]
-         * @param {String} prefix
-         * @returns {Object}
-         */
-    }, {
-        key: 'requireTasks',
-        value: function requireTasks(merge, prefix) {
-            return this.requireDirSync('tasks', merge, prefix);
-        }
-
-        /**
-         * requireModels grabs all the models in the models folder
-         * @param {Object} [merge]
-         * @param {String} prefix
-         * @returns {Object}
-         */
-    }, {
-        key: 'requireModels',
-        value: function requireModels(merge, prefix) {
-            return this.requireDirSync('models', merge, prefix);
-        }
-
-        /**
-         * requireControllers grabs all the controllers in the controllers folder
-         * @param {Object} [merge]
-         * @param {String} prefix
-         * @returns {Object}
-         */
-    }, {
-        key: 'requireControllers',
-        value: function requireControllers(merge, prefix) {
-            return this.requireDirSync('controllers', merge, prefix);
-        }
-
-        /**
-         * requireQueries grabs all the queries in the queries folder
-         * @param {Object} [merge]
-         * @returns {Object}
-         */
-    }, {
-        key: 'requireQueries',
-        value: function requireQueries(merge, prefix) {
-            return this.requireDirSync('queries', merge, prefix);
-        }
-
-        /**
-         * requireMiddleware grabs all the middleware in the middlewares folder
-         * @param {Object} [merge]
-         * @param {String} prefix
-         * @returns {Object}
-         */
-    }, {
-        key: 'requireMiddleWare',
-        value: function requireMiddleWare(merge, prefix) {
-            return this.requireDirSync('middleware', merge, prefix);
-        }
-
-        /**
-         * requirePipes grabs up all the pipe definitions in the pipes folder
-         * @param {Object} [merge]
-         * @returns {Object}
-         */
-    }, {
-        key: 'requirePipes',
-        value: function requirePipes(merge, prefix) {
-            return this.requireDirSync('pipes', merge, prefix);
-        }
+        })
     }]);
 
     return Loader;

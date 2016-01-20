@@ -10,40 +10,61 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _commonRoute = require('../common/Route');
+var _Route = require('./Route');
 
-var _commonRoute2 = _interopRequireDefault(_commonRoute);
+var _Route2 = _interopRequireDefault(_Route);
+
+var _Converter = require('./Converter');
+
+var _Converter2 = _interopRequireDefault(_Converter);
 
 /**
  * Router provides methods for setting up 
  * application routing.
  * @param {Framework} fw 
- * @param {Configuration} config 
  */
 
 var Router = (function () {
-    function Router(fw, config) {
+    function Router(fw) {
         _classCallCheck(this, Router);
 
-        this.fw = fw;
-        this.config = config;
+        this.framework = fw;
     }
 
     /**
      * configure routing
+     * @param {string} mode 
      * @param {object} routes 
+     * @param {Application} app 
      */
 
     _createClass(Router, [{
         key: 'configure',
-        value: function configure(routes) {
+        value: function configure(mode, routes, app) {
             var _this = this;
 
             var route;
+            var definition;
+            var convert = new _Converter2['default'](app.middleware, app.controllers);
+
             Object.keys(routes).forEach(function (path) {
                 return Object.keys(routes[path]).forEach(function (method) {
-                    route = new _commonRoute2['default'](method.toLowerCase(), path, _this.fw, _this.config);
-                    route.configureDefault(routes[path][method]).configureSchema(routes[path][method].schema).configurePipes(routes[path][method].pipes).configureMiddleware(routes[path][method].middleware).configureAction(routes[path][method].action);
+
+                    definition = routes[path][method];
+                    route = new _Route2['default'](method.toLowerCase(), path, _this.framework, definition, convert);
+
+                    if (typeof definition.pipes === 'object') Object.keys(definition.pipes).forEach(function (key) {
+                        return route.configurePipes(key, definition.pipes[key], app.framework.pipes);
+                    });
+
+                    route.configureMiddleware(definition.middleware);
+
+                    if (mode === 'web') route.configureView(definition.view, definition.locals);
+
+                    route.configureAction(definition.action);
+                    route.configureHandler(definition.handler);
+                    route.configureOther(mode, definition);
+                    route.done();
                 });
             });
         }

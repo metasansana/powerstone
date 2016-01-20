@@ -53,8 +53,8 @@ var PowerstoneServer = (function () {
             this.server.close(cb);
         }
     }, {
-        key: 'toFrameworkServer',
-        value: function toFrameworkServer() {
+        key: 'toFramework',
+        value: function toFramework() {
             return this.server;
         }
     }]);

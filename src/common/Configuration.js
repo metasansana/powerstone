@@ -1,4 +1,4 @@
-import DotAccess from 'dot-access';
+import Property from 'property-seek';
 import merge from 'merge';
 
 /**
@@ -6,16 +6,17 @@ import merge from 'merge';
  */
 class Configuration {
 
-    constructor(config) {
+    constructor(config, path) {
         this.config = config;
+        this.path = path;
     }
 
-    read(key, defaults){
-        return DotAccess.get(this.config, key);
+    read(key){
+        return Property.get(this.config, key);
     }
 
     readWithDefaults(key, defaults){
-         var ret = DotAccess.get(this.config, key);
+         var ret = Property.get(this.config, key);
         if(ret) return ret;
         return defaults;
     }
@@ -24,8 +25,6 @@ class Configuration {
         var ret = this.readWithDefaults(key, defaults);
         return merge(target, ret);
     }
-
-
 
 }
 

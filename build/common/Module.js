@@ -10,97 +10,249 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _path2 = require('path');
+var _CompositeModule = require('./CompositeModule');
 
-var _path3 = _interopRequireDefault(_path2);
+var _CompositeModule2 = _interopRequireDefault(_CompositeModule);
 
-var _Loader = require('./Loader');
+var _routingFeatureFactory = require('../routing/FeatureFactory');
 
-var _Loader2 = _interopRequireDefault(_Loader);
+var _routingFeatureFactory2 = _interopRequireDefault(_routingFeatureFactory);
 
-var _Configuration = require('./Configuration');
+var _routingRestifyQ = require('../routing/RestifyQ');
 
-var _Configuration2 = _interopRequireDefault(_Configuration);
+var _routingRestifyQ2 = _interopRequireDefault(_routingRestifyQ);
+
+var _routingExpressQ = require('../routing/ExpressQ');
+
+var _routingExpressQ2 = _interopRequireDefault(_routingExpressQ);
+
+var _properties = require('./properties');
 
 /**
  * Module
+ * @param {string} name   
+ * @param {string} path 
+ * @param {Configuration} config 
+ * @param {Loader} loader 
+ * @param {Application} app 
  */
 
 var Module = (function () {
-    function Module(prefix, config, loader) {
+    function Module(name, path, config, loader, app) {
         _classCallCheck(this, Module);
 
-        this.prefix = prefix;
-        this.config = config;
+        this.name = name;
+        this.path = path;
+        this.configuration = config;
         this.loader = loader;
-        this.modules = null;
+        this.application = app;
+        this.submodules = new _CompositeModule2['default']([]);
     }
 
+    /**
+     * modules loads all the submodules for this module into memory.
+     * @param {object} mods 
+     */
+
     _createClass(Module, [{
-        key: 'isMain',
-        value: function isMain() {
-            return !this.prefix;
-        }
-    }, {
-        key: 'getSubModules',
-        value: function getSubModules() {
+        key: 'modules',
+        value: function modules(mods) {
             var _this = this;
 
-            var prefix;
-            var project;
+            var name;
+            var path;
             var loader;
             var config;
+            var m;
 
-            if (this.modules) return this.modules;
+            this.submodules = new _CompositeModule2['default'](this.configuration.readWithDefaults(_properties.paths.MODULES, []).map(function (path) {
 
-            this.modules = this.config.readWithDefaults('modules', []).map(function (_path) {
+                loader = _this.application.getLoader(_this.loader.join(_properties.paths.MODULES + '/' + path));
+                config = loader.getConfiguration();
+                name = loader.basename();
+                path = _this.path + '/' + name;
 
-                _path = _this.loader.getPath() + '/' + _path;
-                prefix = _path3['default'].basename(_path);
-                prefix = _this.prefix ? _this.prefix + '.' + prefix : prefix;
-                loader = new _Loader2['default'](_path);
-                config = loader.loadFromConf('config', {});
-                project = new Module(prefix, new _Configuration2['default'](config), new _Loader2['default'](_path));
-                return project;
-            });
+                m = new Module(name, path, config, loader, _this.application);
+                mods[name] = m;
+                return m;
+            }));
 
-            return this.modules;
+            this.submodules.modules(mods);
         }
-    }, {
-        key: 'getLoader',
-        value: function getLoader() {
-            return this.loader;
-        }
-    }, {
-        key: 'getConfiguration',
-        value: function getConfiguration() {
-            return this.config;
-        }
-    }, {
-        key: 'setConnections',
-        value: function setConnections(connections) {
 
-            this.config.readWithDefaults('connections', []).forEach(function (con) {
-                connections.create(con.name, con.type, con.options);
-            });
-        }
+        /**
+         * framework loads the files from the framework
+         * folder so that they are available in later steps
+         * @param {object} connectors
+         * @param {object} pipes 
+         */
     }, {
-        key: 'register',
-        value: function register(registry) {
-            this.loader.requireControllers(registry.controllers, this.prefix);
-            this.loader.requireModels(registry.models, this.prefix);
-            this.loader.requireMiddleWare(registry.middleware, this.prefix);
-            this.loader.requirePipes(registry.pipes, this.prefix);
+        key: 'framework',
+        value: function framework(connectors, pipes) {
+
+            this.loader.require(_properties.paths.CONNECTORS, connectors);
+            this.loader.require(_properties.paths.PIPES, pipes);
+            this.submodules.framework(connectors, pipes);
         }
+
+        /**
+         * expressFramework loads the pieces for the express framework
+         * @param {object} middleware
+         * @param {object} engines 
+         */
     }, {
-        key: 'runPlugins',
-        value: function runPlugins() {
+        key: 'expressFramework',
+        value: function expressFramework(middleware, engines) {
+
+            this.loader.require(_properties.paths.WEB_PLUGINS, middleware);
+            this.loader.require(_properties.paths.WEB_ENGINES, engines);
+            this.submodules.expressFramework(middleware, engines);
+        }
+
+        /**
+         * restifyFramework loads the pieces for the restify framework
+         */
+    }, {
+        key: 'restifyFramework',
+        value: function restifyFramework(plugins) {
+            this.loader.require(_properties.paths.API_PLUGINS, plugins);
+            this.submodules.restifyFramework(plugins);
+        }
+
+        /**
+         * connections opens the connections defined in the module's config file.
+         * @param {object} types A list of available connection types
+         * @param {object} conns Opened connections will be referenced here
+         * @return {array<Promise>}
+         */
+    }, {
+        key: 'connections',
+        value: function connections(types, conns) {
             var _this2 = this;
 
-            this.config.readWithDefaults('plugins', []).forEach(function (_path) {
-                var plugin = _this2.loader.requireRelative(_path);
-                plugin(_this2);
+            var type;
+            var cfgs = this.configuration.readWithDefaults(_properties.configs.CONNECTIONS, {});
+            var cfg;
+
+            return Object.keys(cfgs).map(function (key) {
+                cfg = cfgs[key];
+                type = types[cfg.connector];
+                if (!type) throw new Error('Unknown connection type \'' + cfg.type + '\' ' + ('in ' + _this2.configuration.path));
+
+                return new Promise(function (yes, no) {
+                    return type(cfg.options, yes, no);
+                }).then(function (con) {
+                    return conns[key] = con;
+                });
+            }).concat(this.submodules.connections(types, conns));
+        }
+
+        /**
+         * userland loads the userland code into memory
+         * @param {object} controllers 
+         * @param {object} models
+         * @param {object} middleware 
+         */
+    }, {
+        key: 'userland',
+        value: function userland(controllers, models, middleware) {
+            this.loader.require('controllers', controllers, this.name === 'main' ? '' : this.name);
+            this.loader.require('models', models, this.name === 'main' ? '' : this.name);
+            this.loader.require('middleware', middleware, this.name === 'main' ? '' : this.name);
+            this.submodules.userland(controllers, models, middleware);
+        }
+
+        /**
+         * express configures the express framework
+         * @param {express.Application} app
+         * @param {express} express 
+         * @param {array} mware Default middleware to apply if non specified
+         */
+    }, {
+        key: 'express',
+        value: function express(app, _express, mware) {
+            var _this3 = this;
+
+            var isApp = !this.configuration.read(_properties.configs.USE_WEB_ROUTER) || this.name === 'main';
+            var target = isApp ? _express() : _express.Router();
+            var router;
+            var path = this.configuration.readWithDefaults(_properties.configs.PATH, '/' + this.name);
+            var engine = this.configuration.readWithDefaults(_properties.configs.WEB_ENGINE, null);
+            var engineSetup = this.application.framework.express.engines[engine];
+            var features;
+            var routes;
+            var q;
+
+            this.application.interpolate(this.application.framework.express.middleware, this.configuration.readWithDefaults(_properties.configs.WEB_PLUGINS, mware)).forEach(function (m) {
+                return m(target, _this3);
             });
+
+            if (isApp) {
+                if (engine && !engineSetup) {
+                    throw new Error('The view engine \'' + engine + '\' was not found!');
+                } else if (engine) {
+
+                    if (typeof engineSetup !== 'function') throw new Error('Invalid configure script found for view engine \'' + engine + '\'!' + ('The script must export a function, found typeof \'' + typeof engine + '\'.'));
+
+                    engineSetup(target, this);
+                }
+            }
+
+            features = _routingFeatureFactory2['default'].web(this.application);
+
+            routes = this.loader.load(_properties.paths.WEB_ROUTES, {
+                web: {}
+            });
+
+            Object.keys(routes).forEach(function (path) {
+                q = new _routingExpressQ2['default'](path, target);
+                Object.keys(routes[path]).forEach(function (method) {
+                    return features.install(method, path, routes[path][method], q);
+                });
+                q.flush();
+            });
+
+            if (this.name === 'main') {
+                app.use(target);
+            } else if (path) {
+                app.use(path, target);
+            }
+
+            this.submodules.express(isApp ? target : app, _express, isApp ? ['public'] : []);
+        }
+
+        /**
+         * restify
+         * @param {restify.Server} server
+         * @param {array} plugins 
+         * @param {string} path 
+         */
+    }, {
+        key: 'restify',
+        value: function restify(server, plugins) {
+            var _this4 = this;
+
+            var features;
+            var routes;
+            var q;
+
+            this.application.interpolate(this.application.framework.restify.plugins, this.configuration.readWithDefaults(_properties.configs.API_PLUGINS, plugins)).forEach(function (p) {
+                return p(server, _this4.application, _this4);
+            });
+
+            features = _routingFeatureFactory2['default'].api(this.application);
+            routes = this.loader.load(_properties.paths.API_ROUTES, {
+                api: {}
+            });
+
+            Object.keys(routes).forEach(function (route) {
+                q = new _routingRestifyQ2['default'](_this4.path + route, server);
+                Object.keys(routes[route]).forEach(function (method) {
+                    return features.install(method, _this4.path + route, routes[route][method], q);
+                });
+                q.flush();
+            });
+            this.submodules.restify(server, []);
         }
     }]);
 

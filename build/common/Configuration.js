@@ -14,9 +14,9 @@ var _propertySeek = require('property-seek');
 
 var _propertySeek2 = _interopRequireDefault(_propertySeek);
 
-var _merge = require('merge');
+var _deepmerge = require('deepmerge');
 
-var _merge2 = _interopRequireDefault(_merge);
+var _deepmerge2 = _interopRequireDefault(_deepmerge);
 
 /**
  * Configuration
@@ -46,7 +46,7 @@ var Configuration = (function () {
         key: 'readAndMerge',
         value: function readAndMerge(key, target, defaults) {
             var ret = this.readWithDefaults(key, defaults);
-            return (0, _merge2['default'])(target, ret);
+            return (0, _deepmerge2['default'])(target, ret);
         }
     }]);
 

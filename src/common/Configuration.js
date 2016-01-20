@@ -1,5 +1,5 @@
 import Property from 'property-seek';
-import merge from 'merge';
+import merge from 'deepmerge';
 
 /**
  * Configuration

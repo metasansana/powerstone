@@ -36,7 +36,7 @@ var ApiLoader = (function (_Loader) {
     _createClass(ApiLoader, [{
         key: 'getConfiguration',
         value: function getConfiguration() {
-            return new _commonConfiguration2['default'](this.load(_commonProperties.paths.API_CONFIG), this.join(_commonProperties.paths.API_CONFIG));
+            return new _commonConfiguration2['default'](this.load(_commonProperties.paths.API_CONFIG, {}), this.join(_commonProperties.paths.API_CONFIG));
         }
     }]);
 

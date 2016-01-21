@@ -7,7 +7,7 @@ from '../common/properties';
 
 class WebLoader extends Loader {
     getConfiguration() {
-        return new Configuration(this.load(paths.WEB_CONFIG), this.join(paths.WEB_CONFIG));
+        return new Configuration(this.load(paths.WEB_CONFIG, {}), this.join(paths.WEB_CONFIG));
     }
 }
 

@@ -7,7 +7,7 @@ from '../common/properties';
 
 class ApiLoader extends Loader {
     getConfiguration() {
-        return new Configuration(this.load(paths.API_CONFIG), this.join(paths.API_CONFIG));
+        return new Configuration(this.load(paths.API_CONFIG, {}), this.join(paths.API_CONFIG));
     }
 }
 

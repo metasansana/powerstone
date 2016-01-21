@@ -36,7 +36,7 @@ var WebLoader = (function (_Loader) {
     _createClass(WebLoader, [{
         key: 'getConfiguration',
         value: function getConfiguration() {
-            return new _commonConfiguration2['default'](this.load(_commonProperties.paths.WEB_CONFIG), this.join(_commonProperties.paths.WEB_CONFIG));
+            return new _commonConfiguration2['default'](this.load(_commonProperties.paths.WEB_CONFIG, {}), this.join(_commonProperties.paths.WEB_CONFIG));
         }
     }]);
 

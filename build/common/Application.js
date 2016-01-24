@@ -140,7 +140,7 @@ var Application = (function () {
             Controller = this.controllers[split[0]];
             method = split[1] || method;
 
-            if (typeof Controller !== 'function') throw new Error('Controller \'' + split[0] + '\' must be a constructor not' + ('a \'' + typeof Controller + '\'!'));
+            if (typeof Controller !== 'function') throw new Error('Controller \'' + split[0] + '\' must be a constructor not' + (' \'' + typeof Controller + '\'!'));
 
             return function (req, res) {
                 var instance = new Controller(req, res, definition);

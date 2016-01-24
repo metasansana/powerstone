@@ -121,7 +121,7 @@ class Application {
 
         if (typeof Controller !== 'function')
             throw new Error(`Controller '${split[0]}' must be a constructor not`+
-                `a '${typeof Controller}'!`);
+                ` '${typeof Controller}'!`);
 
         return function(req, res) {
             var instance = new Controller(req, res, definition);

@@ -19,8 +19,15 @@ const send_csrf_token = function(req, res, next) {
 export default {
 
     public: function(router, module) {
-        module.configuration.readWithDefaults('web.public', ['public']).
-        forEach(path => router.use(express.static(module.loader.join(path))));
+        module.configuration.readWithDefaults('public', ['public']).
+        forEach(path => {
+
+            if (Array.isArray(path))
+                return router.use(path[0], express.static(module.loader.join(path[1])));
+
+            router.use(express.static(module.loader.join(path)));
+
+        });
     },
     'method-override': function(router, module) {
         router.use(module.path, methodOverride());
@@ -44,7 +51,7 @@ export default {
     },
     session: function(router, module) {
 
-        var sessionConfig = module.configuration.readAndMerge('web.session', {
+        var sessionConfig = module.configuration.readAndMerge('session', {
             name: 'PHPSESSID',
             secret: module.configuration.readWithDefaults('secret',
                 process.env.SECRET || SECRET),

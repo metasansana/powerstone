@@ -22,9 +22,9 @@ var _morgan2 = require('morgan');
 
 var _morgan3 = _interopRequireDefault(_morgan2);
 
-var _bodyParser2 = require('body-parser');
+var _bodyParser = require('body-parser');
 
-var _bodyParser3 = _interopRequireDefault(_bodyParser2);
+var _bodyParser2 = _interopRequireDefault(_bodyParser);
 
 var _cookieParser2 = require('cookie-parser');
 
@@ -37,6 +37,10 @@ var _expressSession2 = _interopRequireDefault(_expressSession);
 var _csurf = require('csurf');
 
 var _csurf2 = _interopRequireDefault(_csurf);
+
+var _serveIndex = require('serve-index');
+
+var _serveIndex2 = _interopRequireDefault(_serveIndex);
 
 var SECRET = _crypto2['default'].randomBytes(32).toString('hex');
 
@@ -57,6 +61,14 @@ exports['default'] = {
             router.use(_express2['default']['static'](module.loader.join(path)));
         });
     },
+    'serve-index': function serveIndex(router, module) {
+        module.configuration.readWithDefaults('directory', []).forEach(function (path) {
+
+            if (Array.isArray(path)) return router.use(path[0], (0, _serveIndex2['default'])(module.loader.join(path[1])));
+
+            router.use((0, _serveIndex2['default'])(module.loader.join(path)));
+        });
+    },
     'method-override': function methodOverride(router, module) {
         router.use(module.path, (0, _methodOverride3['default'])());
     },
@@ -67,8 +79,8 @@ exports['default'] = {
         router.use(module.path, (0, _morgan3['default'])(module.configuration.readWithDefaults('morgan.format', process.env.LOG_FORMAT || 'dev', module.configuration.read('morgan.options'))));
     },
     'body-parser': function bodyParser(router, module) {
-        router.use(module.path, _bodyParser3['default'].json());
-        router.use(module.path, _bodyParser3['default'].urlencoded({
+        router.use(module.path, _bodyParser2['default'].json());
+        router.use(module.path, _bodyParser2['default'].urlencoded({
             extended: true
         }));
     },

@@ -2,10 +2,11 @@ import crypto from 'crypto';
 import express from 'express';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
-import bodyParser from 'body-parser';
+import body_parser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import csrf from 'csurf';
+import serve_index from 'serve-index';
 
 const SECRET = crypto.randomBytes(32).toString('hex');
 
@@ -29,6 +30,18 @@ export default {
 
         });
     },
+  'serve-index': function(router, module) {
+        module.configuration.readWithDefaults('directory', []).
+        forEach(path => {
+
+            if (Array.isArray(path))
+                return router.use(path[0], serve_index(module.loader.join(path[1])));
+
+            router.use(serve_index(module.loader.join(path)));
+
+        });
+
+    },
     'method-override': function(router, module) {
         router.use(module.path, methodOverride());
     },
@@ -40,8 +53,8 @@ export default {
             process.env.LOG_FORMAT || 'dev', module.configuration.read('morgan.options'))));
     },
     'body-parser': function(router, module) {
-        router.use(module.path, bodyParser.json());
-        router.use(module.path, bodyParser.urlencoded({
+        router.use(module.path, body_parser.json());
+        router.use(module.path, body_parser.urlencoded({
             extended: true
         }));
     },

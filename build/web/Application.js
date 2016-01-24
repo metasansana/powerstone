@@ -52,7 +52,7 @@ var _middlewareExpress = require('../middleware/express');
 
 var middleware = _interopRequireWildcard(_middlewareExpress);
 
-var defaultWares = ['public', 'method-override', 'morgan', 'body-parser', 'cookie-parser', 'session', 'csrf'];
+var defaultWares = ['public', 'serve-index', 'method-override', 'morgan', 'body-parser', 'cookie-parser', 'session', 'csrf'];
 
 var Application = (function (_BaseApplication) {
     _inherits(Application, _BaseApplication);

@@ -8,7 +8,7 @@ import ServerFactory from '../common/ServerFactory';
 import WebLoader from './WebLoader';
 import * as middleware from '../middleware/express';
 
-const defaultWares = ['public', 'method-override', 'morgan',
+const defaultWares = ['public', 'serve-index', 'method-override', 'morgan',
     'body-parser', 'cookie-parser', 'session', 'csrf'
 ];
 

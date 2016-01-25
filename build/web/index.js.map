@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/web/index.js"],"names":[],"mappings":";;;;;;;;8BAA2B,kBAAkB;;;;qBAE9B;AACX,kBAAc,6BAAgB;CACjC","file":"index.js","sourcesContent":["import WebApplication from './WebApplication';\n\nexport default {\n    WebApplication: WebApplication\n}"]}

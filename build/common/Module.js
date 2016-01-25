@@ -137,7 +137,7 @@ var Module = (function () {
             return Object.keys(cfgs).map(function (key) {
                 cfg = cfgs[key];
                 type = types[cfg.connector];
-                if (!type) throw new Error('Unknown connection type \'' + cfg.type + '\' ' + ('in ' + _this2.configuration.path));
+                if (!type) throw new Error('Unknown connector \'' + cfg.connector + '\' ' + ('specified in ' + _this2.configuration.path));
 
                 return new Promise(function (yes, no) {
                     return type(cfg.options, yes, no);

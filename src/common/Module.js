@@ -108,8 +108,8 @@ class Module {
                 cfg = cfgs[key];
                 type = types[cfg.connector];
                 if (!type)
-                    throw new Error(`Unknown connection type '${cfg.type}' ` +
-                        `in ${this.configuration.path}`);
+                    throw new Error(`Unknown connector '${cfg.connector}' ` +
+                        `specified in ${this.configuration.path}`);
 
                 return new Promise((yes, no) => type(cfg.options, yes, no)).
                 then(con => conns[key] = con);

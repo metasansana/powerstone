@@ -135,7 +135,7 @@ var Application = (function () {
                 if (typeof w === 'function') return w;
 
                 m = _propertySeek2['default'].get(_this.middleware, w);
-
+                console.log('mware-> ', _this.middleware);
                 if (!m) throw new Error('Unknown middleware: \'' + w + '\' declared in route file!');
 
                 return m;
@@ -214,7 +214,7 @@ var Application = (function () {
             var _this2 = this;
 
             var loader = this.getLoader();
-            var m = new _Module2['default']('main', '', loader.getConfiguration(), loader, this);
+            var m = new _Module2['default']('', '', loader.getConfiguration(), loader, this);
 
             this.modules.main = m;
 

@@ -30,7 +30,7 @@ var _properties = require('./properties');
 
 /**
  * Module
- * @param {string} name   
+ * @param {string} fqn The name of the module prefixed with its parent modules 
  * @param {string} path 
  * @param {Configuration} config 
  * @param {Loader} loader 
@@ -38,10 +38,10 @@ var _properties = require('./properties');
  */
 
 var Module = (function () {
-    function Module(name, path, config, loader, app) {
+    function Module(fqn, path, config, loader, app) {
         _classCallCheck(this, Module);
 
-        this.name = name;
+        this.fqn = fqn;
         this.path = path;
         this.configuration = config;
         this.loader = loader;
@@ -50,11 +50,21 @@ var Module = (function () {
     }
 
     /**
-     * modules loads all the submodules for this module into memory.
-     * @param {object} mods 
+     * name provides the name of this module
+     *  @return {string}
      */
 
     _createClass(Module, [{
+        key: 'name',
+        value: function name() {
+            return this.fqn ? this.fqn.split('.').pop() : '';
+        }
+
+        /**
+         * modules loads all the submodules for this module into memory.
+         * @param {object} mods 
+         */
+    }, {
         key: 'modules',
         value: function modules(mods) {
             var _this = this;
@@ -63,6 +73,7 @@ var Module = (function () {
             var path;
             var loader;
             var config;
+            var fqn;
             var m;
 
             this.submodules = new _CompositeModule2['default'](this.configuration.readWithDefaults(_properties.paths.MODULES, []).map(function (path) {
@@ -70,9 +81,10 @@ var Module = (function () {
                 loader = _this.application.getLoader(_this.loader.join(_properties.paths.MODULES + '/' + path));
                 config = loader.getConfiguration();
                 name = loader.basename();
+                fqn = _this.fqn ? _this.fqn + '.' + name : name;
                 path = _this.path + '/' + name;
 
-                m = new Module(name, path, config, loader, _this.application);
+                m = new Module(fqn, path, config, loader, _this.application);
                 mods[name] = m;
                 return m;
             }));
@@ -157,11 +169,11 @@ var Module = (function () {
         key: 'userland',
         value: function userland(controllers, models, middleware) {
 
-            this.loader.require('controllers', controllers, this.name === 'main' ? '' : this.path);
+            var prefix = this.name() ? this.configuration.readWithDefaults('prefix', this.fqn) : '';
 
-            this.loader.require('models', models, this.name === 'main' ? '' : this.path);
-
-            this.loader.require('middleware', middleware, this.name === 'main' ? '' : this.path);
+            this.loader.require('controllers', controllers, prefix);
+            this.loader.require('models', models, prefix);
+            this.loader.require('middleware', middleware, prefix);
 
             this.submodules.userland(controllers, models, middleware);
         }
@@ -177,10 +189,10 @@ var Module = (function () {
         value: function express(app, _express, mware) {
             var _this3 = this;
 
-            var isApp = !this.configuration.read(_properties.configs.USE_WEB_ROUTER) || this.name === 'main';
+            var isApp = !this.configuration.read(_properties.configs.USE_WEB_ROUTER) || this.name() === '';
             var target = isApp ? _express() : _express.Router();
             var router;
-            var path = this.configuration.readWithDefaults(_properties.configs.PATH, '/' + this.name);
+            var path = this.configuration.readWithDefaults(_properties.configs.PATH, '/' + this.name());
             var engine = this.configuration.readWithDefaults(_properties.configs.WEB_ENGINE, null);
             var engineSetup = this.application.framework.express.engines[engine];
             var features;
@@ -216,7 +228,7 @@ var Module = (function () {
                 q.flush();
             });
 
-            if (this.name === 'main') {
+            if (this.name() === '') {
                 app.use(target);
             } else if (path) {
                 app.use(path, target);

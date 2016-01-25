@@ -9,7 +9,7 @@ from './properties';
 
 /**
  * Module
- * @param {string} name   
+ * @param {string} fqn The name of the module prefixed with its parent modules 
  * @param {string} path 
  * @param {Configuration} config 
  * @param {Loader} loader 
@@ -17,13 +17,22 @@ from './properties';
  */
 class Module {
 
-    constructor(name, path, config, loader, app) {
-        this.name = name;
+    constructor(fqn, path, config, loader, app) {
+        this.fqn = fqn;
         this.path = path;
         this.configuration = config;
         this.loader = loader;
         this.application = app;
         this.submodules = new CompositeModule([]);
+    }
+
+    /**
+     * name provides the name of this module
+     *  @return {string}
+     */
+    name() {
+        return (this.fqn) ?
+            this.fqn.split('.').pop() : '';
     }
 
     /**
@@ -36,6 +45,7 @@ class Module {
         var path;
         var loader;
         var config;
+        var fqn;
         var m;
 
         this.submodules = new CompositeModule(
@@ -44,9 +54,10 @@ class Module {
                 loader = this.application.getLoader(this.loader.join(paths.MODULES + '/' + path));
                 config = loader.getConfiguration();
                 name = loader.basename();
+                fqn = (this.fqn) ? `${this.fqn}.${name}` : name;
                 path = `${this.path}/${name}`;
 
-                m = new Module(name, path, config, loader, this.application);
+                m = new Module(fqn, path, config, loader, this.application);
                 mods[name] = m;
                 return m;
 
@@ -126,14 +137,12 @@ class Module {
      */
     userland(controllers, models, middleware) {
 
-        this.loader.require('controllers', controllers,
-            (this.name === 'main') ? '' : this.path);
+        var prefix = (this.name()) ?
+            this.configuration.readWithDefaults('prefix', this.fqn) : '';
 
-        this.loader.require('models', models,
-            (this.name === 'main') ? '' : this.path);
-
-        this.loader.require('middleware', middleware,
-            (this.name === 'main') ? '' : this.path);
+        this.loader.require('controllers', controllers, prefix);
+        this.loader.require('models', models, prefix);
+        this.loader.require('middleware', middleware, prefix);
 
         this.submodules.userland(controllers, models, middleware);
     }
@@ -146,10 +155,10 @@ class Module {
      */
     express(app, express, mware) {
 
-        var isApp = ((!this.configuration.read(configs.USE_WEB_ROUTER)) || this.name === 'main');
+        var isApp = ((!this.configuration.read(configs.USE_WEB_ROUTER)) || this.name() === '');
         var target = (isApp) ? express() : express.Router();
         var router;
-        var path = this.configuration.readWithDefaults(configs.PATH, `/${this.name}`);
+        var path = this.configuration.readWithDefaults(configs.PATH, `/${this.name()}`);
         var engine = this.configuration.readWithDefaults(configs.WEB_ENGINE, null);
         var engineSetup = this.application.framework.express.engines[engine];
         var features
@@ -188,7 +197,7 @@ class Module {
             q.flush();
         });
 
-        if (this.name === 'main') {
+        if (this.name() === '') {
             app.use(target);
         } else if (path) {
             app.use(path, target);

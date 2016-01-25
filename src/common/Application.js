@@ -115,7 +115,7 @@ class Application {
             if (typeof w === 'function') return w;
 
             m = Property.get(this.middleware, w);
-
+            console.log('mware-> ', this.middleware);
             if (!m)
                 throw new Error(`Unknown middleware: '${w}' declared in route file!`);
 
@@ -199,7 +199,7 @@ class Application {
     run() {
 
         var loader = this.getLoader();
-        var m = new Module('main', '', loader.getConfiguration(), loader, this);
+        var m = new Module('', '', loader.getConfiguration(), loader, this);
 
         this.modules.main = m;
 

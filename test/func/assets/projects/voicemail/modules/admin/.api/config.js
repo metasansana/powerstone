@@ -4,5 +4,6 @@ export default {
             connector: 'null',
             options: {}
         }
-    }
+    },
+    modules:['demo']
 };

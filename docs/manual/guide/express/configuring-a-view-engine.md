@@ -22,7 +22,7 @@ export default function (expressApp, module) {
  Object.keys(filters).
  forEach(key=>env.addFilter(key, filters[key]));
 
- expressApp.engine(env);
+ expressApp.engine('html', env.render);
 
 }
 

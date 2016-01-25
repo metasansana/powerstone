@@ -1,21 +1,24 @@
 #Configuration
 
-Configuration of a powerstone project is done through the `config.js` file.
+Configuration for your apps are stored in the `.web` or `.api` folders respectively.
 
-Currently the folder can have to
-main files:
+Each module can have its own configuration folders, directives are applied
+to the module in question or system wide depending on the circumstance.
 
-* `config.json`
-* `routes.json`
+The two main files of these folders are:
 
-`config.json` is used to configure
+* `config.js`
+* `routes.js`
+
+`config.js` is used to configure
 various parts of the system.
 
-`routes.json` is used to configure
+`routes.js` is used to configure
 application routing.
 
+~~ This document needs to be updated ~~
 
-###config.json
+###config.js
 
 Directive,Type,Description,Default
 

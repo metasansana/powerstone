@@ -92,5 +92,12 @@ describe('Application', function() {
         });
     });
 
+    it('GET /admin/admin_demo', function() {
+
+        return request(app.server.toFramework()).
+        get('/admin/admin_demo').
+        expect(200);
+
+    });
 
 });

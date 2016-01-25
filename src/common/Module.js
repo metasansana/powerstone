@@ -2,6 +2,7 @@ import CompositeModule from './CompositeModule';
 import FeatureFactory from '../routing/FeatureFactory';
 import RestifyQ from '../routing/RestifyQ';
 import ExpressQ from '../routing/ExpressQ';
+import * as util from '../util';
 import {
     configs, paths
 }
@@ -200,6 +201,7 @@ class Module {
         if (this.name() === '') {
             app.use(target);
         } else if (path) {
+            console.log('app will user ', path, this.path);
             app.use(path, target);
         }
 
@@ -217,6 +219,7 @@ class Module {
         var features;
         var routes;
         var q;
+        var path = this.configuration.readWithDefaults(configs.PATH, this.path);
 
         this.application.interpolate(this.application.framework.restify.plugins,
             this.configuration.readWithDefaults(configs.API_PLUGINS, plugins)).
@@ -229,11 +232,13 @@ class Module {
 
         Object.keys(routes).
         forEach((route) => {
-            q = new RestifyQ(this.path + route, server);
+            q = new RestifyQ(path + route, server);
             Object.keys(routes[route]).
-            forEach(method => features.install(method, this.path + route, routes[route][method], q));
+            forEach(method =>
+                features.install(method, path + route, routes[route][method], q));
             q.flush();
         });
+
         this.submodules.restify(server, []);
 
     }

@@ -6,6 +6,8 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -25,6 +27,10 @@ var _routingRestifyQ2 = _interopRequireDefault(_routingRestifyQ);
 var _routingExpressQ = require('../routing/ExpressQ');
 
 var _routingExpressQ2 = _interopRequireDefault(_routingExpressQ);
+
+var _util = require('../util');
+
+var util = _interopRequireWildcard(_util);
 
 var _properties = require('./properties');
 
@@ -231,6 +237,7 @@ var Module = (function () {
             if (this.name() === '') {
                 app.use(target);
             } else if (path) {
+                console.log('app will user ', path, this.path);
                 app.use(path, target);
             }
 
@@ -251,6 +258,7 @@ var Module = (function () {
             var features;
             var routes;
             var q;
+            var path = this.configuration.readWithDefaults(_properties.configs.PATH, this.path);
 
             this.application.interpolate(this.application.framework.restify.plugins, this.configuration.readWithDefaults(_properties.configs.API_PLUGINS, plugins)).forEach(function (p) {
                 return p(server, _this4.application, _this4);
@@ -262,12 +270,13 @@ var Module = (function () {
             });
 
             Object.keys(routes).forEach(function (route) {
-                q = new _routingRestifyQ2['default'](_this4.path + route, server);
+                q = new _routingRestifyQ2['default'](path + route, server);
                 Object.keys(routes[route]).forEach(function (method) {
-                    return features.install(method, _this4.path + route, routes[route][method], q);
+                    return features.install(method, path + route, routes[route][method], q);
                 });
                 q.flush();
             });
+
             this.submodules.restify(server, []);
         }
     }]);

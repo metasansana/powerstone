@@ -87,4 +87,13 @@ describe('Application', function() {
 
         });
     });
+
+    it('GET /admin_demo', function() {
+
+        return request(app.server.toFramework()).
+        get('/admin_demo').
+        expect(200);
+
+    });
+
 });

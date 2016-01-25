@@ -6,6 +6,8 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -22,12 +24,9 @@ var _Module = require('./Module');
 
 var _Module2 = _interopRequireDefault(_Module);
 
-var isCall = function isCall(str) {
+var _util = require('../util');
 
-    str = str || '';
-
-    if (str.indexOf('(') > -1) if (str.indexOf(')') > -1) return true;
-};
+var util = _interopRequireWildcard(_util);
 
 /**
  * Application is the main class of the framework.
@@ -135,7 +134,7 @@ var Application = (function () {
                 if (typeof w === 'function') return w;
 
                 m = _propertySeek2['default'].get(_this.middleware, w);
-                console.log('mware-> ', _this.middleware);
+
                 if (!m) throw new Error('Unknown middleware: \'' + w + '\' declared in route file!');
 
                 return m;
@@ -158,7 +157,7 @@ var Application = (function () {
             var path;
             var type;
 
-            if (isCall(action)) {
+            if (util.isCall(action)) {
                 split = action.slice(0, -2).split('.');
                 method = split.pop();
             } else {

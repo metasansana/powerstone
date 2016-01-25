@@ -1,16 +1,7 @@
 import events from 'events';
 import Property from 'property-seek';
 import Module from './Module';
-
-var isCall = function(str) {
-
-    str = str || '';
-
-    if (str.indexOf('(') > -1)
-        if (str.indexOf(')') > -1)
-            return true;
-
-};
+import * as util from '../util';
 
 /**
  * Application is the main class of the framework.
@@ -115,7 +106,7 @@ class Application {
             if (typeof w === 'function') return w;
 
             m = Property.get(this.middleware, w);
-            console.log('mware-> ', this.middleware);
+
             if (!m)
                 throw new Error(`Unknown middleware: '${w}' declared in route file!`);
 
@@ -138,7 +129,7 @@ class Application {
         var path;
         var type;
 
-        if (isCall(action)) {
+        if (util.isCall(action)) {
             split = action.slice(0, -2).split('.');
             method = split.pop();
         } else {

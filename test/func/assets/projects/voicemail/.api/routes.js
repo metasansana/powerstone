@@ -27,11 +27,11 @@ export default  {
         }
     },
     '/users/count': {
-        get: 'Users.count'
+        get: 'Users.count()'
     },
     '/users/messages': {
         get: {
-            action: 'Users.messages',
+            action: 'Users.messages()',
             middleware: ['count']
         }
     }

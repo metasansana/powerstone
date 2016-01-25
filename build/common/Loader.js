@@ -26,7 +26,9 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
-var _path3 = _interopRequireDefault(_path);
+var _propertySeek = require('property-seek');
+
+var _propertySeek2 = _interopRequireDefault(_propertySeek);
 
 var _Configuration = require('./Configuration');
 
@@ -56,7 +58,7 @@ var Loader = (function () {
     _createClass(Loader, [{
         key: 'basename',
         value: function basename() {
-            return _path3['default'].basename(this.path);
+            return _path2['default'].basename(this.path);
         }
 
         /**
@@ -67,7 +69,7 @@ var Loader = (function () {
     }, {
         key: 'join',
         value: function join(value) {
-            return _path3['default'].join(this.path, value);
+            return _path2['default'].join(this.path, value);
         }
 
         /**
@@ -117,6 +119,8 @@ var Loader = (function () {
 
             prefix = prefix || '';
             prefix = prefix ? prefix + '.' : prefix;
+            prefix = prefix[0] === '/' ? prefix.replace('/', '') : prefix;
+            prefix = prefix.replace(/\//g, '.');
 
             try {
                 files = _fs2['default'].readdirSync(dir);
@@ -125,8 +129,13 @@ var Loader = (function () {
             }
 
             if (Array.isArray(files)) files.forEach(function (pathToFile) {
-                if (extensions.indexOf(_path3['default'].extname(pathToFile)) < 0) return;
-                merge[prefix + _path3['default'].basename(pathToFile, _path3['default'].extname(pathToFile))] = require(dir + '/' + pathToFile);
+                if (extensions.indexOf(_path2['default'].extname(pathToFile)) < 0) return;
+
+                _propertySeek2['default'].set(merge, prefix + _path2['default'].basename(pathToFile, _path2['default'].extname(pathToFile)), require(dir + '/' + pathToFile));
+
+                //Disabled, will remove if using property-seek works
+                //merge[prefix + Path.basename(pathToFile, Path.extname(pathToFile))] =
+                // require(dir + '/' + pathToFile);
             });
 
             return merge;

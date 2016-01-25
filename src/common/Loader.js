@@ -1,8 +1,8 @@
 import Promise from 'bluebird';
 import merge from 'deepmerge';
 import fs from 'fs';
-import path from 'path';
 import Path from 'path';
+import Property from 'property-seek';
 import Configuration from './Configuration';
 
 /**
@@ -68,6 +68,8 @@ class Loader {
 
         prefix = prefix || '';
         prefix = (prefix) ? prefix + '.' : prefix;
+        prefix = (prefix[0] === '/') ? prefix.replace('/', '') : prefix;
+        prefix = prefix.replace(/\//g, '.');
 
         try {
             files = fs.readdirSync(dir);
@@ -78,8 +80,14 @@ class Loader {
         if (Array.isArray(files))
             files.forEach((pathToFile) => {
                 if (extensions.indexOf(Path.extname(pathToFile)) < 0) return;
-                merge[prefix + Path.basename(pathToFile, Path.extname(pathToFile))] =
-                    require(dir + '/' + pathToFile);
+
+                Property.set(merge, prefix+Path.basename(pathToFile, Path.extname(pathToFile)),
+                  require(dir+'/'+pathToFile));
+
+                //Disabled, will remove if using property-seek works
+                //merge[prefix + Path.basename(pathToFile, Path.extname(pathToFile))] =
+                   // require(dir + '/' + pathToFile);
+
             });
 
         return merge;

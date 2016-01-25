@@ -156,9 +156,13 @@ var Module = (function () {
     }, {
         key: 'userland',
         value: function userland(controllers, models, middleware) {
-            this.loader.require('controllers', controllers, this.name === 'main' ? '' : this.name);
-            this.loader.require('models', models, this.name === 'main' ? '' : this.name);
-            this.loader.require('middleware', middleware, this.name === 'main' ? '' : this.name);
+
+            this.loader.require('controllers', controllers, this.name === 'main' ? '' : this.path);
+
+            this.loader.require('models', models, this.name === 'main' ? '' : this.path);
+
+            this.loader.require('middleware', middleware, this.name === 'main' ? '' : this.path);
+
             this.submodules.userland(controllers, models, middleware);
         }
 

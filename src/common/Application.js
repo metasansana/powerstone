@@ -1,5 +1,16 @@
-import Module from './Module';
 import events from 'events';
+import Property from 'property-seek';
+import Module from './Module';
+
+var isCall = function(str) {
+
+    str = str || '';
+
+    if (str.indexOf('(') > -1)
+        if (str.indexOf(')') > -1)
+            return true;
+
+};
 
 /**
  * Application is the main class of the framework.
@@ -70,15 +81,19 @@ class Application {
 
         var multi = Array.isArray(list);
         var result;
+        var hit;
+
         list = (multi) ? list : [list];
 
         result = list.map(l => {
 
-            if (!source[l])
-                throw new Error(`Application#interpolate: The source does not
-            contain a member ${l}!`);
+            hit = Property.get(source, l);
 
-            return source[l];
+            if (!hit)
+                throw new Error(`Application#interpolate: The source does not
+            contain a member at path  ${l}!`);
+
+            return hit;
 
         });
 
@@ -92,14 +107,19 @@ class Application {
      * @throws Will throw if an unregistered string is encountered.
      */
     resolveMiddleware(list) {
+
+        var m;
+
         return list.map(w => {
 
             if (typeof w === 'function') return w;
 
-            if (!this.middleware[w])
+            m = Property.get(this.middleware, w);
+
+            if (!m)
                 throw new Error(`Unknown middleware: '${w}' declared in route file!`);
 
-            return this.middleware[w];
+            return m;
 
         });
     }
@@ -113,25 +133,57 @@ class Application {
      */
     resolveAction(action, method, definition) {
 
-        var split = action.split('.');
+        var split;
         var Controller;
+        var path;
+        var type;
 
-        Controller = this.controllers[split[0]];
-        method = split[1] || method;
+        if (isCall(action)) {
+            split = action.slice(0, -2).split('.');
+            method = split.pop();
+        } else {
+            split = action.split('.');
+        }
 
-        if (typeof Controller !== 'function')
-            throw new Error(`Controller '${split[0]}' must be a constructor not`+
-                ` '${typeof Controller}'!`);
+        path = split.join('.');
+        Controller = Property.get(this.controllers, path);
+        type = (typeof Controller);
+
+        switch (type) {
+
+            case 'function':
+                break;
+
+            case 'object':
+                break;
+
+            default:
+                throw new Error(`Controller '${path}' must be a constructor or instance not` +
+                    ` '${type}'!`);
+
+
+        }
 
         return function(req, res) {
-            var instance = new Controller(req, res, definition);
+
+            var instance;
+
+            if (type === 'function') {
+                instance = new Controller(req, res, definition);
+            } else {
+                instance = Controller;
+                instance.request = req;
+                instance.response = res;
+                instance.route = definition;
+            }
+
             if (typeof instance[method] !== 'function') {
                 res.status(500);
-                return res.send(`
+                return console.error(`
                     Unknown method '${method}' in route description
                     for controller ` +
                     `
-                    '${action[0]}'!`);
+                    '${path}'!`);
             }
 
             instance[method]();

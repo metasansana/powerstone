@@ -39,9 +39,7 @@ class Application extends BaseApplication {
 
             return this.server.start();
 
-        }).
-        then(port => this._events.emit(this.events.STARTED, port, this)).
-        catch(err => this._events.emit(this.events.ERROR, err, this));
+        }).then(port => this._events.emit(this.events.STARTED, port, this)).catch(err => this._events.emit(this.events.ERROR, err, this));
 
     }
 

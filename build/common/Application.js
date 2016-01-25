@@ -10,13 +10,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
+var _events = require('events');
+
+var _events2 = _interopRequireDefault(_events);
+
+var _propertySeek = require('property-seek');
+
+var _propertySeek2 = _interopRequireDefault(_propertySeek);
+
 var _Module = require('./Module');
 
 var _Module2 = _interopRequireDefault(_Module);
 
-var _events = require('events');
+var isCall = function isCall(str) {
 
-var _events2 = _interopRequireDefault(_events);
+    str = str || '';
+
+    if (str.indexOf('(') > -1) if (str.indexOf(')') > -1) return true;
+};
 
 /**
  * Application is the main class of the framework.
@@ -90,13 +101,17 @@ var Application = (function () {
 
             var multi = Array.isArray(list);
             var result;
+            var hit;
+
             list = multi ? list : [list];
 
             result = list.map(function (l) {
 
-                if (!source[l]) throw new Error('Application#interpolate: The source does not\n            contain a member ' + l + '!');
+                hit = _propertySeek2['default'].get(source, l);
 
-                return source[l];
+                if (!hit) throw new Error('Application#interpolate: The source does not\n            contain a member at path  ' + l + '!');
+
+                return hit;
             });
 
             return multi ? result : result[0];
@@ -113,13 +128,17 @@ var Application = (function () {
         value: function resolveMiddleware(list) {
             var _this = this;
 
+            var m;
+
             return list.map(function (w) {
 
                 if (typeof w === 'function') return w;
 
-                if (!_this.middleware[w]) throw new Error('Unknown middleware: \'' + w + '\' declared in route file!');
+                m = _propertySeek2['default'].get(_this.middleware, w);
 
-                return _this.middleware[w];
+                if (!m) throw new Error('Unknown middleware: \'' + w + '\' declared in route file!');
+
+                return m;
             });
         }
 
@@ -134,19 +153,51 @@ var Application = (function () {
         key: 'resolveAction',
         value: function resolveAction(action, method, definition) {
 
-            var split = action.split('.');
+            var split;
             var Controller;
+            var path;
+            var type;
 
-            Controller = this.controllers[split[0]];
-            method = split[1] || method;
+            if (isCall(action)) {
+                split = action.slice(0, -2).split('.');
+                method = split.pop();
+            } else {
+                split = action.split('.');
+            }
 
-            if (typeof Controller !== 'function') throw new Error('Controller \'' + split[0] + '\' must be a constructor not' + (' \'' + typeof Controller + '\'!'));
+            path = split.join('.');
+            Controller = _propertySeek2['default'].get(this.controllers, path);
+            type = typeof Controller;
+
+            switch (type) {
+
+                case 'function':
+                    break;
+
+                case 'object':
+                    break;
+
+                default:
+                    throw new Error('Controller \'' + path + '\' must be a constructor or instance not' + (' \'' + type + '\'!'));
+
+            }
 
             return function (req, res) {
-                var instance = new Controller(req, res, definition);
+
+                var instance;
+
+                if (type === 'function') {
+                    instance = new Controller(req, res, definition);
+                } else {
+                    instance = Controller;
+                    instance.request = req;
+                    instance.response = res;
+                    instance.route = definition;
+                }
+
                 if (typeof instance[method] !== 'function') {
                     res.status(500);
-                    return res.send('\n                    Unknown method \'' + method + '\' in route description\n                    for controller ' + ('\n                    \'' + action[0] + '\'!'));
+                    return console.error('\n                    Unknown method \'' + method + '\' in route description\n                    for controller ' + ('\n                    \'' + path + '\'!'));
                 }
 
                 instance[method]();

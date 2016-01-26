@@ -201,7 +201,6 @@ class Module {
         if (this.name() === '') {
             app.use(target);
         } else if (path) {
-            console.log('app will user ', path, this.path);
             app.use(path, target);
         }
 

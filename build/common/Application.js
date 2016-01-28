@@ -58,6 +58,7 @@ var Application = (function () {
         this.framework = {
             pipes: {},
             run: {},
+            events: {},
             connectors: {},
             express: {
                 engines: {},
@@ -69,7 +70,8 @@ var Application = (function () {
         };
         this.events = {
             ERROR: 'error',
-            STARTED: 'started'
+            STARTED: 'started',
+            ROUTING: 'routing'
         };
         this._events = new _events2['default'].EventEmitter();
     }
@@ -82,6 +84,11 @@ var Application = (function () {
         key: 'on',
         value: function on() {
             this._events.on.apply(this._events, arguments);
+        }
+    }, {
+        key: 'emit',
+        value: function emit() {
+            return this._events.emit.apply(this._events, arguments);
         }
 
         /**
@@ -218,7 +225,7 @@ var Application = (function () {
             this.modules.main = m;
 
             m.modules(this.modules);
-            m.framework(this.framework.connectors, this.framework.pipes);
+            m.framework(this.framework.connectors, this.framework.pipes, this.framework.events);
             return Promise.all(m.connections(this.framework.connectors, this.pool)).then(function () {
                 return m.userland(_this2.controllers, _this2.models, _this2.middleware);
             });

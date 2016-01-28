@@ -103,14 +103,21 @@ var Module = (function () {
          * folder so that they are available in later steps
          * @param {object} connectors
          * @param {object} pipes 
+         * @param {object} events 
          */
     }, {
         key: 'framework',
-        value: function framework(connectors, pipes) {
+        value: function framework(connectors, pipes, events) {
+            var _this2 = this;
 
             this.loader.require(_properties.paths.CONNECTORS, connectors);
             this.loader.require(_properties.paths.PIPES, pipes);
-            this.submodules.framework(connectors, pipes);
+
+            Object.keys(this.loader.require(_properties.paths.EVENTS, events)).forEach(function (event) {
+                return _this2.application.on(event, _this2.application.framework.events[event]);
+            });
+
+            this.submodules.framework(connectors, pipes, events);
         }
 
         /**
@@ -146,7 +153,7 @@ var Module = (function () {
     }, {
         key: 'connections',
         value: function connections(types, conns) {
-            var _this2 = this;
+            var _this3 = this;
 
             var type;
             var cfgs = this.configuration.readWithDefaults(_properties.configs.CONNECTIONS, {});
@@ -155,7 +162,7 @@ var Module = (function () {
             return Object.keys(cfgs).map(function (key) {
                 cfg = cfgs[key];
                 type = types[cfg.connector];
-                if (!type) throw new Error('Unknown connector \'' + cfg.connector + '\' ' + ('specified in ' + _this2.configuration.path));
+                if (!type) throw new Error('Unknown connector \'' + cfg.connector + '\' ' + ('specified in ' + _this3.configuration.path));
 
                 return new Promise(function (yes, no) {
                     return type(cfg.options, yes, no);
@@ -193,9 +200,10 @@ var Module = (function () {
     }, {
         key: 'express',
         value: function express(app, _express, mware) {
-            var _this3 = this;
+            var _this4 = this;
 
-            var isApp = !this.configuration.read(_properties.configs.USE_WEB_ROUTER) || this.name() === '';
+            var isMain = this.name() === '';
+            var isApp = !this.configuration.read(_properties.configs.USE_WEB_ROUTER) || isMain;
             var target = isApp ? _express() : _express.Router();
             var router;
             var path = this.configuration.readWithDefaults(_properties.configs.PATH, '/' + this.name());
@@ -206,8 +214,10 @@ var Module = (function () {
             var q;
 
             this.application.interpolate(this.application.framework.express.middleware, this.configuration.readWithDefaults(_properties.configs.WEB_PLUGINS, mware)).forEach(function (m) {
-                return m(target, _this3);
+                return m(target, _this4);
             });
+
+            if (isMain) this.application.emit(this.application.events.ROUTING, target, this);
 
             if (isApp) {
                 if (engine && !engineSetup) {
@@ -234,7 +244,7 @@ var Module = (function () {
                 q.flush();
             });
 
-            if (this.name() === '') {
+            if (isMain) {
                 app.use(target);
             } else if (path) {
                 app.use(path, target);
@@ -252,7 +262,7 @@ var Module = (function () {
     }, {
         key: 'restify',
         value: function restify(server, plugins) {
-            var _this4 = this;
+            var _this5 = this;
 
             var features;
             var routes;
@@ -260,7 +270,7 @@ var Module = (function () {
             var path = this.configuration.readWithDefaults(_properties.configs.PATH, this.path);
 
             this.application.interpolate(this.application.framework.restify.plugins, this.configuration.readWithDefaults(_properties.configs.API_PLUGINS, plugins)).forEach(function (p) {
-                return p(server, _this4.application, _this4);
+                return p(server, _this5.application, _this5);
             });
 
             features = _routingFeatureFactory2['default'].api(this.application);

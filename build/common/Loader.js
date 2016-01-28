@@ -92,9 +92,9 @@ var Loader = (function () {
 
         /**
          * require requires all files in a sub-directory into a single object
-         * @param {String} dir A name of a sub-directory in the current path.
-         * @param {Object} merge An optional object functions can be merged into.
-         * @param {String} [prefix] A prefix that will be concatenated to the object's keys
+         * @param {string} dir A name of a sub-directory in the current path.
+         * @param {object} merge An optional object functions can be merged into.
+         * @param {string} [prefix] A prefix that will be concatenated to the object's keys
          * @returns {Object}
          */
     }, {

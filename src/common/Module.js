@@ -73,12 +73,18 @@ class Module {
      * folder so that they are available in later steps
      * @param {object} connectors
      * @param {object} pipes 
+     * @param {object} events 
      */
-    framework(connectors, pipes) {
+    framework(connectors, pipes, events) {
 
         this.loader.require(paths.CONNECTORS, connectors);
         this.loader.require(paths.PIPES, pipes);
-        this.submodules.framework(connectors, pipes);
+
+        Object.keys(this.loader.require(paths.EVENTS, events)).
+        forEach(event =>
+            this.application.on(event, this.application.framework.events[event]));
+
+        this.submodules.framework(connectors, pipes, events);
 
     }
 
@@ -156,7 +162,8 @@ class Module {
      */
     express(app, express, mware) {
 
-        var isApp = ((!this.configuration.read(configs.USE_WEB_ROUTER)) || this.name() === '');
+        var isMain = (this.name() === '');
+        var isApp = ((!this.configuration.read(configs.USE_WEB_ROUTER)) || isMain);
         var target = (isApp) ? express() : express.Router();
         var router;
         var path = this.configuration.readWithDefaults(configs.PATH, `/${this.name()}`);
@@ -169,6 +176,9 @@ class Module {
         this.application.interpolate(this.application.framework.express.middleware,
             this.configuration.readWithDefaults(configs.WEB_PLUGINS, mware)).
         forEach(m => m(target, this));
+
+        if (isMain)
+            this.application.emit(this.application.events.ROUTING, target, this);
 
         if (isApp) {
             if (engine && (!engineSetup)) {
@@ -198,7 +208,7 @@ class Module {
             q.flush();
         });
 
-        if (this.name() === '') {
+        if (isMain) {
             app.use(target);
         } else if (path) {
             app.use(path, target);

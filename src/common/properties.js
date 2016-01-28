@@ -3,6 +3,7 @@ export const paths = {
     MODULES: 'modules',
     CONNECTORS: 'framework/connectors',
     PIPES: 'framework/pipes',
+    EVENTS: 'framework/events',
     WEB_PLUGINS: 'framework/express/middleware',
     WEB_ENGINES: 'framework/express/engines',
     API_PLUGINS: 'framework/restify/plugins',

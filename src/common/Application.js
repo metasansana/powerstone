@@ -32,6 +32,7 @@ class Application {
         this.framework = {
             pipes: {},
             run: {},
+            events: {},
             connectors: {},
             express: {
                 engines: {},
@@ -43,7 +44,8 @@ class Application {
         };
         this.events = {
             ERROR: 'error',
-            STARTED: 'started'
+            STARTED: 'started',
+            ROUTING: 'routing'
         };
         this._events = new events.EventEmitter();
 
@@ -56,7 +58,9 @@ class Application {
         this._events.on.apply(this._events, arguments);
     }
 
-
+    emit() {
+        return this._events.emit.apply(this._events, arguments);
+    }
 
     /**
      * interpolate swaps a list of string for values
@@ -195,7 +199,7 @@ class Application {
         this.modules.main = m;
 
         m.modules(this.modules);
-        m.framework(this.framework.connectors, this.framework.pipes);
+        m.framework(this.framework.connectors, this.framework.pipes, this.framework.events);
         return Promise.all(m.connections(this.framework.connectors, this.pool)).
         then(() => m.userland(this.controllers, this.models, this.middleware));
 

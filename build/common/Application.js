@@ -158,6 +158,7 @@ var Application = (function () {
     }, {
         key: 'resolveAction',
         value: function resolveAction(action, method, definition) {
+            var _this2 = this;
 
             var split;
             var Controller;
@@ -184,7 +185,7 @@ var Application = (function () {
                     break;
 
                 default:
-                    throw new Error('Controller \'' + path + '\' must be a constructor or instance not' + (' \'' + type + '\'!'));
+                    throw new Error('Controller \'' + path + '\' specified in route file ' + 'must be a constructor or an instance not' + (' \'' + type + '\'!'));
 
             }
 
@@ -193,7 +194,7 @@ var Application = (function () {
                 var instance;
 
                 if (type === 'function') {
-                    instance = new Controller(req, res, definition);
+                    instance = new Controller(req, res, _this2, definition);
                 } else {
                     instance = Controller;
                     instance.request = req;
@@ -202,8 +203,10 @@ var Application = (function () {
                 }
 
                 if (typeof instance[method] !== 'function') {
+
                     res.status(500);
-                    return console.error('\n                    Unknown method \'' + method + '\' in route description\n                    for controller ' + ('\n                    \'' + path + '\'!'));
+                    res.send();
+                    return console.error('\n                    Unknown method \'' + method + '\' in route description\n                    for controller ' + ('\n                    \'' + path + '\'! (' + instance.constructor + ')'));
                 }
 
                 instance[method]();
@@ -217,7 +220,7 @@ var Application = (function () {
     }, {
         key: 'run',
         value: function run() {
-            var _this2 = this;
+            var _this3 = this;
 
             var loader = this.getLoader();
             var m = new _Module2['default']('', '', loader.getConfiguration(), loader, this);
@@ -227,7 +230,7 @@ var Application = (function () {
             m.modules(this.modules);
             m.framework(this.framework.connectors, this.framework.pipes, this.framework.events);
             return Promise.all(m.connections(this.framework.connectors, this.pool)).then(function () {
-                return m.userland(_this2.controllers, _this2.models, _this2.middleware);
+                return m.userland(_this3.controllers, _this3.models, _this3.middleware);
             });
         }
     }]);

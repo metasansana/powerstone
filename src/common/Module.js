@@ -123,8 +123,10 @@ class Module {
 
         return Object.keys(cfgs)
             .map(key => {
+
                 cfg = cfgs[key];
                 type = types[cfg.connector];
+
                 if (!type)
                     throw new Error(`Unknown connector '${cfg.connector}' ` +
                         `specified in ${this.configuration.path}`);

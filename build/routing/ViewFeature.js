@@ -36,6 +36,7 @@ var ViewFeature = (function (_Feature) {
         value: function install(method, path, def, q) {
 
             if (typeof def.view === 'string') {
+
                 return q.enque('get', function (req, res) {
 
                     res.render(def.view, def.locals || {}, function (err, html) {

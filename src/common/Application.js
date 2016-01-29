@@ -153,18 +153,19 @@ class Application {
                 break;
 
             default:
-                throw new Error(`Controller '${path}' must be a constructor or instance not` +
+                throw new Error(`Controller '${path}' specified in route file ` +
+                    `must be a constructor or an instance not` +
                     ` '${type}'!`);
 
 
         }
 
-        return function(req, res) {
+        return (req, res)=> {
 
             var instance;
 
             if (type === 'function') {
-                instance = new Controller(req, res, definition);
+                instance = new Controller(req, res, this, definition);
             } else {
                 instance = Controller;
                 instance.request = req;
@@ -173,12 +174,14 @@ class Application {
             }
 
             if (typeof instance[method] !== 'function') {
+
                 res.status(500);
+                res.send();
                 return console.error(`
                     Unknown method '${method}' in route description
                     for controller ` +
                     `
-                    '${path}'!`);
+                    '${path}'! (${instance.constructor})`);
             }
 
             instance[method]();

@@ -160,8 +160,10 @@ var Module = (function () {
             var cfg;
 
             return Object.keys(cfgs).map(function (key) {
+
                 cfg = cfgs[key];
                 type = types[cfg.connector];
+
                 if (!type) throw new Error('Unknown connector \'' + cfg.connector + '\' ' + ('specified in ' + _this3.configuration.path));
 
                 return new Promise(function (yes, no) {

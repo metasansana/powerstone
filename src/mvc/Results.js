@@ -2,14 +2,21 @@
  * Results provides helper methods for http responses. 
  * @param {Request} request
  * @param {Response} response
- * @param {Route} route
+ * @param {Application} app 
+ * @param {object} route
+ *
+ * @property {Request} request - The Request object
+ * @property {Response} response - The Response object
+ * @property {Application} app - The Application being run
+ * @property {object} route - The route definition that activate this code
  *
  */
 class Results {
 
-    constructor(request, response, route) {
+    constructor(request, response, app, route) {
         this.request = request;
         this.response = response;
+        this.app = app;
         this.route = route;
     }
 

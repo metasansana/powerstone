@@ -10,12 +10,11 @@ class MiddlewareFeature extends Feature {
         if (!Array.isArray(definition.middleware)) return;
 
         this.application.resolveMiddleware(definition.middleware).
-        forEach(function(m) {
+        forEach(m => {
 
- q.enque(method, function(req, res, next) {
+            q.enque(method, (req, res, next) => {
 
-                m(req, res, next, definition);
-                next();
+                m(req, res, next, this.application, definition);
 
             });
 

@@ -34,6 +34,7 @@ var MiddlewareFeature = (function (_Feature) {
     _createClass(MiddlewareFeature, [{
         key: 'install',
         value: function install(method, path, definition, q) {
+            var _this = this;
 
             if (!Array.isArray(definition.middleware)) return;
 
@@ -41,8 +42,7 @@ var MiddlewareFeature = (function (_Feature) {
 
                 q.enque(method, function (req, res, next) {
 
-                    m(req, res, next, definition);
-                    next();
+                    m(req, res, next, _this.application, definition);
                 });
             });
         }

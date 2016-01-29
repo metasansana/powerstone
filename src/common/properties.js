@@ -8,8 +8,8 @@ export const paths = {
     WEB_ENGINES: 'framework/express/engines',
     API_PLUGINS: 'framework/restify/plugins',
     WEB_ROUTES: 'webconf/routes',
-    API_ROUTES: 'apiconf/routes',
     WEB_CONFIG: 'webconf/config',
+    API_ROUTES: 'apiconf/routes',
     API_CONFIG: 'apiconf/config'
 
 };
@@ -22,4 +22,5 @@ export const configs = {
     WEB_ENGINE: 'engine',
     WEB_PLUGINS: 'middleware',
     API_PLUGINS: 'plugins'
+
 };

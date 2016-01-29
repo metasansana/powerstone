@@ -2,7 +2,13 @@
  * Results provides helper methods for http responses. 
  * @param {Request} request
  * @param {Response} response
- * @param {Route} route
+ * @param {Application} app 
+ * @param {object} route
+ *
+ * @property {Request} request - The Request object
+ * @property {Response} response - The Response object
+ * @property {Application} app - The Application being run
+ * @property {object} route - The route definition that activate this code
  *
  */
 "use strict";
@@ -16,11 +22,12 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Results = (function () {
-    function Results(request, response, route) {
+    function Results(request, response, app, route) {
         _classCallCheck(this, Results);
 
         this.request = request;
         this.response = response;
+        this.app = app;
         this.route = route;
     }
 

@@ -7,6 +7,7 @@ var app;
 before(function() {
 
     app = new Application(`${__dirname}/assets/projects/voicemail`);
+    global.connected = false;
     return app.run();
 
 });
@@ -19,6 +20,12 @@ describe('Application', function() {
     describe('.run()', function() {
 
         global.requests = 24;
+
+        it('should be connected', function() {
+
+            must(global.connected).equal(true);
+
+        });
 
         it('GET /users/:user/messages', function() {
             return request(app.server.toFramework()).

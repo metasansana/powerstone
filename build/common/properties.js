@@ -12,10 +12,10 @@ var paths = {
     WEB_PLUGINS: 'framework/express/middleware',
     WEB_ENGINES: 'framework/express/engines',
     API_PLUGINS: 'framework/restify/plugins',
-    WEB_ROUTES: '.web/routes',
-    API_ROUTES: '.api/routes',
-    WEB_CONFIG: '.web/config',
-    API_CONFIG: '.api/config'
+    WEB_ROUTES: 'webconf/routes',
+    WEB_CONFIG: 'webconf/config',
+    API_ROUTES: 'apiconf/routes',
+    API_CONFIG: 'apiconf/config'
 
 };
 
@@ -28,6 +28,7 @@ var configs = {
     WEB_ENGINE: 'engine',
     WEB_PLUGINS: 'middleware',
     API_PLUGINS: 'plugins'
+
 };
 exports.configs = configs;
 //# sourceMappingURL=properties.js.map

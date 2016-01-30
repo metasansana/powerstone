@@ -160,7 +160,7 @@ class Application {
 
         }
 
-        return (req, res)=> {
+        return (req, res) => {
 
             var instance;
 

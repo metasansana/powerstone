@@ -1,4 +1,5 @@
 import Feature from './Feature';
+import merge from 'deepmerge';
 
 /**
  * ViewFeature 
@@ -11,7 +12,9 @@ class ViewFeature extends Feature {
 
             return q.enque('get', function(req, res) {
 
-                res.render(def.view, def.locals || {}, function(err, html) {
+                res.render(def.view, merge({
+                    request: req
+                }, def.locals||{}), function(err, html) {
 
                     if (err) {
                         console.log(err.stack);

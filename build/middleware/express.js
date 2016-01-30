@@ -70,22 +70,22 @@ exports['default'] = {
         });
     },
     'method-override': function methodOverride(router, module) {
-        router.use(module.path, (0, _methodOverride3['default'])());
+        router.use((0, _methodOverride3['default'])());
     },
     morgan: function morgan(router, module) {
 
         if (module.configuration.read('morgan') === false) return;
 
-        router.use(module.path, (0, _morgan3['default'])(module.configuration.readWithDefaults('morgan.format', process.env.LOG_FORMAT || 'dev', module.configuration.read('morgan.options'))));
+        router.use((0, _morgan3['default'])(module.configuration.readWithDefaults('morgan.format', process.env.LOG_FORMAT || 'dev', module.configuration.read('morgan.options'))));
     },
     'body-parser': function bodyParser(router, module) {
-        router.use(module.path, _bodyParser2['default'].json());
-        router.use(module.path, _bodyParser2['default'].urlencoded({
+        router.use(_bodyParser2['default'].json());
+        router.use(_bodyParser2['default'].urlencoded({
             extended: true
         }));
     },
     'cookie-parser': function cookieParser(router, module) {
-        router.use(module.path, (0, _cookieParser3['default'])(module.configuration.readWithDefaults('secret', process.env.SECRET || SECRET)));
+        router.use((0, _cookieParser3['default'])(module.configuration.readWithDefaults('secret', process.env.SECRET || SECRET)));
     },
     session: function session(router, module) {
 
@@ -98,13 +98,20 @@ exports['default'] = {
 
         if (module.application.pool.session) sessionConfig.store = module.application.pool.session;
 
-        router.use(module.path, (0, _expressSession2['default'])(sessionConfig));
+        router.use((0, _expressSession2['default'])(sessionConfig));
     },
     csrf: function csrf(router, module) {
 
         if (module.configuration.read('csrf')) {
-            router.use(module.path, (0, _csurf2['default'])());
-            router.use(module.path, send_csrf_token);
+
+            router.use((0, _csurf2['default'])({ cookie: true }));
+            router.use(send_csrf_token);
+            router.use(function (err, req, res, next) {
+
+                if (err.code !== 'EBADCSRFTOKEN') return next(err);
+                res.status(403);
+                res.send('INVALID TOKEN');
+            });
         }
     }
 };

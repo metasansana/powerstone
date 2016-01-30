@@ -30,7 +30,7 @@ export default {
 
         });
     },
-  'serve-index': function(router, module) {
+    'serve-index': function(router, module) {
         module.configuration.readWithDefaults('directory', []).
         forEach(path => {
 
@@ -43,23 +43,23 @@ export default {
 
     },
     'method-override': function(router, module) {
-        router.use(module.path, methodOverride());
+        router.use(methodOverride());
     },
     morgan: function(router, module) {
 
         if (module.configuration.read('morgan') === false) return;
 
-        router.use(module.path, morgan(module.configuration.readWithDefaults('morgan.format',
+        router.use(morgan(module.configuration.readWithDefaults('morgan.format',
             process.env.LOG_FORMAT || 'dev', module.configuration.read('morgan.options'))));
     },
     'body-parser': function(router, module) {
-        router.use(module.path, body_parser.json());
-        router.use(module.path, body_parser.urlencoded({
+        router.use(body_parser.json());
+        router.use(body_parser.urlencoded({
             extended: true
         }));
     },
     'cookie-parser': function(router, module) {
-        router.use(module.path, cookieParser(module.configuration.readWithDefaults('secret',
+        router.use(cookieParser(module.configuration.readWithDefaults('secret',
             process.env.SECRET || SECRET)));
     },
     session: function(router, module) {
@@ -75,14 +75,22 @@ export default {
         if (module.application.pool.session)
             sessionConfig.store = module.application.pool.session;
 
-        router.use(module.path, session(sessionConfig));
+        router.use(session(sessionConfig));
 
     },
     csrf: function(router, module) {
 
         if (module.configuration.read('csrf')) {
-            router.use(module.path, csrf());
-            router.use(module.path, send_csrf_token);
+
+            router.use(csrf({cookie:true}));
+            router.use(send_csrf_token);
+            router.use((err, req, res, next) => {
+
+                if (err.code !== 'EBADCSRFTOKEN') return next(err);
+                res.status(403);
+                res.send('INVALID TOKEN');
+
+            });
         }
 
     }

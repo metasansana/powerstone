@@ -88,11 +88,8 @@ describe('Application', function() {
         return request(app.server.toFramework()).
         get('/admin/panel').
         expect(403).
-        then(res => {
+        then(res => must(global.flag).eql('set'));
 
-            must(global.flag).eql('set');
-
-        });
     });
 
     it('GET /admin_demo', function() {

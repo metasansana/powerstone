@@ -39,9 +39,7 @@ var MiddlewareFeature = (function (_Feature) {
             if (!Array.isArray(definition.middleware)) return;
 
             this.application.resolveMiddleware(definition.middleware).forEach(function (m) {
-                console.log('middleware ', m);
-
-                q.enque(method, function (req, res, next) {
+                return q.enque(method, function (req, res, next) {
                     return m(req, res, next, _this.application, definition);
                 });
             });

@@ -28,6 +28,14 @@ var _util = require('../util');
 
 var util = _interopRequireWildcard(_util);
 
+var _userlandModels = require('../userland/models');
+
+var _userlandModels2 = _interopRequireDefault(_userlandModels);
+
+var _userlandPool = require('../userland/pool');
+
+var _userlandPool2 = _interopRequireDefault(_userlandPool);
+
 /**
  * Application is the main class of the framework.
  * @param {String} path The path to intialize this Application to. 
@@ -52,9 +60,9 @@ var Application = (function () {
         this.server = null;
         this.modules = {};
         this.controllers = {};
-        this.models = {};
+        this.models = _userlandModels2['default'];
         this.middleware = {};
-        this.pool = {};
+        this.pool = _userlandPool2['default'];
         this.framework = {
             pipes: {},
             run: {},
@@ -228,8 +236,9 @@ var Application = (function () {
             this.modules.main = m;
 
             m.modules(this.modules);
-            m.framework(this.framework.connectors, this.framework.pipes, this.framework.events);
-            return Promise.all(m.connections(this.framework.connectors, this.pool)).then(function () {
+            m.framework(this.framework.connectors, this.framework.pipes);
+
+            return Promise.all(m.connections(this.framework.connectors, require('../userland/pool'))).then(function () {
                 return m.userland(_this3.controllers, _this3.models, _this3.middleware);
             });
         }

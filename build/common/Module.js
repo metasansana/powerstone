@@ -63,6 +63,7 @@ var Module = (function () {
     _createClass(Module, [{
         key: 'name',
         value: function name() {
+
             return this.fqn ? this.fqn.split('.').pop() : '';
         }
 
@@ -103,21 +104,14 @@ var Module = (function () {
          * folder so that they are available in later steps
          * @param {object} connectors
          * @param {object} pipes 
-         * @param {object} events 
          */
     }, {
         key: 'framework',
-        value: function framework(connectors, pipes, events) {
-            var _this2 = this;
+        value: function framework(connectors, pipes) {
 
             this.loader.require(_properties.paths.CONNECTORS, connectors);
             this.loader.require(_properties.paths.PIPES, pipes);
-
-            Object.keys(this.loader.require(_properties.paths.EVENTS, events)).forEach(function (event) {
-                return _this2.application.on(event, _this2.application.framework.events[event]);
-            });
-
-            this.submodules.framework(connectors, pipes, events);
+            this.submodules.framework(connectors, pipes);
         }
 
         /**
@@ -140,6 +134,7 @@ var Module = (function () {
     }, {
         key: 'restifyFramework',
         value: function restifyFramework(plugins) {
+
             this.loader.require(_properties.paths.API_PLUGINS, plugins);
             this.submodules.restifyFramework(plugins);
         }
@@ -153,7 +148,7 @@ var Module = (function () {
     }, {
         key: 'connections',
         value: function connections(types, conns) {
-            var _this3 = this;
+            var _this2 = this;
 
             var type;
             var cfgs = this.configuration.readWithDefaults(_properties.configs.CONNECTIONS, {});
@@ -164,7 +159,7 @@ var Module = (function () {
                 cfg = cfgs[key];
                 type = types[cfg.connector];
 
-                if (!type) throw new Error('Unknown connector \'' + cfg.connector + '\' ' + ('specified in ' + _this3.configuration.path));
+                if (!type) throw new Error('Unknown connector \'' + cfg.connector + '\' ' + ('specified in ' + _this2.configuration.path));
 
                 return new Promise(function (yes, no) {
                     return type(cfg.options, yes, no);
@@ -183,12 +178,19 @@ var Module = (function () {
     }, {
         key: 'userland',
         value: function userland(controllers, models, middleware) {
+            var _this3 = this;
 
             var prefix = this.name() ? this.configuration.readWithDefaults('prefix', this.fqn) : '';
 
+            var events = {};
+
             this.loader.require('controllers', controllers, prefix);
-            this.loader.require('models', models, prefix);
+            this.loader.require('models', models); //Prefixed models are annoying!
             this.loader.require('middleware', middleware, prefix);
+
+            Object.keys(this.loader.require('events', events)).forEach(function (event) {
+                return _this3.application.on(event, events[event]);
+            });
 
             this.submodules.userland(controllers, models, middleware);
         }

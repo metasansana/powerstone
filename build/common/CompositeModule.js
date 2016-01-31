@@ -36,7 +36,7 @@ var CompositeModule = (function () {
         /**
          * framework 
          * @param {object} connectors
-         * @param {pipes} pipes 
+         * @param {object} pipes 
          */
     }, {
         key: "framework",
@@ -55,7 +55,7 @@ var CompositeModule = (function () {
         key: "expressFramework",
         value: function expressFramework(middleware, engines) {
             this.submodules.forEach(function (m) {
-                return m.framework(middleware, engines);
+                return m.expressFramework(middleware, engines);
             });
         }
 

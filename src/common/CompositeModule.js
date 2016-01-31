@@ -20,7 +20,7 @@ class CompositeModule {
     /**
      * framework 
      * @param {object} connectors
-     * @param {pipes} pipes 
+     * @param {object} pipes 
      */
     framework(connectors, pipes) {
         this.submodules.forEach(m => m.framework(connectors, pipes));
@@ -32,7 +32,7 @@ class CompositeModule {
      * @param {object} engines
      */
     expressFramework(middleware, engines) {
-        this.submodules.forEach(m => m.framework(middleware, engines));
+        this.submodules.forEach(m => m.expressFramework(middleware, engines));
     }
 
     /**

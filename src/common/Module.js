@@ -19,12 +19,14 @@ from './properties';
 class Module {
 
     constructor(fqn, path, config, loader, app) {
+
         this.fqn = fqn;
         this.path = path;
         this.configuration = config;
         this.loader = loader;
         this.application = app;
         this.submodules = new CompositeModule([]);
+
     }
 
     /**
@@ -32,8 +34,10 @@ class Module {
      *  @return {string}
      */
     name() {
+
         return (this.fqn) ?
             this.fqn.split('.').pop() : '';
+
     }
 
     /**
@@ -73,18 +77,12 @@ class Module {
      * folder so that they are available in later steps
      * @param {object} connectors
      * @param {object} pipes 
-     * @param {object} events 
      */
-    framework(connectors, pipes, events) {
+    framework(connectors, pipes) {
 
         this.loader.require(paths.CONNECTORS, connectors);
         this.loader.require(paths.PIPES, pipes);
-
-        Object.keys(this.loader.require(paths.EVENTS, events)).
-        forEach(event =>
-            this.application.on(event, this.application.framework.events[event]));
-
-        this.submodules.framework(connectors, pipes, events);
+        this.submodules.framework(connectors, pipes);
 
     }
 
@@ -105,8 +103,10 @@ class Module {
      * restifyFramework loads the pieces for the restify framework
      */
     restifyFramework(plugins) {
+
         this.loader.require(paths.API_PLUGINS, plugins);
         this.submodules.restifyFramework(plugins);
+
     }
 
     /**
@@ -149,11 +149,17 @@ class Module {
         var prefix = (this.name()) ?
             this.configuration.readWithDefaults('prefix', this.fqn) : '';
 
+        var events = {};
+
         this.loader.require('controllers', controllers, prefix);
-        this.loader.require('models', models, prefix);
+        this.loader.require('models', models); //Prefixed models are annoying!
         this.loader.require('middleware', middleware, prefix);
 
+        Object.keys(this.loader.require('events', events)).
+        forEach(event => this.application.on(event, events[event]));
+
         this.submodules.userland(controllers, models, middleware);
+
     }
 
     /**

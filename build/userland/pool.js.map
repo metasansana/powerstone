@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/userland/pool.js"],"names":[],"mappings":";;;;;qBAAe,EAAC,MAAM,EAAC,OAAO,EAAC","file":"pool.js","sourcesContent":["export default {marker:'BOOGA'};\n"]}

@@ -2,6 +2,8 @@ import events from 'events';
 import Property from 'property-seek';
 import Module from './Module';
 import * as util from '../util';
+import models from '../userland/models';
+import pool from '../userland/pool';
 
 /**
  * Application is the main class of the framework.
@@ -26,9 +28,9 @@ class Application {
         this.server = null;
         this.modules = {};
         this.controllers = {};
-        this.models = {};
+        this.models = models;
         this.middleware = {};
-        this.pool = {};
+        this.pool = pool;
         this.framework = {
             pipes: {},
             run: {},
@@ -202,8 +204,9 @@ class Application {
         this.modules.main = m;
 
         m.modules(this.modules);
-        m.framework(this.framework.connectors, this.framework.pipes, this.framework.events);
-        return Promise.all(m.connections(this.framework.connectors, this.pool)).
+        m.framework(this.framework.connectors, this.framework.pipes);
+
+        return Promise.all(m.connections(this.framework.connectors, require('../userland/pool'))).
         then(() => m.userland(this.controllers, this.models, this.middleware));
 
     }

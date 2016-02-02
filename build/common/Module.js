@@ -184,9 +184,9 @@ var Module = (function () {
 
             var events = {};
 
-            this.loader.require('controllers', controllers, prefix);
-            this.loader.require('models', models); //Prefixed models are annoying!
-            this.loader.require('middleware', middleware, prefix);
+            this.loader.require('controllers', controllers);
+            this.loader.require('models', models);
+            this.loader.require('middleware', middleware);
 
             Object.keys(this.loader.require('events', events)).forEach(function (event) {
                 return _this3.application.on(event, events[event]);

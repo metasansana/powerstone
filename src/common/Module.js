@@ -4,7 +4,8 @@ import RestifyQ from '../routing/RestifyQ';
 import ExpressQ from '../routing/ExpressQ';
 import * as util from '../util';
 import {
-    configs, paths
+    configs,
+    paths
 }
 from './properties';
 
@@ -151,9 +152,9 @@ class Module {
 
         var events = {};
 
-        this.loader.require('controllers', controllers, prefix);
-        this.loader.require('models', models); //Prefixed models are annoying!
-        this.loader.require('middleware', middleware, prefix);
+        this.loader.require('controllers', controllers);
+        this.loader.require('models', models);
+        this.loader.require('middleware', middleware);
 
         Object.keys(this.loader.require('events', events)).
         forEach(event => this.application.on(event, events[event]));

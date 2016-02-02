@@ -2,8 +2,8 @@ import events from 'events';
 import Property from 'property-seek';
 import Module from './Module';
 import * as util from '../util';
-import models from '../userland/models';
-import pool from '../userland/pool';
+import models from '../usr/models';
+import pool from '../usr/pool';
 
 /**
  * Application is the main class of the framework.
@@ -206,7 +206,7 @@ class Application {
         m.modules(this.modules);
         m.framework(this.framework.connectors, this.framework.pipes);
 
-        return Promise.all(m.connections(this.framework.connectors, require('../userland/pool'))).
+        return Promise.all(m.connections(this.framework.connectors, this.pool)).
         then(() => m.userland(this.controllers, this.models, this.middleware));
 
     }

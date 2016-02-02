@@ -28,13 +28,13 @@ var _util = require('../util');
 
 var util = _interopRequireWildcard(_util);
 
-var _userlandModels = require('../userland/models');
+var _usrModels = require('../usr/models');
 
-var _userlandModels2 = _interopRequireDefault(_userlandModels);
+var _usrModels2 = _interopRequireDefault(_usrModels);
 
-var _userlandPool = require('../userland/pool');
+var _usrPool = require('../usr/pool');
 
-var _userlandPool2 = _interopRequireDefault(_userlandPool);
+var _usrPool2 = _interopRequireDefault(_usrPool);
 
 /**
  * Application is the main class of the framework.
@@ -60,9 +60,9 @@ var Application = (function () {
         this.server = null;
         this.modules = {};
         this.controllers = {};
-        this.models = _userlandModels2['default'];
+        this.models = _usrModels2['default'];
         this.middleware = {};
-        this.pool = _userlandPool2['default'];
+        this.pool = _usrPool2['default'];
         this.framework = {
             pipes: {},
             run: {},
@@ -238,7 +238,7 @@ var Application = (function () {
             m.modules(this.modules);
             m.framework(this.framework.connectors, this.framework.pipes);
 
-            return Promise.all(m.connections(this.framework.connectors, require('../userland/pool'))).then(function () {
+            return Promise.all(m.connections(this.framework.connectors, this.pool)).then(function () {
                 return m.userland(_this3.controllers, _this3.models, _this3.middleware);
             });
         }

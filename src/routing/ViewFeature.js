@@ -1,5 +1,4 @@
 import Feature from './Feature';
-import merge from 'deepmerge';
 
 /**
  * ViewFeature 
@@ -9,12 +8,9 @@ class ViewFeature extends Feature {
     install(method, path, def, q) {
 
         if (typeof def.view === 'string') {
-
             return q.enque('get', function(req, res) {
 
-                res.render(def.view, merge({
-                    request: req
-                }, def.locals||{}), function(err, html) {
+                res.render(def.view, def.locals || {}, function(err, html) {
 
                     if (err) {
                         console.log(err.stack);
@@ -32,18 +28,18 @@ class ViewFeature extends Feature {
 
                 q.enque('get', function(req, res) {
 
-                res.render(def, function(err, html) {
+                    res.render(def, function(err, html) {
 
-                    if (err) {
-                        console.log(err.stack);
-                        res.status(500).send();
-                    }
+                        if (err) {
+                            console.log(err.stack);
+                            res.status(500).send();
+                        }
 
-                    res.send(html);
+                        res.send(html);
 
-                });
+                    });
 
-            })
+                })
     }
 }
 export default ViewFeature

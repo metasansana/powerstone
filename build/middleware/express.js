@@ -104,7 +104,9 @@ exports['default'] = {
 
         if (module.configuration.read('csrf')) {
 
-            router.use((0, _csurf2['default'])({ cookie: true }));
+            router.use((0, _csurf2['default'])({
+                cookie: true
+            }));
             router.use(send_csrf_token);
             router.use(function (err, req, res, next) {
 

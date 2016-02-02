@@ -82,7 +82,9 @@ export default {
 
         if (module.configuration.read('csrf')) {
 
-            router.use(csrf({cookie:true}));
+            router.use(csrf({
+                cookie: true
+            }));
             router.use(send_csrf_token);
             router.use((err, req, res, next) => {
 

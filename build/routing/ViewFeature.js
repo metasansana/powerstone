@@ -18,10 +18,6 @@ var _Feature2 = require('./Feature');
 
 var _Feature3 = _interopRequireDefault(_Feature2);
 
-var _deepmerge = require('deepmerge');
-
-var _deepmerge2 = _interopRequireDefault(_deepmerge);
-
 /**
  * ViewFeature 
  */
@@ -40,12 +36,9 @@ var ViewFeature = (function (_Feature) {
         value: function install(method, path, def, q) {
 
             if (typeof def.view === 'string') {
-
                 return q.enque('get', function (req, res) {
 
-                    res.render(def.view, (0, _deepmerge2['default'])({
-                        request: req
-                    }, def.locals || {}), function (err, html) {
+                    res.render(def.view, def.locals || {}, function (err, html) {
 
                         if (err) {
                             console.log(err.stack);

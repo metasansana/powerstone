@@ -11,10 +11,7 @@ export default {
         },
         post: {
             pipes: {
-                body: {
-                    id: ['double', 'double', 'double'],
-                    message: ['string']
-                }
+                body: 'body'
             },
             action: function(req, res) {
                 global.messages[req.params.user] = global.messages[req.params.user] || [];

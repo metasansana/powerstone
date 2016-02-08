@@ -12,10 +12,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _events = require('events');
-
-var _events2 = _interopRequireDefault(_events);
-
 var _propertySeek = require('property-seek');
 
 var _propertySeek2 = _interopRequireDefault(_propertySeek);
@@ -35,6 +31,10 @@ var _usrModels2 = _interopRequireDefault(_usrModels);
 var _usrPool = require('../usr/pool');
 
 var _usrPool2 = _interopRequireDefault(_usrPool);
+
+var _usrEvents = require('../usr/events');
+
+var _usrEvents2 = _interopRequireDefault(_usrEvents);
 
 /**
  * Application is the main class of the framework.
@@ -64,7 +64,10 @@ var Application = (function () {
         this.middleware = {};
         this.pool = _usrPool2['default'];
         this.framework = {
-            pipes: {},
+            pipes: {
+                filters: {},
+                defines: {}
+            },
             run: {},
             events: {},
             connectors: {},
@@ -81,7 +84,7 @@ var Application = (function () {
             STARTED: 'started',
             ROUTING: 'routing'
         };
-        this._events = new _events2['default'].EventEmitter();
+        this._events = _usrEvents2['default'];
     }
 
     /**

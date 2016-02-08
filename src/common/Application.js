@@ -1,9 +1,9 @@
-import events from 'events';
 import Property from 'property-seek';
 import Module from './Module';
 import * as util from '../util';
 import models from '../usr/models';
 import pool from '../usr/pool';
+import events from '../usr/events';
 
 /**
  * Application is the main class of the framework.
@@ -32,7 +32,10 @@ class Application {
         this.middleware = {};
         this.pool = pool;
         this.framework = {
-            pipes: {},
+            pipes: {
+                filters: {},
+                defines: {}
+            },
             run: {},
             events: {},
             connectors: {},
@@ -49,7 +52,7 @@ class Application {
             STARTED: 'started',
             ROUTING: 'routing'
         };
-        this._events = new events.EventEmitter();
+        this._events = events;
 
     }
 

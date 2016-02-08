@@ -7,7 +7,8 @@ var paths = {
 
     MODULES: 'modules',
     CONNECTORS: 'framework/connectors',
-    PIPES: 'framework/pipes',
+    PIPES_DEFINES: 'framework/pipes/defines',
+    PIPES_FILTERS: 'framework/pipes/filters',
     EVENTS: 'framework/events',
     WEB_PLUGINS: 'framework/express/middleware',
     WEB_ENGINES: 'framework/express/engines',

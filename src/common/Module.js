@@ -82,7 +82,8 @@ class Module {
     framework(connectors, pipes) {
 
         this.loader.require(paths.CONNECTORS, connectors);
-        this.loader.require(paths.PIPES, pipes);
+        this.loader.require(paths.PIPES_DEFINES, pipes.defines);
+        this.loader.require(paths.PIPES_FILTERS, pipes.filters);
         this.submodules.framework(connectors, pipes);
 
     }
@@ -147,14 +148,13 @@ class Module {
      */
     userland(controllers, models, middleware) {
 
-        var prefix = (this.name()) ?
-            this.configuration.readWithDefaults('prefix', this.fqn) : '';
+        var prefix = this.configuration.readWithDefaults('prefix', '');
 
         var events = {};
 
-        this.loader.require('controllers', controllers);
-        this.loader.require('models', models);
-        this.loader.require('middleware', middleware);
+        this.loader.require('controllers', controllers, prefix);
+        this.loader.require('models', models, prefix);
+        this.loader.require('middleware', middleware, prefix);
 
         Object.keys(this.loader.require('events', events)).
         forEach(event => this.application.on(event, events[event]));

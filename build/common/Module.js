@@ -110,7 +110,8 @@ var Module = (function () {
         value: function framework(connectors, pipes) {
 
             this.loader.require(_properties.paths.CONNECTORS, connectors);
-            this.loader.require(_properties.paths.PIPES, pipes);
+            this.loader.require(_properties.paths.PIPES_DEFINES, pipes.defines);
+            this.loader.require(_properties.paths.PIPES_FILTERS, pipes.filters);
             this.submodules.framework(connectors, pipes);
         }
 
@@ -180,13 +181,13 @@ var Module = (function () {
         value: function userland(controllers, models, middleware) {
             var _this3 = this;
 
-            var prefix = this.name() ? this.configuration.readWithDefaults('prefix', this.fqn) : '';
+            var prefix = this.configuration.readWithDefaults('prefix', '');
 
             var events = {};
 
-            this.loader.require('controllers', controllers);
-            this.loader.require('models', models);
-            this.loader.require('middleware', middleware);
+            this.loader.require('controllers', controllers, prefix);
+            this.loader.require('models', models, prefix);
+            this.loader.require('middleware', middleware, prefix);
 
             Object.keys(this.loader.require('events', events)).forEach(function (event) {
                 return _this3.application.on(event, events[event]);

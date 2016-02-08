@@ -14,9 +14,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _pipesBuildPipe = require('pipes/build/Pipe');
+var _pipeTransformPipe = require('pipe-transform/Pipe');
 
-var _pipesBuildPipe2 = _interopRequireDefault(_pipesBuildPipe);
+var _pipeTransformPipe2 = _interopRequireDefault(_pipeTransformPipe);
 
 var _Feature2 = require('./Feature');
 
@@ -54,7 +54,7 @@ var PipesFeature = (function (_Feature) {
 
                 if (!spec) throw new Error('Unknown pipe \'' + pipe + '\' decleared for property ' + property);
 
-                p = new _pipesBuildPipe2['default'](spec, _this.application.framework.pipes.filters);
+                p = new _pipeTransformPipe2['default'](spec, _this.application.framework.pipes.filters);
 
                 q.enque(method, function (req, res, next) {
 

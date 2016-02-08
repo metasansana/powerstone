@@ -1,4 +1,4 @@
-import Pipe from 'pipes/build/Pipe';
+import Pipe from 'pipe-transform/Pipe';
 import Feature from './Feature';
 
 /**

@@ -12,28 +12,32 @@ class PipesFeature extends Feature {
         var p;
         var spec;
         var pipe;
+        var selection;
 
         if (typeof definition.pipes !== 'object') return;
 
         Object.keys(definition.pipes).
-        forEach(property => {
+        forEach(request_property => {
 
-            pipe = definition.pipes[property];
-            spec = this.application.framework.pipes.defines[pipe];
+            selection = definition.pipes[request_property];
+
+            spec = (typeof selection === 'object') ? selection :
+                this.application.framework.pipes.defines[selection];
 
             if (!spec)
-                throw new Error(`Unknown pipe '${pipe}' decleared for property ${property}`);
+                throw new Error(`Unknown pipe selection '${selection}' ` +
+                    `decleared for property '${request_property}'!`);
 
             p = new Pipe(spec, this.application.framework.pipes.filters);
 
             q.enque(method, function(req, res, next) {
 
-                p.run(req[property], function(err, o) {
+                p.run(req[request_property], function(err, o) {
                     if (err) {
                         res.status(409);
                         return res.send();
                     }
-                    req[property] = o;
+                    req[request_property] = o;
                     next();
                 });
             });

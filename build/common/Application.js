@@ -36,6 +36,10 @@ var _usrEvents = require('../usr/events');
 
 var _usrEvents2 = _interopRequireDefault(_usrEvents);
 
+var _usrShared = require('../usr/shared');
+
+var _usrShared2 = _interopRequireDefault(_usrShared);
+
 /**
  * Application is the main class of the framework.
  * @param {String} path The path to intialize this Application to. 
@@ -57,12 +61,14 @@ var Application = (function () {
         _classCallCheck(this, Application);
 
         this.path = path;
+        this.name = 'main';
         this.server = null;
         this.modules = {};
         this.controllers = {};
         this.models = _usrModels2['default'];
         this.middleware = {};
         this.pool = _usrPool2['default'];
+        this.shared = _usrShared2['default'];
         this.framework = {
             pipes: {
                 filters: {},

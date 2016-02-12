@@ -4,6 +4,7 @@ import * as util from '../util';
 import models from '../usr/models';
 import pool from '../usr/pool';
 import events from '../usr/events';
+import shared from '../usr/shared';
 
 /**
  * Application is the main class of the framework.
@@ -25,12 +26,14 @@ class Application {
     constructor(path) {
 
         this.path = path;
+        this.name = 'main';
         this.server = null;
         this.modules = {};
         this.controllers = {};
         this.models = models;
         this.middleware = {};
         this.pool = pool;
+        this.shared = shared;
         this.framework = {
             pipes: {
                 filters: {},

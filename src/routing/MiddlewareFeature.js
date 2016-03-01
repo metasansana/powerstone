@@ -11,7 +11,7 @@ class MiddlewareFeature extends Feature {
 
         this.application.resolveMiddleware(definition.middleware).
         forEach(m => q.enque(method, (req, res, next) => 
-              m(req, res, next, this.application, definition)));
+              m(req, res, next, definition)));
 
     }
 

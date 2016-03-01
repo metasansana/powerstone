@@ -22,6 +22,10 @@ var _Feature2 = require('./Feature');
 
 var _Feature3 = _interopRequireDefault(_Feature2);
 
+var _usrEvents = require('../usr/events');
+
+var _usrEvents2 = _interopRequireDefault(_usrEvents);
+
 /**
  * PipesFeature installs middleware for the pipes framework
  * on a route.
@@ -61,12 +65,14 @@ var PipesFeature = (function (_Feature) {
                 q.enque(method, function (req, res, next) {
 
                     p.run(req[request_property], function (err, o) {
-                        if (err) {
-                            res.status(409);
-                            return res.send();
-                        }
+
+                        if (err) return _usrEvents2['default'].emit('pipe-error', err, req, res, next);
+
                         req[request_property] = o;
                         next();
+                    }, {
+                        request: req,
+                        response: res
                     });
                 });
             });

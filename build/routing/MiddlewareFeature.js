@@ -34,13 +34,12 @@ var MiddlewareFeature = (function (_Feature) {
     _createClass(MiddlewareFeature, [{
         key: 'install',
         value: function install(method, path, definition, q) {
-            var _this = this;
 
             if (!Array.isArray(definition.middleware)) return;
 
             this.application.resolveMiddleware(definition.middleware).forEach(function (m) {
                 return q.enque(method, function (req, res, next) {
-                    return m(req, res, next, _this.application, definition);
+                    return m(req, res, next, definition);
                 });
             });
         }

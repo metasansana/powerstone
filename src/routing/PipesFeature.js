@@ -1,5 +1,6 @@
 import Pipe from 'pipe-transform/Pipe';
 import Feature from './Feature';
+import events from '../usr/events';
 
 /**
  * PipesFeature installs middleware for the pipes framework
@@ -33,12 +34,16 @@ class PipesFeature extends Feature {
             q.enque(method, function(req, res, next) {
 
                 p.run(req[request_property], function(err, o) {
-                    if (err) {
-                        res.status(409);
-                        return res.send();
-                    }
+
+                    if (err)
+                        return events.emit('pipe-error', err, req, res, next);
+
                     req[request_property] = o;
                     next();
+
+                }, {
+                    request: req,
+                    response: res
                 });
             });
         });

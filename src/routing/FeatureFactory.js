@@ -1,4 +1,4 @@
-import PipesFeature from './PipesFeature';
+import PipeFeature from './pipe-transform/PipeFeature';
 import MiddlewareFeature from './MiddlewareFeature';
 import ActionFeature from './ActionFeature';
 import ActionDefinitionFeature from './ActionDefinitionFeature';
@@ -13,7 +13,7 @@ class FeatureFactory {
 
     api(app) {
 
-        return new Decorator(new PipesFeature(app),
+        return new Decorator(new PipeFeature(app),
             new Decorator(new MiddlewareFeature(app),
                 new Decorator(new HandlerFeature(app),
                     new Decorator(new ActionFeature(app),
@@ -22,7 +22,7 @@ class FeatureFactory {
 
     web(app) {
 
-        return new Decorator(new PipesFeature(app),
+        return new Decorator(new PipeFeature(app),
             new Decorator(new MiddlewareFeature(app),
                 new Decorator(new HandlerFeature(app),
                     new Decorator(new ActionFeature(app),

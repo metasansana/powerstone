@@ -10,9 +10,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _PipesFeature = require('./PipesFeature');
+var _pipeTransformPipeFeature = require('./pipe-transform/PipeFeature');
 
-var _PipesFeature2 = _interopRequireDefault(_PipesFeature);
+var _pipeTransformPipeFeature2 = _interopRequireDefault(_pipeTransformPipeFeature);
 
 var _MiddlewareFeature = require('./MiddlewareFeature');
 
@@ -51,13 +51,13 @@ var FeatureFactory = (function () {
         key: 'api',
         value: function api(app) {
 
-            return new _Decorator2['default'](new _PipesFeature2['default'](app), new _Decorator2['default'](new _MiddlewareFeature2['default'](app), new _Decorator2['default'](new _HandlerFeature2['default'](app), new _Decorator2['default'](new _ActionFeature2['default'](app), new _ActionDefinitionFeature2['default'](app)))));
+            return new _Decorator2['default'](new _pipeTransformPipeFeature2['default'](app), new _Decorator2['default'](new _MiddlewareFeature2['default'](app), new _Decorator2['default'](new _HandlerFeature2['default'](app), new _Decorator2['default'](new _ActionFeature2['default'](app), new _ActionDefinitionFeature2['default'](app)))));
         }
     }, {
         key: 'web',
         value: function web(app) {
 
-            return new _Decorator2['default'](new _PipesFeature2['default'](app), new _Decorator2['default'](new _MiddlewareFeature2['default'](app), new _Decorator2['default'](new _HandlerFeature2['default'](app), new _Decorator2['default'](new _ActionFeature2['default'](app), new _Decorator2['default'](new _ActionDefinitionFeature2['default'](app), new _ViewFeature2['default'](app))))));
+            return new _Decorator2['default'](new _pipeTransformPipeFeature2['default'](app), new _Decorator2['default'](new _MiddlewareFeature2['default'](app), new _Decorator2['default'](new _HandlerFeature2['default'](app), new _Decorator2['default'](new _ActionFeature2['default'](app), new _Decorator2['default'](new _ActionDefinitionFeature2['default'](app), new _ViewFeature2['default'](app))))));
         }
     }]);
 

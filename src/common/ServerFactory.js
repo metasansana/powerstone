@@ -1,5 +1,6 @@
 import http from 'http';
 import https from 'https';
+import events from '../usr/events';
 
 /**
  * ServerFactory provides new instances for http.Server or the
@@ -29,12 +30,21 @@ class ServerFactory {
     }
 
     createApiServer(restify, module) {
-        return restify.createServer(module.configuration.readWithDefaults('api.options', null));
+
+        var s = restify.createServer(module.configuration.readWithDefaults('api.options', null));
+
+        s.on('uncaughtException', (req, res, route, err) => {
+            res.status(500);
+            res.send();
+            events.emit('error', err);
+        });
+
+        return s;
     }
 
     createWebServer(app, module) {
 
-      var options = module.configuration.readWithDefaults('web.https', null);
+        var options = module.configuration.readWithDefaults('web.https', null);
 
         if (options)
             return this.createSecureNativeWebServer(options, app);

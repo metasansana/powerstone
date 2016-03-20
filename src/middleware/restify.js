@@ -9,5 +9,11 @@ export function accept_parser(server, app, module) {
 }
 
 export function body_parser(server, app, module) {
-    server.use(restify.bodyParser({mapParams:false}));
+    server.use(restify.bodyParser({
+        mapParams: false
+    }));
+}
+
+export function authorization(server, app, module) {
+    server.use(restify.authorizationParser());
 }

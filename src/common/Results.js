@@ -22,44 +22,50 @@ class Results {
 
     success() {
 
-        this.response.status(200);
-        this.response.send();
+        this.send(200);
 
     }
 
     accepted() {
-        this.response.status(204);
-        this.response.send();
+
+        this.send(204);
+
     }
 
     created(body) {
-        this.response.status(201);
-        this.response.send(body);
+
+        this.send(201, body);
+
     }
 
     badRequest(body) {
-        this.response.status(400);
-        this.response.send(body);
+
+        this.send(400, body);
+
     }
 
     forbidden(body) {
-        this.response.status(403);
-        this.response.send(body);
+
+        this.send(403, body);
+
     }
 
     notFound(body) {
-        this.response.status(404);
-        this.response.send(body);
+
+        this.send(404, body);
+
     }
 
     conflict(body) {
-        this.response.status(409);
-        this.response.send(body);
+
+        this.send(409, body);
+
     }
 
-    internalError() {
-        this.response.status(500);
-        this.response.send();
+    internalError(err) {
+
+        this.send(500);
+
     }
 }
 

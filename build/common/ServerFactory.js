@@ -18,6 +18,10 @@ var _https = require('https');
 
 var _https2 = _interopRequireDefault(_https);
 
+var _usrEvents = require('../usr/events');
+
+var _usrEvents2 = _interopRequireDefault(_usrEvents);
+
 /**
  * ServerFactory provides new instances for http.Server or the
  * framework's own wrapper.
@@ -56,7 +60,16 @@ var ServerFactory = (function () {
     }, {
         key: 'createApiServer',
         value: function createApiServer(restify, module) {
-            return restify.createServer(module.configuration.readWithDefaults('api.options', null));
+
+            var s = restify.createServer(module.configuration.readWithDefaults('api.options', null));
+
+            s.on('uncaughtException', function (req, res, route, err) {
+                res.status(500);
+                res.send();
+                _usrEvents2['default'].emit('error', err);
+            });
+
+            return s;
         }
     }, {
         key: 'createWebServer',

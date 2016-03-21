@@ -121,6 +121,7 @@ var ManagedServer = (function () {
     }, {
         key: 'listen',
         value: function listen(port, hostname, callback) {
+            console.log('lisetning pon  ', arguments);
             this.server.listen(port, hostname, callback);
         }
     }, {

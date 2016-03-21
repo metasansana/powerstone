@@ -272,7 +272,7 @@ var Module = (function () {
             var features;
             var routes;
             var q;
-            var path = this.configuration.readWithDefaults(_properties.configs.PATH, this.path);
+            var path = this.configuration.readWithDefaults(_properties.configs.PATH, '/' + this.name());
 
             this.application.interpolate(this.application.framework.restify.plugins, this.configuration.readWithDefaults(_properties.configs.API_PLUGINS, plugins)).forEach(function (p) {
                 return p(server, _this5.application, _this5);

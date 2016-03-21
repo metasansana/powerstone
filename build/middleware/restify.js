@@ -6,6 +6,7 @@ Object.defineProperty(exports, '__esModule', {
 exports.query_parser = query_parser;
 exports.accept_parser = accept_parser;
 exports.body_parser = body_parser;
+exports.authorization = authorization;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -22,6 +23,12 @@ function accept_parser(server, app, module) {
 }
 
 function body_parser(server, app, module) {
-    server.use(_restify2['default'].bodyParser({ mapParams: false }));
+    server.use(_restify2['default'].bodyParser({
+        mapParams: false
+    }));
+}
+
+function authorization(server, app, module) {
+    server.use(_restify2['default'].authorizationParser());
 }
 //# sourceMappingURL=restify.js.map

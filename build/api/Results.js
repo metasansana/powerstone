@@ -14,74 +14,34 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _pipeTransformPipe = require('pipe-transform/Pipe');
+var _commonResults = require('../common/Results');
 
-var _pipeTransformPipe2 = _interopRequireDefault(_pipeTransformPipe);
-
-var _Feature2 = require('./Feature');
-
-var _Feature3 = _interopRequireDefault(_Feature2);
-
-var _usrEvents = require('../usr/events');
-
-var _usrEvents2 = _interopRequireDefault(_usrEvents);
+var _commonResults2 = _interopRequireDefault(_commonResults);
 
 /**
- * PipesFeature installs middleware for the pipes framework
- * on a route.
+ * Results 
  */
 
-var PipesFeature = (function (_Feature) {
-    _inherits(PipesFeature, _Feature);
+var Results = (function (_BaseResults) {
+    _inherits(Results, _BaseResults);
 
-    function PipesFeature() {
-        _classCallCheck(this, PipesFeature);
+    function Results() {
+        _classCallCheck(this, Results);
 
-        _get(Object.getPrototypeOf(PipesFeature.prototype), 'constructor', this).apply(this, arguments);
+        _get(Object.getPrototypeOf(Results.prototype), 'constructor', this).apply(this, arguments);
     }
 
-    _createClass(PipesFeature, [{
-        key: 'install',
-        value: function install(method, path, definition, q) {
-            var _this = this;
+    _createClass(Results, [{
+        key: 'send',
+        value: function send(status, body) {
 
-            var p;
-            var spec;
-            var pipe;
-            var selection;
-
-            if (typeof definition.pipes !== 'object') return;
-
-            Object.keys(definition.pipes).forEach(function (request_property) {
-
-                selection = definition.pipes[request_property];
-
-                spec = typeof selection === 'object' ? selection : _this.application.framework.pipes.defines[selection];
-
-                if (!spec) throw new Error('Unknown pipe selection \'' + selection + '\' ' + ('decleared for property \'' + request_property + '\'!'));
-
-                p = new _pipeTransformPipe2['default'](spec, _this.application.framework.pipes.filters);
-
-                q.enque(method, function (req, res, next) {
-
-                    p.run(req[request_property], function (err, o) {
-
-                        if (err) return _usrEvents2['default'].emit('pipe-error', err, req, res, next);
-
-                        req[request_property] = o;
-                        next();
-                    }, {
-                        request: req,
-                        response: res
-                    });
-                });
-            });
+            this.response.send(status, body);
         }
     }]);
 
-    return PipesFeature;
-})(_Feature3['default']);
+    return Results;
+})(_commonResults2['default']);
 
-exports['default'] = PipesFeature;
+exports['default'] = Results;
 module.exports = exports['default'];
-//# sourceMappingURL=PipesFeature.js.map
+//# sourceMappingURL=Results.js.map

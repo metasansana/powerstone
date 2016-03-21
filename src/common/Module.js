@@ -237,7 +237,7 @@ class Module {
         var features;
         var routes;
         var q;
-        var path = this.configuration.readWithDefaults(configs.PATH, this.path);
+         var path = this.configuration.readWithDefaults(configs.PATH, `/${this.name()}`);
 
         this.application.interpolate(this.application.framework.restify.plugins,
             this.configuration.readWithDefaults(configs.API_PLUGINS, plugins)).

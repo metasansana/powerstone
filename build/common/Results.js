@@ -35,50 +35,49 @@ var Results = (function () {
         key: "success",
         value: function success() {
 
-            this.response.status(200);
-            this.response.send();
+            this.send(200);
         }
     }, {
         key: "accepted",
         value: function accepted() {
-            this.response.status(204);
-            this.response.send();
+
+            this.send(204);
         }
     }, {
         key: "created",
         value: function created(body) {
-            this.response.status(201);
-            this.response.send(body);
+
+            this.send(201, body);
         }
     }, {
         key: "badRequest",
         value: function badRequest(body) {
-            this.response.status(400);
-            this.response.send(body);
+
+            this.send(400, body);
         }
     }, {
         key: "forbidden",
         value: function forbidden(body) {
-            this.response.status(403);
-            this.response.send(body);
+
+            this.send(403, body);
         }
     }, {
         key: "notFound",
         value: function notFound(body) {
-            this.response.status(404);
-            this.response.send(body);
+
+            this.send(404, body);
         }
     }, {
         key: "conflict",
         value: function conflict(body) {
-            this.response.status(409);
-            this.response.send(body);
+
+            this.send(409, body);
         }
     }, {
         key: "internalError",
-        value: function internalError() {
-            this.response.status(500);
-            this.response.send();
+        value: function internalError(err) {
+
+            this.send(500);
         }
     }]);
 

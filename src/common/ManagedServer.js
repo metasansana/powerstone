@@ -28,7 +28,7 @@ class ManagedServer {
         this.connectionId += 1;
         socket._serverId = self.connectionId;
 
-        socket.on('close', function () {
+        socket.on('close', function() {
             delete self.connections[this._serverId];
         });
 
@@ -43,7 +43,7 @@ class ManagedServer {
 
         var self = this;
 
-        Object.keys(self.connections).forEach(function (socketId) {
+        Object.keys(self.connections).forEach(function(socketId) {
             var socket = self.connections[socketId];
             if (socket) socket.destroy();
 
@@ -57,9 +57,9 @@ class ManagedServer {
      */
     start() {
         var self = this;
-        return new Promise(function (resolve) {
+        return new Promise(function(resolve) {
             self.server.on('connection', self._store.bind(self));
-            self.server.on('listening', x=>resolve(self.port, self.host, self));
+            self.server.on('listening', x => resolve(self.port, self.host, self));
             self.server.listen(self.port, self.host);
         });
     }
@@ -70,8 +70,8 @@ class ManagedServer {
      */
     shutdown() {
         var self = this;
-        return new Promise(function (resolve) {
-            self.server.close(x=>resolve(self));
+        return new Promise(function(resolve) {
+            self.server.close(x => resolve(self));
             self.flush();
         });
 
@@ -91,6 +91,7 @@ class ManagedServer {
     }
 
     listen(port, hostname, callback) {
+        console.log('lisetning pon  ', arguments);
         this.server.listen(port, hostname, callback);
     }
 
@@ -105,8 +106,3 @@ class ManagedServer {
 }
 
 export default ManagedServer;
-
-
-
-
-

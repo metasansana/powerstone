@@ -64,7 +64,7 @@ var PipeController = (function (_Controller) {
 
             p = new _pipeTransformPipe2['default'](spec, this.app.framework.pipes.filters);
 
-            p.run(_propertySeek2['default'].get(this.request, prop), function (err, o) {
+            p.run(_propertySeek2['default'].get(this.request, prop) || Object.create(null), function (err, o) {
 
                 if (err) return _usrEvents2['default'].emit('pipe-error', err, _this.request, _this.response, next);
 

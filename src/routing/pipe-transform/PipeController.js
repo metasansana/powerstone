@@ -29,7 +29,7 @@ class PipeController extends Controller {
 
         p = new Pipe(spec, this.app.framework.pipes.filters);
 
-        p.run(Property.get(this.request, prop), (err, o) => {
+        p.run(Property.get(this.request, prop) || Object.create(null), (err, o) => {
 
             if (err)
                 return events.emit('pipe-error', err,

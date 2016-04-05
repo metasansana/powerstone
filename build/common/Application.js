@@ -50,6 +50,7 @@ var _usrShared2 = _interopRequireDefault(_usrShared);
  * @property {object} controllers - Controllers loaded into memory.
  * @property {object} models - Models loaded into memory.
  * @property {object} middleware - Middleware loaded into memory.
+ * @property {ManagedServer|null} server - The internal managed server that serves clients.
  * @property {object} pool - A pool of connections the Application has made.
  * @property {object} framework.express - Loaded modules for express
  * @property {object} framework.restify - Loaded modules for restify

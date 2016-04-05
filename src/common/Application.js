@@ -16,6 +16,7 @@ import shared from '../usr/shared';
  * @property {object} controllers - Controllers loaded into memory.
  * @property {object} models - Models loaded into memory.
  * @property {object} middleware - Middleware loaded into memory.
+ * @property {ManagedServer|null} server - The internal managed server that serves clients.
  * @property {object} pool - A pool of connections the Application has made.
  * @property {object} framework.express - Loaded modules for express
  * @property {object} framework.restify - Loaded modules for restify
@@ -216,6 +217,7 @@ class Application {
         then(() => m.userland(this.controllers, this.models, this.middleware));
 
     }
+
 }
 
 export default Application;

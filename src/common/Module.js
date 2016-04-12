@@ -245,7 +245,6 @@ class Module {
 
         features = FeatureFactory.api(this.application);
         routes = this.loader.load(paths.API_ROUTES, {
-            api: {}
         });
 
         Object.keys(routes).

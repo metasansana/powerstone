@@ -82,12 +82,20 @@ var Loader = (function () {
         key: 'load',
         value: function load(path, defaults) {
 
+            var isdir = false;
+
+            path = this.join(path);
+
             try {
-                return require(this.join(path));
+                isdir = _fs2['default'].statSync(path).isDirectory();
             } catch (e) {
-                if (e.code !== 'MODULE_NOT_FOUND' || !defaults) throw e;
+                if (!defaults) throw new Error('Unable to load path \'' + path + '\'!');
                 return defaults;
             }
+
+            if (isdir) throw new Error('The path \'' + path + '\' must be a file!');
+
+            return require(path);
         }
 
         /**

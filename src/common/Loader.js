@@ -42,12 +42,21 @@ class Loader {
      */
     load(path, defaults) {
 
+        var isdir = false;
+
+        path = this.join(path);
+
         try {
-            return require(this.join(path));
+            isdir = fs.statSync(path).isDirectory();
         } catch (e) {
-            if ((e.code !== 'MODULE_NOT_FOUND') || (!defaults)) throw e;
+            if (!defaults) throw new Error(`Unable to load path '${path}'!`);
             return defaults;
         }
+
+        if (isdir)
+            throw new Error(`The path '${path}' must be a file!`);
+
+        return require(path);
 
     }
 
@@ -81,12 +90,12 @@ class Loader {
             files.forEach((pathToFile) => {
                 if (extensions.indexOf(Path.extname(pathToFile)) < 0) return;
 
-                Property.set(merge, prefix+Path.basename(pathToFile, Path.extname(pathToFile)),
-                  require(dir+'/'+pathToFile));
+                Property.set(merge, prefix + Path.basename(pathToFile, Path.extname(pathToFile)),
+                    require(dir + '/' + pathToFile));
 
                 //Disabled, will remove if using property-seek works
                 //merge[prefix + Path.basename(pathToFile, Path.extname(pathToFile))] =
-                   // require(dir + '/' + pathToFile);
+                // require(dir + '/' + pathToFile);
 
             });
 

@@ -13,10 +13,10 @@ var paths = {
     WEB_PLUGINS: 'framework/express/middleware',
     WEB_ENGINES: 'framework/express/engines',
     API_PLUGINS: 'framework/restify/plugins',
-    WEB_ROUTES: 'webconf/routes',
-    WEB_CONFIG: 'webconf/config',
-    API_ROUTES: 'apiconf/routes',
-    API_CONFIG: 'apiconf/config'
+    WEB_ROUTES: 'webconf/routes.js',
+    WEB_CONFIG: 'webconf/config.js',
+    API_ROUTES: 'apiconf/routes.js',
+    API_CONFIG: 'apiconf/config.js'
 
 };
 

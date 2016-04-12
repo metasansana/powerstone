@@ -279,9 +279,7 @@ var Module = (function () {
             });
 
             features = _routingFeatureFactory2['default'].api(this.application);
-            routes = this.loader.load(_properties.paths.API_ROUTES, {
-                api: {}
-            });
+            routes = this.loader.load(_properties.paths.API_ROUTES, {});
 
             Object.keys(routes).forEach(function (route) {
                 q = new _routingRestifyQ2['default'](path + route, server);

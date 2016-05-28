@@ -1,7 +1,7 @@
 {
     "name": "powerstone",
     "version": "0.1.6",
-    "description": "Application framework for mongodb powered apps.",
+    "description": "A framework for writing web servers a certain way.",
     "repository": {
         "type": "git",
         "url": "https://github.com/metasansana/powerstone.git"
@@ -50,15 +50,13 @@
         "test": "npm run -s test-web; npm run -s test-api",
         "test-web": "./node_modules/.bin/mocha --opts mocha.opts test/func/web.js",
         "test-api": "./node_modules/.bin/mocha --opts mocha.opts test/func/api.js",
-        "build": "rm -R build; node_modules/.bin/babel -D -w src -s true -d build",
-        "api-docs": "rm -R docs/api; node_modules/.bin/jsdoc -c jsdoc.json",
-        "prepublish": "mv build/* .; rm -R build;",
-        "postpublish":"git checkout . && git clean -fd"
+        "build": "rm -R release; node_modules/.bin/babel -D -w src -s true -d release",
+        "api-docs": "rm -R docs/api; node_modules/.bin/jsdoc -c jsdoc.json"
     },
     "engines": {
         "node": "4.2.5"
     },
     "files": [
-        "build/*"
+        "release"
     ]
 }

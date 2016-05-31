@@ -18,27 +18,42 @@ var _deepmerge = require('deepmerge');
 
 var _deepmerge2 = _interopRequireDefault(_deepmerge);
 
+function exists(path) {
+
+    try {
+        return fs.statSync(path).isFile();
+    } catch (e) {
+        return false;
+    }
+}
+
 /**
  * Configuration
+ * @param {string} dir
+ * @param {string} path 
+ * @property {object} keys
+ * @property {string} path
  */
 
 var Configuration = (function () {
-    function Configuration(config, path) {
+    function Configuration(dir, path) {
         _classCallCheck(this, Configuration);
 
-        this.config = config;
-        this.path = path;
+        this.paths = {
+            root: path,
+            config: path + '/' + dir + '/config.js',
+            routes: path + '/' + dir + '/routes.js',
+            modules: path + '/modules'
+        };
+
+        this.options = exists(this.paths.config) ? require(this.paths.config) : {};
+        this.routes = exists(this.paths.routes) ? require(this.paths.routes) : {};
     }
 
     _createClass(Configuration, [{
         key: 'read',
-        value: function read(key) {
-            return _propertySeek2['default'].get(this.config, key);
-        }
-    }, {
-        key: 'readWithDefaults',
-        value: function readWithDefaults(key, defaults) {
-            var ret = _propertySeek2['default'].get(this.config, key);
+        value: function read(key, defaults) {
+            var ret = _propertySeek2['default'].get(this.options, key);
             if (ret) return ret;
             return defaults;
         }
@@ -52,6 +67,13 @@ var Configuration = (function () {
 
     return Configuration;
 })();
+
+Configuration.keys = {
+    MODULES: 'modules',
+    CONNECTIONS: 'connections',
+    MIDDLEWARE: 'middleware',
+    PATH: 'path'
+};
 
 exports['default'] = Configuration;
 module.exports = exports['default'];

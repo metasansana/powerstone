@@ -1,22 +1,42 @@
 import Property from 'property-seek';
 import merge from 'deepmerge';
 
+function exists(path) {
+
+    try {
+        return fs.statSync(path).isFile();
+    } catch (e) {
+        return false;
+
+    }
+}
+
+
 /**
  * Configuration
+ * @param {string} dir
+ * @param {string} path 
+ * @property {object} keys
+ * @property {string} path
  */
 class Configuration {
 
-    constructor(config, path) {
-        this.config = config;
-        this.path = path;
+    constructor(dir, path) {
+
+        this.paths = {
+            root: path,
+            config: `${path}/${dir}/config.js`,
+            routes: `${path}/${dir}/routes.js`,
+            modules: `${path}/modules`
+        };
+
+        this.options = (exists(this.paths.config)) ? require(this.paths.config) : {};
+        this.routes = (exists(this.paths.routes)) ? require(this.paths.routes) : {};
+
     }
 
-    read(key) {
-        return Property.get(this.config, key);
-    }
-
-    readWithDefaults(key, defaults) {
-        var ret = Property.get(this.config, key);
+    read(key, defaults) {
+        var ret = Property.get(this.options, key);
         if (ret) return ret;
         return defaults;
     }
@@ -27,5 +47,12 @@ class Configuration {
     }
 
 }
+
+Configuration.keys = {
+    MODULES: 'modules',
+    CONNECTIONS: 'connections',
+    MIDDLEWARE: 'middleware',
+    PATH: 'path'
+};
 
 export default Configuration

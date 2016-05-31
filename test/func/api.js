@@ -1,12 +1,15 @@
 import request from 'supertest-as-promised';
 import must from 'must';
-import Application from '../../src/api/Application';
+import Api from '../../src/api/Api';
 
-var app;
+class App extends Api {
+
+
+}
 
 before(function() {
 
-    app = new Application(`${__dirname}/assets/projects/voicemail`);
+    app = new App(`${__dirname}/assets/projects/voicemail`);
     global.connected = false;
     return app.run();
 
@@ -16,7 +19,7 @@ beforeEach(function() {
     global.count = 0;
 });
 
-describe('Application', function() {
+describe('Api', function() {
     describe('.run()', function() {
 
         global.requests = 24;

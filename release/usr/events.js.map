@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/usr/events.js"],"names":[],"mappings":";;;;;;;;sBAAmB,QAAQ;;;;qBACZ,IAAI,oBAAO,YAAY,EAAE","file":"events.js","sourcesContent":["import events from 'events';\nexport default new events.EventEmitter();\n"]}

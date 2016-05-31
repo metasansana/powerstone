@@ -1,264 +1,147 @@
 import CompositeModule from './CompositeModule';
-import FeatureFactory from '../routing/FeatureFactory';
-import RestifyQ from '../routing/RestifyQ';
-import ExpressQ from '../routing/ExpressQ';
-import * as util from '../util';
-import {
-    configs,
-    paths
-}
-from './properties';
+import BulkLookup from './BulkLookup';
+import RequireLookup from './RequireLookup';
+import Router from './Router';
 
 /**
  * Module
- * @param {string} fqn The name of the module prefixed with its parent modules 
- * @param {string} path 
+ * @abstract
+ * @param {string} name
  * @param {Configuration} config 
- * @param {Loader} loader 
+ * @param {HttpHandler} handler 
  * @param {Application} app 
+ *
+ * @property {string} name
+ * @property {Configuration} configuration
+ * @property {HttpHandler} handler
+ * @property {ResourceLookup} resources
+ * @property {Router} router
+ * @property {Application} application
+ * @property {CompositeModule} submodules
  */
 class Module {
 
-    constructor(fqn, path, config, loader, app) {
+    constructor(name, config, app) {
 
-        this.fqn = fqn;
-        this.path = path;
+        this.name = name;
         this.configuration = config;
-        this.loader = loader;
         this.application = app;
         this.submodules = new CompositeModule([]);
 
     }
 
     /**
-     * name provides the name of this module
-     *  @return {string}
+     * __submodule is called to create a submodule for this module.
+     * @param {string} name 
+     * @param {Configuration} config 
+     * @param {Application} app 
+     * @abstract
+     * @returns {Module}
      */
-    name() {
+    __submodule(name, config, app) {
 
-        return (this.fqn) ?
-            this.fqn.split('.').pop() : '';
 
     }
 
     /**
-     * modules loads all the submodules for this module into memory.
-     * @param {object} mods 
+     * __init initializes this module and its submodules
      */
-    modules(mods) {
+    __init() {
 
-        var name;
-        var path;
-        var loader;
-        var config;
-        var fqn;
-        var m;
+        var module;
+        var submodules = this.configuration.read(Configuration.keys.MODULES, {});
+        var look = new BulkLookup('require', new RequireLookup(this.configuration.path.modules));
 
-        this.submodules = new CompositeModule(
-            this.configuration.readWithDefaults(paths.MODULES, []).map((path) => {
+        look.add('require', new RequireLookup());
 
-                loader = this.application.getLoader(this.loader.join(paths.MODULES + '/' + path));
-                config = loader.getConfiguration();
-                name = loader.basename();
-                fqn = (this.fqn) ? `${this.fqn}.${name}` : name;
-                path = `${this.path}/${name}`;
+        Object.keys(submodules).
+        forEach(path => {
 
-                m = new Module(fqn, path, config, loader, this.application);
-                mods[name] = m;
-                return m;
+            module = resources.lookup(path).module;
 
-            }));
+            if (subs[path] === false)
+                module.preventRoutes();
 
-        this.submodules.modules(mods);
+            this.submodules.add(module);
 
-    }
 
-    /**
-     * framework loads the files from the framework
-     * folder so that they are available in later steps
-     * @param {object} connectors
-     * @param {object} pipes 
-     */
-    framework(connectors, pipes) {
+        }) this.submodules.add(
+            this.__submodule(this.resources.lookup(path), this.handler, this.application)));
 
-        this.loader.require(paths.CONNECTORS, connectors);
-        this.loader.require(paths.PIPES_DEFINES, pipes.defines);
-        this.loader.require(paths.PIPES_FILTERS, pipes.filters);
-        this.submodules.framework(connectors, pipes);
+    this.submodules.__init();
 
-    }
+}
 
-    /**
-     * expressFramework loads the pieces for the express framework
-     * @param {object} middleware
-     * @param {object} engines 
-     */
-    expressFramework(middleware, engines) {
+/**
+ * __connections establishes the connections decleared in the config file.
+ * @param {object} pool 
+ * @return {array<Promise>}
+ */
+__connections(pool) {
 
-        this.loader.require(paths.WEB_PLUGINS, middleware);
-        this.loader.require(paths.WEB_ENGINES, engines);
-        this.submodules.expressFramework(middleware, engines);
+    var config;
+    var connector;
 
-    }
+    return Object.keys(this.configuration.readOrDefault(Configuration.keys.CONNECTIONS, {})).
+    map(key => {
 
-    /**
-     * restifyFramework loads the pieces for the restify framework
-     */
-    restifyFramework(plugins) {
+        config = connections[key];
+        connector = this.resources.lookup(config.connector);
+        return connector(config.options).then(c => pool[key] = c);
 
-        this.loader.require(paths.API_PLUGINS, plugins);
-        this.submodules.restifyFramework(plugins);
+    }).concat(this.submodules.connections(pool));
 
-    }
+}
 
-    /**
-     * connections opens the connections defined in the module's config file.
-     * @param {object} types A list of available connection types
-     * @param {object} conns Opened connections will be referenced here
-     * @return {array<Promise>}
-     */
-    connections(types, conns) {
+/**
+ * __middleware loads the pre routing middleware.
+ */
+__middleware() {
 
-        var type;
-        var cfgs = this.configuration.readWithDefaults(configs.CONNECTIONS, {});
-        var cfg;
+    var wares = this.config.readOrDefault(Configuration.keys.MIDDLEWARE, {});
 
-        return Object.keys(cfgs)
-            .map(key => {
+    if (Array.isArray(wares.load))
+        wares.load.forEach(m => {
+            var resource = this.resources.lookup(m);
 
-                cfg = cfgs[key];
-                type = types[cfg.connector];
+            if (typeof resource.module !== 'function')
+                throw new TypeError('Middleware must be a function, got ',
+                    typeof resource.module, '!');
 
-                if (!type)
-                    throw new Error(`Unknown connector '${cfg.connector}' ` +
-                        `specified in ${this.configuration.path}`);
-
-                return new Promise((yes, no) => type(cfg.options, yes, no)).
-                then(con => conns[key] = con);
-
-            }).concat(this.submodules.connections(types, conns));
-
-    }
-
-    /**
-     * userland loads the userland code into memory
-     * @param {object} controllers 
-     * @param {object} models
-     * @param {object} middleware 
-     */
-    userland(controllers, models, middleware) {
-
-        var prefix = this.configuration.readWithDefaults('prefix', '');
-
-        var events = {};
-
-        this.loader.require('controllers', controllers, prefix);
-        this.loader.require('models', models, prefix);
-        this.loader.require('middleware', middleware, prefix);
-
-        Object.keys(this.loader.require('events', events)).
-        forEach(event => this.application.on(event, events[event]));
-
-        this.submodules.userland(controllers, models, middleware);
-
-    }
-
-    /**
-     * express configures the express framework
-     * @param {express.Application} app
-     * @param {express} express 
-     * @param {array} mware Default middleware to apply if non specified
-     */
-    express(app, express, mware) {
-
-        var isMain = (this.name() === '');
-        var isApp = ((!this.configuration.read(configs.USE_WEB_ROUTER)) || isMain);
-        var target = (isApp) ? express() : express.Router();
-        var router;
-        var path = this.configuration.readWithDefaults(configs.PATH, `/${this.name()}`);
-        var engine = this.configuration.readWithDefaults(configs.WEB_ENGINE, null);
-        var engineSetup = this.application.framework.express.engines[engine];
-        var features
-        var routes;
-        var q;
-
-        this.application.interpolate(this.application.framework.express.middleware,
-            this.configuration.readWithDefaults(configs.WEB_PLUGINS, mware)).
-        forEach(m => m(target, this));
-
-        if (isMain)
-            this.application.emit(this.application.events.ROUTING, target, this);
-
-        if (isApp) {
-            if (engine && (!engineSetup)) {
-                throw new Error(`The view engine '${engine}' was not found!`);
-            } else if (engine) {
-
-                if (typeof engineSetup !== 'function')
-                    throw new Error(`Invalid configure script found for view engine '${engine}'!` +
-                        `The script must export a function, found typeof '${typeof engine}'.`);
-
-                engineSetup(target, this);
-
-            }
-        }
-
-        features = FeatureFactory.web(this.application);
-
-        routes = this.loader.load(paths.WEB_ROUTES, {
-            web: {}
+            resource.module.
+            apply(this, (wares.options) ?
+                (wares.options[resource.basename]) ? wares.options[resource.basename] : null : null);
         });
 
-        Object.keys(routes).
-        forEach(function(path) {
-            q = new ExpressQ(path, target);
-            Object.keys(routes[path]).
-            forEach(method => features.install(method, path, routes[path][method], q));
-            q.flush();
-        });
+    this.submodules.middleware();
 
-        if (isMain) {
-            app.use(target);
-        } else if (path) {
-            app.use(path, target);
-        }
+}
 
-        this.submodules.express((isApp) ? target : app, express, (isApp) ? ['public'] : []);
-    }
+/**
+ * __routing sets up the routing for this module
+ * @param {string} point The mount point of this module's parent's router.
+ * @param {Router} parent The router of this module's parent.
+ */
+__routing(mountPoint, parent) {
 
-    /**
-     * restify
-     * @param {restify.Server} server
-     * @param {array} plugins 
-     * @param {string} path 
-     */
-    restify(server, plugins) {
+    var path = this.configuration.readOrDefault(Configuration.keys.PATH, `/${this.name}`);
+    var routes = this.configuration.readOrDefault(Configuration.keys.ROUTES, {});
 
-        var features;
-        var routes;
-        var q;
-         var path = this.configuration.readWithDefaults(configs.PATH, `/${this.name()}`);
+    Object.keys(routes).forEach(route => this.router.add(route));
+    this.submodules.__routing(`${point}/${path}`, this.router);
+    parent.use(path, this.router);
 
-        this.application.interpolate(this.application.framework.restify.plugins,
-            this.configuration.readWithDefaults(configs.API_PLUGINS, plugins)).
-        forEach(p => p(server, this.application, this));
+}
 
-        features = FeatureFactory.api(this.application);
-        routes = this.loader.load(paths.API_ROUTES, {
-        });
+/**
+ * load this module
+ */
+load() {
 
-        Object.keys(routes).
-        forEach((route) => {
-            q = new RestifyQ(path + route, server);
-            Object.keys(routes[route]).
-            forEach(method =>
-                features.install(method, path + route, routes[route][method], q));
-            q.flush();
-        });
+    this.__init();
 
-        this.submodules.restify(server, []);
+}
 
-    }
 }
 
 export default Module

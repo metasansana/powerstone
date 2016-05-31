@@ -1,6 +1,5 @@
 import http from 'http';
 import https from 'https';
-import events from '../usr/events';
 
 /**
  * ServerFactory provides new instances for http.Server or the

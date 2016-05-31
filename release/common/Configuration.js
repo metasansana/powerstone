@@ -18,10 +18,14 @@ var _deepmerge = require('deepmerge');
 
 var _deepmerge2 = _interopRequireDefault(_deepmerge);
 
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
+
 function exists(path) {
 
     try {
-        return fs.statSync(path).isFile();
+        return _fs2['default'].statSync(path).isFile();
     } catch (e) {
         return false;
     }
@@ -43,7 +47,8 @@ var Configuration = (function () {
             root: path,
             config: path + '/' + dir + '/config.js',
             routes: path + '/' + dir + '/routes.js',
-            modules: path + '/modules'
+            modules: path + '/modules',
+            connectors: path + '/connectors'
         };
 
         this.options = exists(this.paths.config) ? require(this.paths.config) : {};
@@ -70,7 +75,8 @@ var Configuration = (function () {
 
 Configuration.keys = {
     MODULES: 'modules',
-    CONNECTIONS: 'connections',
+    CONNECTIONS: 'connections.open',
+    CONNECTORS: 'connections.connectors',
     MIDDLEWARE: 'middleware',
     PATH: 'path'
 };

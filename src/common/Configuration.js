@@ -1,5 +1,6 @@
 import Property from 'property-seek';
 import merge from 'deepmerge';
+import fs from 'fs';
 
 function exists(path) {
 
@@ -27,7 +28,8 @@ class Configuration {
             root: path,
             config: `${path}/${dir}/config.js`,
             routes: `${path}/${dir}/routes.js`,
-            modules: `${path}/modules`
+            modules: `${path}/modules`,
+            connectors: `${path}/connectors`
         };
 
         this.options = (exists(this.paths.config)) ? require(this.paths.config) : {};
@@ -50,7 +52,8 @@ class Configuration {
 
 Configuration.keys = {
     MODULES: 'modules',
-    CONNECTIONS: 'connections',
+    CONNECTIONS: 'connections.open',
+    CONNECTORS: 'connections.connectors', 
     MIDDLEWARE: 'middleware',
     PATH: 'path'
 };

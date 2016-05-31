@@ -1,5 +1,5 @@
-import CompositeModule from './CompositeModule';
-import Configuration from './Configuration';
+import Configuration from '../common/Configuration';
+import Module from '../common/Module';
 
 /**
  * Module
@@ -9,12 +9,12 @@ import Configuration from './Configuration';
  * @param {Loader} loader 
  * @param {Application} app 
  */
-class Module {
+class ApiModule extends Module {
 
-    __submodule(resource, framework, app) {
+    __submodule(resource, app) {
 
-        var config = new Configuration('apiconf.js', resource.path);
-        return new WebModule(name, config, express(), app);
+        return new ApiModule(resource.basename, 
+            new Configuration('apiconf', resource.path), this.context, app);
 
     }
 
@@ -23,6 +23,32 @@ class Module {
 
     }
 
+    __routing(point, parent) {
+
+        var path = this.configuration.readOrDefault(Configuration.keys.PATH, `/${this.name}`);
+        var routes = this.configuration.readOrDefault(Configuration.keys.ROUTES, {});
+        var location = `${point}/${path}`;
+        var action;
+
+        Object.keys(routes).
+        forEach(path => {
+
+            Object.keys(routes[path]).
+            map(method => {
+
+                actions = new Actions(method, path, Delegates.create(routes[path][method]));
+                actions.apply(this._handler);
+
+            });
+
+        });
+
+        this.submodules.__routing(location, this.handler);
+        parent.use(path, this.handler);
+
+    }
+
+
 }
 
-export default Module
+export default ApiModule

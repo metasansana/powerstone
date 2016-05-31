@@ -30,6 +30,10 @@ var _commonApplication = require('../common/Application');
 
 var _commonApplication2 = _interopRequireDefault(_commonApplication);
 
+var _ApiModule = require('./ApiModule');
+
+var _ApiModule2 = _interopRequireDefault(_ApiModule);
+
 var _commonPowerstoneServer = require('../common/PowerstoneServer');
 
 var _commonPowerstoneServer2 = _interopRequireDefault(_commonPowerstoneServer);
@@ -38,9 +42,13 @@ var _commonManagedServer = require('../common/ManagedServer');
 
 var _commonManagedServer2 = _interopRequireDefault(_commonManagedServer);
 
-var _ApiLoader = require('./ApiLoader');
+var _commonConfiguration = require('../common/Configuration');
 
-var _ApiLoader2 = _interopRequireDefault(_ApiLoader);
+var _commonConfiguration2 = _interopRequireDefault(_commonConfiguration);
+
+var _commonContext = require('../common/Context');
+
+var _commonContext2 = _interopRequireDefault(_commonContext);
 
 function handleException(req, res, next, err) {
 
@@ -56,8 +64,10 @@ var Api = (function (_Application) {
         _classCallCheck(this, Api);
 
         _get(Object.getPrototypeOf(Api.prototype), 'constructor', this).call(this, path);
-        this.main = new ApiModule('', new Configuration('apiconf', path), this);
-        this.frameworkApp = _restify2['default'].createServer(this.main.configuration.readOrDefault('restify', null));
+
+        this.main = new _ApiModule2['default']('', new _commonConfiguration2['default']('apiconf', path), new _commonContext2['default'](), this);
+
+        this.frameworkApp = _restify2['default'].createServer(this.main.configuration.read('restify', null));
     }
 
     _createClass(Api, [{
@@ -65,20 +75,15 @@ var Api = (function (_Application) {
         value: function run() {
             var _this = this;
 
-            this.main.load(this.frameworkApp).then(function () {
+            return this.main.load(this.frameworkApp).then(function () {
 
-                _this.framework.restify.plugins = (0, _deepmerge2['default'])(_this.framework.restify.plugins, plugins);
-                _this.modules.main.restifyFramework(_this.framework.restify.plugins);
-                _this.modules.main.restify(engine, ['body_parser', 'query_parser'], '');
                 _this.frameworkApp.on('uncaughtException', handleException);
 
-                _this.server = new _commonManagedServer2['default'](_this.modules.main.configuration.readWithDefaults('port', process.env.PORT || 3000), _this.modules.main.configuration.readWithDefaults('host', process.env.HOST || '0.0.0.0'), new _commonPowerstoneServer2['default'](engine));
+                _this.server = new _commonManagedServer2['default'](_this.main.configuration.read('port', process.env.PORT || 3000), _this.main.configuration.read('host', process.env.HOST || '0.0.0.0'), new _commonPowerstoneServer2['default'](_this.frameworkApp));
 
                 return _this.server.start();
             }).then(function (port) {
-                return _this._events.emit(_this.events.STARTED, port, _this);
-            })['catch'](function (err) {
-                return _this._events.emit(_this.events.ERROR, err, _this);
+                return console.log(port);
             });
         }
     }]);
@@ -86,6 +91,6 @@ var Api = (function (_Application) {
     return Api;
 })(_commonApplication2['default']);
 
-exports['default'] = _commonApplication2['default'];
+exports['default'] = Api;
 module.exports = exports['default'];
 //# sourceMappingURL=Api.js.map

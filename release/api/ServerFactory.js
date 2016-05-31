@@ -10,24 +10,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _http = require('http');
+var _restify = require('restify');
 
-var _http2 = _interopRequireDefault(_http);
-
-var _https = require('https');
-
-var _https2 = _interopRequireDefault(_https);
-
-var _usrEvents = require('../usr/events');
-
-var _usrEvents2 = _interopRequireDefault(_usrEvents);
-
-/**
- * ServerFactory provides new instances for http.Server or the
- * framework's own wrapper.
- *
- * Powerstone wraps these in its own wrapper to provide a maintainable api.
- */
+var _restify2 = _interopRequireDefault(_restify);
 
 var ServerFactory = (function () {
     function ServerFactory() {
@@ -35,51 +20,18 @@ var ServerFactory = (function () {
     }
 
     _createClass(ServerFactory, [{
-        key: 'createNativeWebServer',
+        key: 'create',
+        value: function create(main) {
 
-        /**
-         * createNativeWebServer creates and returns a http.Server
-         * @param {express.Application} app
-         * @returns {*}
-         */
-        value: function createNativeWebServer(app) {
-            return _http2['default'].createServer(app);
-        }
-
-        /**
-         * createSecureNativeWebServer creates and returns a https.Server
-         * @param {Object} options
-         * @param {express.Application} app
-         * @returns {*}
-         */
-    }, {
-        key: 'createSecureNativeWebServer',
-        value: function createSecureNativeWebServer(options, app) {
-            return _https2['default'].createServer(options, app);
-        }
-    }, {
-        key: 'createApiServer',
-        value: function createApiServer(restify, module) {
-
-            var s = restify.createServer(module.configuration.readWithDefaults('api.options', null));
+            var s = _restify2['default'].createServer(main.configuration.readOrDefault('api.options', null));
 
             s.on('uncaughtException', function (req, res, route, err) {
                 res.status(500);
                 res.send();
-                _usrEvents2['default'].emit('error', err);
+                events.emit('error', err);
             });
 
             return s;
-        }
-    }, {
-        key: 'createWebServer',
-        value: function createWebServer(app, module) {
-
-            var options = module.configuration.readWithDefaults('web.https', null);
-
-            if (options) return this.createSecureNativeWebServer(options, app);
-
-            return this.createNativeWebServer(app);
         }
     }]);
 

@@ -19,13 +19,35 @@ var Router = (function () {
         this._routes = [];
     }
 
-    /**
-     * add a Route to this router
-     * @param {string} path 
-     * @param {Route} route 
-     */
-
     _createClass(Router, [{
+        key: "configure",
+        value: function configure() {
+            var _this = this;
+
+            var path = this.configuration.readOrDefault(Configuration.keys.PATH, "/" + this.name);
+            var routes = this.configuration.readOrDefault(Configuration.keys.ROUTES, {});
+            var location = point + "/" + path;
+            var action;
+
+            Object.keys(routes).forEach(function (path) {
+
+                Object.keys(routes[path]).map(function (method) {
+
+                    actions = new Actions(method, path, Delegates.create(routes[path][method]));
+                    actions.apply(_this._handler);
+                });
+            });
+
+            this.submodules.__routing(location, this.handler);
+            parent.use(path, this.handler);
+        }
+
+        /**
+         * add a Route to this router
+         * @param {string} path 
+         * @param {Route} route 
+         */
+    }, {
         key: "add",
         value: function add(path, route) {
 

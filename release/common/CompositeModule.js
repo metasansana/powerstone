@@ -20,105 +20,47 @@ var CompositeModule = (function () {
         this.submodules = modules;
     }
 
-    /**
-     * modules 
-     * @param {object} mods
-     */
-
     _createClass(CompositeModule, [{
-        key: "modules",
-        value: function modules(mods) {
+        key: "add",
+        value: function add(m) {
+
+            this.submodules.push(m);
+            return this;
+        }
+    }, {
+        key: "__init",
+        value: function __init() {
             this.submodules.forEach(function (m) {
-                return m.modules(mods);
+                return m.__init();
             });
         }
-
-        /**
-         * framework 
-         * @param {object} connectors
-         * @param {object} pipes 
-         */
     }, {
-        key: "framework",
-        value: function framework(connectors, pipes) {
+        key: "__framework",
+        value: function __framework() {
+
             this.submodules.forEach(function (m) {
-                return m.framework(connectors, pipes);
+                return m.__framework();
             });
         }
-
-        /**
-         * expressFramework
-         * @param {object} middleware
-         * @param {object} engines
-         */
     }, {
-        key: "expressFramework",
-        value: function expressFramework(middleware, engines) {
-            this.submodules.forEach(function (m) {
-                return m.expressFramework(middleware, engines);
-            });
-        }
-
-        /**
-         * restifyFramework 
-         * @param {object} plugins 
-         */
-    }, {
-        key: "restifyFramework",
-        value: function restifyFramework(plugins) {
-            this.submodules.forEach(function (m) {
-                return m.restifyFramework(plugins);
-            });
-        }
-
-        /**
-         * connections 
-         * @param {object} types 
-         * @param {object} conns 
-         */
-    }, {
-        key: "connections",
-        value: function connections(types, conns) {
+        key: "__connections",
+        value: function __connections() {
             return this.submodules.map(function (m) {
-                return m.connections(types, conns);
+                return m.__connections();
             });
         }
-
-        /**
-         * userland 
-         * @param {object} registry 
-         */
     }, {
-        key: "userland",
-        value: function userland(controllers, models, middleware) {
-            this.submodules.forEach(function (m) {
-                return m.userland(controllers, models, middleware);
+        key: "__middleware",
+        value: function __middleware() {
+            return this.submodules.forEach(function (m) {
+                return m.__middleware();
             });
         }
-
-        /**
-         * express 
-         * @param {express.Application} app
-         * @param {express} express 
-         * @param {object} mware 
-         */
     }, {
-        key: "express",
-        value: function express(app, _express, mware) {
-            this.submodules.forEach(function (m) {
-                return m.express(app, _express, mware);
-            });
-        }
-
-        /**
-         * restify 
-         * @param {restify.Application} app 
-         */
-    }, {
-        key: "restify",
-        value: function restify(app, plugins) {
-            this.submodules.forEach(function (m) {
-                return m.restify(app, plugins);
+        key: "__routing",
+        value: function __routing() {
+            return this.submodules.forEach(function (m) {
+                return m.__routing();
             });
         }
     }]);

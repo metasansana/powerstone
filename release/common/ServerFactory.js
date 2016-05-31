@@ -18,10 +18,6 @@ var _https = require('https');
 
 var _https2 = _interopRequireDefault(_https);
 
-var _usrEvents = require('../usr/events');
-
-var _usrEvents2 = _interopRequireDefault(_usrEvents);
-
 /**
  * ServerFactory provides new instances for http.Server or the
  * framework's own wrapper.
@@ -66,7 +62,7 @@ var ServerFactory = (function () {
             s.on('uncaughtException', function (req, res, route, err) {
                 res.status(500);
                 res.send();
-                _usrEvents2['default'].emit('error', err);
+                events.emit('error', err);
             });
 
             return s;

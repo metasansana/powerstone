@@ -9,73 +9,32 @@ class CompositeModule {
         this.submodules = modules;
     }
 
-    /**
-     * modules 
-     * @param {object} mods
-     */
-    modules(mods) {
-        this.submodules.forEach(m => m.modules(mods));
+    add(m) {
+
+      this.submodules.push(m);
+      return this;
+
     }
 
-    /**
-     * framework 
-     * @param {object} connectors
-     * @param {object} pipes 
-     */
-    framework(connectors, pipes) {
-        this.submodules.forEach(m => m.framework(connectors, pipes));
+    __init() {
+        this.submodules.forEach(m => m.__init());
     }
 
-    /**
-     * expressFramework
-     * @param {object} middleware
-     * @param {object} engines
-     */
-    expressFramework(middleware, engines) {
-        this.submodules.forEach(m => m.expressFramework(middleware, engines));
+    __framework() {
+
+        this.submodules.forEach(m => m.__framework());
     }
 
-    /**
-     * restifyFramework 
-     * @param {object} plugins 
-     */
-    restifyFramework(plugins) {
-        this.submodules.forEach(m => m.restifyFramework(plugins));
+    __connections() {
+        return this.submodules.map(m => m.__connections());
     }
 
-    /**
-     * connections 
-     * @param {object} types 
-     * @param {object} conns 
-     */
-    connections(types, conns) {
-        return this.submodules.map(m => m.connections(types, conns));
+    __middleware() {
+        return this.submodules.forEach(m => m.__middleware());
     }
 
-    /**
-     * userland 
-     * @param {object} registry 
-     */
-    userland(controllers, models, middleware) {
-        this.submodules.forEach(m => m.userland(controllers, models, middleware));
-    }
-
-    /**
-     * express 
-     * @param {express.Application} app
-     * @param {express} express 
-     * @param {object} mware 
-     */
-    express(app, express, mware) {
-        this.submodules.forEach(m => m.express(app, express, mware));
-    }
-
-    /**
-     * restify 
-     * @param {restify.Application} app 
-     */
-    restify(app, plugins) {
-        this.submodules.forEach(m => m.restify(app, plugins));
+    __routing() {
+        return this.submodules.forEach(m => m.__routing());
     }
 
 }

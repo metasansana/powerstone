@@ -5,5 +5,5 @@ export default {
             options: {}
         }
     },
-    modules: ['demo', 'demo1']
+    modules:{'demo':true , 'demo1':true}
 };

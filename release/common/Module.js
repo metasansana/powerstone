@@ -34,6 +34,24 @@ var _Configuration = require('./Configuration');
 
 var _Configuration2 = _interopRequireDefault(_Configuration);
 
+var _routeBulkAction = require('../route/BulkAction');
+
+var _routeBulkAction2 = _interopRequireDefault(_routeBulkAction);
+
+var _routeMiddlewareAction = require('../route/MiddlewareAction');
+
+var _routeMiddlewareAction2 = _interopRequireDefault(_routeMiddlewareAction);
+
+var _routeControllerAction = require('../route/ControllerAction');
+
+var _routeControllerAction2 = _interopRequireDefault(_routeControllerAction);
+
+var _routeViewAction = require('../route/ViewAction');
+
+var _routeViewAction2 = _interopRequireDefault(_routeViewAction);
+
+var _routeBulkAction3 = _interopRequireDefault(_routeBulkAction);
+
 /**
  * Module
  * @abstract
@@ -73,6 +91,16 @@ var Module = (function () {
         value: function __submodule(resource, app) {}
 
         /**
+         * __viewCallback provides a callback that will 
+         * handle view declarations.
+         * @param {string} view The view template
+         * @abstract
+         */
+    }, {
+        key: '__viewCallback',
+        value: function __viewCallback(view) {}
+
+        /**
          * __init initializes this module and its submodules
          */
     }, {
@@ -101,31 +129,37 @@ var Module = (function () {
         }
 
         /**
+         * __autoload the autoloadable aspects of the system
+         */
+    }, {
+        key: '__autoload',
+        value: function __autoload() {
+            var _this2 = this;
+
+            var autos = this.configuration.read(_Configuration2['default'].keys.AUTOS, {});
+            var delegate = new _SmartResourceDelegate2['default'](new _RequireDelegate2['default']());
+
+            delegate.add('require', new _RequireDelegate2['default']());
+
+            ['connectors', 'filters', 'middleware', 'controllers'].forEach(function (key) {
+
+                if (autos.hasOwnProperty(key)) Object.keys(autos[key]).forEach(function (name) {
+                    return _this2.context[key][name] = delegate.lookup(autos[key][name]).module;
+                });
+
+                _this2.configuration.require(_this2.configuration.paths[key], _this2.context[key]);
+            });
+
+            this.submodules.__autoload();
+        }
+
+        /**
          * __framework performs framework specific actions
          * @abstract
          */
     }, {
         key: '__framework',
         value: function __framework() {}
-
-        /**
-         * __connectors loads the known connectors so that they can
-         * be used when opening connections.
-         */
-    }, {
-        key: '__connectors',
-        value: function __connectors() {
-            var _this2 = this;
-
-            var connectors = this.configuration.read(_Configuration2['default'].keys.CONNECTORS, {});
-            var delegate = new _SmartResourceDelegate2['default'](new _RequireDelegate2['default'](this.configuration.paths.connectors));
-
-            delegate.add('require', new _RequireDelegate2['default']());
-
-            Object.keys(connectors).forEach(function (key) {
-                return _this2.context.connectors[key] = delegate.lookup(connectors[key]).module;
-            });
-        }
 
         /**
          * __connections establishes the connections decleared in the config file.
@@ -138,7 +172,7 @@ var Module = (function () {
             var config;
             var connector;
             var connections = this.configuration.read(_Configuration2['default'].keys.CONNECTIONS, {});
-            var delegate = new _SmartResourceDelegate2['default'](new _PropertyDelegate2['default'](this.context.connectors));
+            var delegate = new _PropertyDelegate2['default']('connector', this.context.connectors);
 
             return Object.keys(connections).map(function (key) {
 
@@ -151,48 +185,47 @@ var Module = (function () {
         }
 
         /**
-         * __middleware loads the pre routing middleware.
+         * __filters loads the pre routing middleware.
          */
     }, {
-        key: '__middleware',
-        value: function __middleware() {
+        key: '__filters',
+        value: function __filters(app, defaults) {
             var _this3 = this;
 
-            var wares = this.configuration.read(_Configuration2['default'].keys.MIDDLEWARE, {});
-            var delegate = new _SmartResourceDelegate2['default']('require', new _RequireDelegate2['default'](this.configuration.paths.middleware));
+            var wares = this.configuration.read(_Configuration2['default'].keys.FILTERS, defaults);
+            var delegate = new _SmartResourceDelegate2['default'](new _PropertyDelegate2['default']('filter', this.context.filters));
 
             delegate.add('require', new _RequireDelegate2['default']());
-
-            if (Array.isArray(wares)) wares.forEach(function (m) {
-
-                var resource = delegate.lookup(m);
-
-                if (typeof resource.module !== 'function') throw new TypeError('Middleware must be a function, got ', typeof resource.module, '!');
-
-                resource.module.apply(_this3);
+            wares.forEach(function (m) {
+                return delegate.lookup(m).module.filter(app, _this3.configuration);
             });
 
-            this.submodules.__middleware();
+            this.submodules.__filters(app, []);
         }
 
         /**
          * __routing sets up the routing for this module
          * @param {string} point The mount point of this module's parent's router.
-         * @param {Router} parent The router of this module's parent.
+         * @param {FrameworkApplication} app 
+         * @param {array<Action>} actions 
+         * @abstract
          */
     }, {
         key: '__routing',
-        value: function __routing(mountPoint, parent) {
-            var _this4 = this;
+        value: function __routing(mountPoint, app, actions) {}
 
-            var path = this.configuration.readOrDefault(_Configuration2['default'].keys.PATH, '/' + this.name);
-            var routes = this.configuration.readOrDefault(_Configuration2['default'].keys.ROUTES, {});
+        /**
+         * handleRoute is called before any of the routes for this
+         * module are activated.
+         * @param {Request} req 
+         * @param {Response} res 
+         * @param {function} next 
+         */
+    }, {
+        key: 'handleRoute',
+        value: function handleRoute(req, res, next) {
 
-            Object.keys(routes).forEach(function (route) {
-                return _this4.router.add(route);
-            });
-            this.submodules.__routing(point + '/' + path, this.router);
-            parent.use(path, this.router);
+            next();
         }
 
         /**
@@ -200,18 +233,19 @@ var Module = (function () {
          */
     }, {
         key: 'load',
-        value: function load() {
-            var _this5 = this;
+        value: function load(app) {
+            var _this4 = this;
 
             this.__init();
-            this.__connectors();
-            this.__framework();
+            this.__autoload();
 
             return Promise.all(this.__connections()).then(function () {
-                return _this5.application.onConnected(_netPool2['default']);
+                return _this4.application.onConnected(_netPool2['default']);
             }).then(function () {
 
-                _this5.__middleware();
+                _this4.__filters(app, ['default']);
+                _this4.__framework();
+                _this4.__routing('', app, new _routeBulkAction3['default']([new _routeMiddlewareAction2['default'](new _PropertyDelegate2['default']('middleware', _this4.context.middleware)), new _routeControllerAction2['default'](_this4.context.controllers), new _routeViewAction2['default'](_this4.__viewCallback)]));
             });
         }
     }]);

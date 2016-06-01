@@ -1,4 +1,6 @@
 import Property from 'property-seek';
+import PowerstoneServer from '../common/PowerstoneServer';
+import ManagedServer from '../common/ManagedServer';
 
 /**
  * Application is the main class of the framework.
@@ -48,14 +50,29 @@ class Application {
     }
 
     /**
-     * run this Application
-     * @abstract
+     * start the server for this Application
      * @return {Promise}
      */
-    run() {
+    start() {
+
+        if (this.server !== null)
+            return this.server.start();
+
+        return this.main.load(this.frameworkApp).
+        then(() => {
+
+
+            this.server = new ManagedServer(
+                this.main.configuration.read('port', process.env.PORT || 3000),
+                this.main.configuration.read('host', process.env.HOST || '0.0.0.0'),
+                new PowerstoneServer(this.__createServer()));
+
+            return this.server.start();
+
+        }).
+        then(port => console.log(port));
 
     }
-
 }
 
 export default Application;

@@ -4,6 +4,11 @@ import RequireDelegate from './RequireDelegate';
 import SmartResourceDelegate from './SmartResourceDelegate';
 import Pool from '../net/Pool';
 import Configuration from './Configuration';
+import RouteAction from '../route/BulkAction';
+import MiddlewareAction from '../route/MiddlewareAction';
+import ControllerAction from '../route/ControllerAction';
+import ViewAction from '../route/ViewAction';
+import BulkAction from '../route/BulkAction';
 
 /**
  * Module
@@ -44,6 +49,16 @@ class Module {
     }
 
     /**
+     * __viewCallback provides a callback that will 
+     * handle view declarations.
+     * @param {string} view The view template
+     * @abstract
+     */
+    __viewCallback(view) {
+
+    }
+
+    /**
      * __init initializes this module and its submodules
      */
     __init() {
@@ -73,28 +88,35 @@ class Module {
     }
 
     /**
-     * __framework performs framework specific actions
-     * @abstract
+     * __autoload the autoloadable aspects of the system
      */
-    __framework() {
+    __autoload() {
+
+        var autos = this.configuration.read(Configuration.keys.AUTOS, {});
+        var delegate = new SmartResourceDelegate(new RequireDelegate());
+
+        delegate.add('require', new RequireDelegate());
+
+        ['connectors', 'filters', 'middleware', 'controllers'].
+        forEach(key => {
+
+            if (autos.hasOwnProperty(key))
+                Object.keys(autos[key]).forEach(name =>
+                    this.context[key][name] = delegate.lookup(autos[key][name]).module);
+
+            this.configuration.require(this.configuration.paths[key], this.context[key]);
+
+        });
+
+        this.submodules.__autoload();
 
     }
 
     /**
-     * __connectors loads the known connectors so that they can
-     * be used when opening connections.
+     * __framework performs framework specific actions
+     * @abstract
      */
-    __connectors() {
-
-        var connectors = this.configuration.read(Configuration.keys.CONNECTORS, {});
-        var delegate = new SmartResourceDelegate(
-            new RequireDelegate(this.configuration.paths.connectors));
-
-        delegate.add('require', new RequireDelegate());
-
-        Object.keys(connectors).
-        forEach(key =>
-            this.context.connectors[key] = delegate.lookup(connectors[key]).module);
+    __framework() {
 
     }
 
@@ -107,7 +129,7 @@ class Module {
         var config;
         var connector;
         var connections = this.configuration.read(Configuration.keys.CONNECTIONS, {});
-        var delegate = new SmartResourceDelegate(new PropertyDelegate(this.context.connectors));
+        var delegate = new PropertyDelegate('connector', this.context.connectors);
 
         return Object.keys(connections).
         map(key => {
@@ -121,63 +143,65 @@ class Module {
     }
 
     /**
-     * __middleware loads the pre routing middleware.
+     * __filters loads the pre routing middleware.
      */
-    __middleware() {
+    __filters(app, defaults) {
 
-        var wares = this.configuration.read(Configuration.keys.MIDDLEWARE, {});
-        var delegate = new SmartResourceDelegate('require',
-            new RequireDelegate(this.configuration.paths.middleware));
+        var wares = this.configuration.read(Configuration.keys.FILTERS, defaults);
+        var delegate = new SmartResourceDelegate(
+            new PropertyDelegate('filter', this.context.filters));
 
         delegate.add('require', new RequireDelegate());
+        wares.forEach(m => delegate.lookup(m).module.filter(app, this.configuration));
 
-        if (Array.isArray(wares))
-            wares.forEach(m => {
-
-                var resource = delegate.lookup(m);
-
-                if (typeof resource.module !== 'function')
-                    throw new TypeError('Middleware must be a function, got ',
-                        typeof resource.module, '!');
-
-                resource.module.apply(this);
-
-            });
-
-        this.submodules.__middleware();
+        this.submodules.__filters(app, []);
 
     }
 
     /**
      * __routing sets up the routing for this module
      * @param {string} point The mount point of this module's parent's router.
-     * @param {Router} parent The router of this module's parent.
+     * @param {FrameworkApplication} app 
+     * @param {array<Action>} actions 
+     * @abstract
      */
-    __routing(mountPoint, parent) {
+    __routing(mountPoint, app, actions) {
 
-        var path = this.configuration.readOrDefault(Configuration.keys.PATH, `/${this.name}`);
-        var routes = this.configuration.readOrDefault(Configuration.keys.ROUTES, {});
 
-        Object.keys(routes).forEach(route => this.router.add(route));
-        this.submodules.__routing(`${point}/${path}`, this.router);
-        parent.use(path, this.router);
+    }
+
+    /**
+     * handleRoute is called before any of the routes for this
+     * module are activated.
+     * @param {Request} req 
+     * @param {Response} res 
+     * @param {function} next 
+     */
+    handleRoute(req, res, next) {
+
+        next();
 
     }
 
     /**
      * load this module
      */
-    load() {
+    load(app) {
 
         this.__init();
-        this.__connectors();
-        this.__framework();
+        this.__autoload();
 
         return Promise.all(this.__connections()).
         then(() => this.application.onConnected(Pool)).
         then(() => {
 
-            this.__middleware();
+            this.__filters(app, ['default']);
+            this.__framework();
+            this.__routing('', app, new BulkAction([
+                new MiddlewareAction(new PropertyDelegate('middleware', this.context.middleware)),
+                new ControllerAction(this.context.controllers),
+                new ViewAction(this.__viewCallback)
+            ]));
 
         });
 

@@ -1,5 +1,6 @@
 import Configuration from '../common/Configuration';
 import Module from '../common/Module';
+import Route from '../route/Route';
 
 /**
  * Module
@@ -11,9 +12,16 @@ import Module from '../common/Module';
  */
 class ApiModule extends Module {
 
+    constructor(name, config, context, app) {
+
+        super(name, config, context, app);
+        this.__defaultFilters = ['default'];
+
+    }
+
     __submodule(resource, app) {
 
-        return new ApiModule(resource.basename, 
+        return new ApiModule(resource.basename,
             new Configuration('apiconf', resource.path), this.context, app);
 
     }
@@ -23,31 +31,20 @@ class ApiModule extends Module {
 
     }
 
-    __routing(point, parent) {
+    __routing(point, app, actions) {
 
-        var path = this.configuration.readOrDefault(Configuration.keys.PATH, `/${this.name}`);
-        var routes = this.configuration.readOrDefault(Configuration.keys.ROUTES, {});
-        var location = `${point}/${path}`;
-        var action;
+        var path = this.configuration.read(Configuration.keys.PATH, `${point}/${this.name}`);
+        var routes = this.configuration.routes;
 
         Object.keys(routes).
-        forEach(path => {
+        forEach(route =>
+            this.routes = Object.keys(routes[route]).map(method =>
+                new Route(method, `${path}/${route}`, [this.handleRoute.bind(this)].concat(
+                    actions.generate(method, `${path}/${route}`, routes[route][method])), app)));
 
-            Object.keys(routes[path]).
-            map(method => {
-
-                actions = new Actions(method, path, Delegates.create(routes[path][method]));
-                actions.apply(this._handler);
-
-            });
-
-        });
-
-        this.submodules.__routing(location, this.handler);
-        parent.use(path, this.handler);
+        this.submodules.__routing(path, app, actions);
 
     }
-
 
 }
 

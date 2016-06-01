@@ -14,10 +14,6 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
-var _ServerFactory = require('./ServerFactory');
-
-var _ServerFactory2 = _interopRequireDefault(_ServerFactory);
-
 /**
  * PowerstoneServer wraps around the frameworks server to provide
  * a simplified api.

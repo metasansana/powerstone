@@ -5,15 +5,18 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Context = function Context() {
-  _classCallCheck(this, Context);
+    _classCallCheck(this, Context);
 
-  this.connectors = {};
+    this.middleware = {};
+    this.connectors = {};
+    this.controllers = {};
+    this.filters = {};
 };
 
 exports["default"] = Context;

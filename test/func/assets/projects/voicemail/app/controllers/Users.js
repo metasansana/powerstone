@@ -1,4 +1,5 @@
-import Controller from '../../../../../../build/mvc/Controller';
+import Controller from 'libpowerstone/api/Controller';
+
 /**
  * Users 
  */

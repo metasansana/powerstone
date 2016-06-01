@@ -1,12 +1,13 @@
 import express from 'express';
+import Configuration from '../common/Configuration';
 import Module from '../common/Module';
 
 class WebModule extends Module {
 
-    __submodule(resource, framework, app) {
+   __submodule(resource, app) {
 
-        var config = new Configuration('webconf.js', resource.path);
-        return new WebModule(name, config, express(), app);
+        return new WebModule(resource.basename,
+            new Configuration('webconf', resource.path), this.context, app);
 
     }
 

@@ -22,6 +22,10 @@ var _commonModule = require('../common/Module');
 
 var _commonModule2 = _interopRequireDefault(_commonModule);
 
+var _routeRoute = require('../route/Route');
+
+var _routeRoute2 = _interopRequireDefault(_routeRoute);
+
 /**
  * Module
  * @param {string} fqn The name of the module prefixed with its parent modules 
@@ -34,10 +38,11 @@ var _commonModule2 = _interopRequireDefault(_commonModule);
 var ApiModule = (function (_Module) {
     _inherits(ApiModule, _Module);
 
-    function ApiModule() {
+    function ApiModule(name, config, context, app) {
         _classCallCheck(this, ApiModule);
 
-        _get(Object.getPrototypeOf(ApiModule.prototype), 'constructor', this).apply(this, arguments);
+        _get(Object.getPrototypeOf(ApiModule.prototype), 'constructor', this).call(this, name, config, context, app);
+        this.__defaultFilters = ['default'];
     }
 
     _createClass(ApiModule, [{
@@ -51,25 +56,19 @@ var ApiModule = (function (_Module) {
         value: function __framework() {}
     }, {
         key: '__routing',
-        value: function __routing(point, parent) {
+        value: function __routing(point, app, actions) {
             var _this = this;
 
-            var path = this.configuration.readOrDefault(_commonConfiguration2['default'].keys.PATH, '/' + this.name);
-            var routes = this.configuration.readOrDefault(_commonConfiguration2['default'].keys.ROUTES, {});
-            var location = point + '/' + path;
-            var action;
+            var path = this.configuration.read(_commonConfiguration2['default'].keys.PATH, point + '/' + this.name);
+            var routes = this.configuration.routes;
 
-            Object.keys(routes).forEach(function (path) {
-
-                Object.keys(routes[path]).map(function (method) {
-
-                    actions = new Actions(method, path, Delegates.create(routes[path][method]));
-                    actions.apply(_this._handler);
+            Object.keys(routes).forEach(function (route) {
+                return _this.routes = Object.keys(routes[route]).map(function (method) {
+                    return new _routeRoute2['default'](method, path + '/' + route, [_this.handleRoute.bind(_this)].concat(actions.generate(method, path + '/' + route, routes[route][method])), app);
                 });
             });
 
-            this.submodules.__routing(location, this.handler);
-            parent.use(path, this.handler);
+            this.submodules.__routing(path, app, actions);
         }
     }]);
 

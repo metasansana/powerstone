@@ -5,13 +5,17 @@
  */
 class PropertyDelegate {
 
-    constructor(o) {
+    constructor(name, o) {
 
         this._o = o;
+        this._name = name;
 
     }
 
     resolve(path) {
+
+        if (!this._o.hasOwnProperty(path))
+            throw new Error(`Unknown ${name} '${path}'!`);
 
         return {
             basename: path,
@@ -24,6 +28,10 @@ class PropertyDelegate {
     }
 
     lookup(path) {
+
+        if (!this._o.hasOwnProperty(path)) 
+            throw new Error(`Unknown ${this._name} '${path}'!`);
+
         return {
             basename: path,
             dirname: null,

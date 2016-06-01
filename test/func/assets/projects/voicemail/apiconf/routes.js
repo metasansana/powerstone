@@ -6,7 +6,7 @@ export default {
 
     '/users/:user/messages': {
         get: {
-            middleware: ['middleware/count'],
+            middleware: ['count'],
             action: function(req, res) {
                 res.send(global.messages[req.params.user]);
             }
@@ -22,19 +22,13 @@ export default {
     },
     '/users/count': {
         get: {
-            action: {
-                controller: 'Users',
-                method: 'count'
-            }
+            action: 'Users.count()'
         }
     },
     '/users/messages': {
         get: {
-            middleware: ['middleware/count'],
-            action: {
-                controller: 'controllers/User',
-                method: 'messages'
-            }
+            middleware: ['count'],
+            action: 'Users.messages()'
         }
     }
 

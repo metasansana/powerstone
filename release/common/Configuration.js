@@ -22,6 +22,10 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
 function exists(path) {
 
     try {
@@ -48,7 +52,10 @@ var Configuration = (function () {
             config: path + '/' + dir + '/config.js',
             routes: path + '/' + dir + '/routes.js',
             modules: path + '/modules',
-            connectors: path + '/connectors'
+            connectors: path + '/connectors',
+            filters: path + '/filters',
+            middleware: path + '/app/middleware',
+            controllers: path + '/app/controllers'
         };
 
         this.options = exists(this.paths.config) ? require(this.paths.config) : {};
@@ -68,6 +75,52 @@ var Configuration = (function () {
             var ret = this.readWithDefaults(key, defaults);
             return (0, _deepmerge2['default'])(target, ret);
         }
+
+        /**
+         * require requires all files in a sub-directory into a single object
+         * @param {string} dir The  path.
+         * @param {object} merge An optional object functions can be merged into.
+         * @param {string} [prefix] A prefix that will be concatenated to the object's keys
+         * @returns {Object}
+         */
+    }, {
+        key: 'require',
+        value: (function (_require) {
+            function require(_x, _x2, _x3) {
+                return _require.apply(this, arguments);
+            }
+
+            require.toString = function () {
+                return _require.toString();
+            };
+
+            return require;
+        })(function (dir, merge, prefix) {
+
+            var files;
+            var extensions = extensions || ['.js', '.json'];
+
+            merge = merge || {};
+
+            prefix = prefix || '';
+            prefix = prefix ? prefix + '.' : prefix;
+            prefix = prefix[0] === '/' ? prefix.replace('/', '') : prefix;
+            prefix = prefix.replace(/\//g, '.');
+
+            try {
+                files = _fs2['default'].readdirSync(dir);
+            } catch (e) {
+                return merge || {};
+            }
+            if (Array.isArray(files)) files.forEach(function (pathToFile) {
+
+                if (extensions.indexOf(_path2['default'].extname(pathToFile)) < 0) return;
+
+                _propertySeek2['default'].set(merge, prefix + _path2['default'].basename(pathToFile, _path2['default'].extname(pathToFile)), require(dir + '/' + pathToFile));
+            });
+
+            return merge;
+        })
     }]);
 
     return Configuration;
@@ -75,9 +128,9 @@ var Configuration = (function () {
 
 Configuration.keys = {
     MODULES: 'modules',
-    CONNECTIONS: 'connections.open',
-    CONNECTORS: 'connections.connectors',
+    CONNECTIONS: 'connections',
     MIDDLEWARE: 'middleware',
+    FILTERS: 'filters',
     PATH: 'path'
 };
 

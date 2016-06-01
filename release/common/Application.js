@@ -14,6 +14,14 @@ var _propertySeek = require('property-seek');
 
 var _propertySeek2 = _interopRequireDefault(_propertySeek);
 
+var _commonPowerstoneServer = require('../common/PowerstoneServer');
+
+var _commonPowerstoneServer2 = _interopRequireDefault(_commonPowerstoneServer);
+
+var _commonManagedServer = require('../common/ManagedServer');
+
+var _commonManagedServer2 = _interopRequireDefault(_commonManagedServer);
+
 /**
  * Application is the main class of the framework.
  * @param {string} path The path to intialize this Application to. 
@@ -67,13 +75,25 @@ var Application = (function () {
         }
 
         /**
-         * run this Application
-         * @abstract
+         * start the server for this Application
          * @return {Promise}
          */
     }, {
-        key: 'run',
-        value: function run() {}
+        key: 'start',
+        value: function start() {
+            var _this = this;
+
+            if (this.server !== null) return this.server.start();
+
+            return this.main.load(this.frameworkApp).then(function () {
+
+                _this.server = new _commonManagedServer2['default'](_this.main.configuration.read('port', process.env.PORT || 3000), _this.main.configuration.read('host', process.env.HOST || '0.0.0.0'), new _commonPowerstoneServer2['default'](_this.__createServer()));
+
+                return _this.server.start();
+            }).then(function (port) {
+                return console.log(port);
+            });
+        }
     }]);
 
     return Application;

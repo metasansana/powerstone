@@ -11,8 +11,8 @@ class CompositeModule {
 
     add(m) {
 
-      this.submodules.push(m);
-      return this;
+        this.submodules.push(m);
+        return this;
 
     }
 
@@ -20,8 +20,11 @@ class CompositeModule {
         this.submodules.forEach(m => m.__init());
     }
 
-    __framework() {
+    __autoload() {
+        this.submodules.forEach(m => m.__autoload());
+    }
 
+    __framework() {
         this.submodules.forEach(m => m.__framework());
     }
 
@@ -29,12 +32,12 @@ class CompositeModule {
         return this.submodules.map(m => m.__connections());
     }
 
-    __middleware() {
-        return this.submodules.forEach(m => m.__middleware());
+    __filters(app, defaults) {
+        return this.submodules.forEach(m => m.__filters(app, defaults));
     }
 
-    __routing() {
-        return this.submodules.forEach(m => m.__routing());
+    __routing(path, app, actions) {
+        return this.submodules.forEach(m => m.__routing(path, app, actions));
     }
 
 }

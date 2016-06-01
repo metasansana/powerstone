@@ -1,6 +1,7 @@
 import request from 'supertest-as-promised';
 import must from 'must';
 import Api from 'libpowerstone/api/Api';
+import Pool from 'libpowerstone/net/Pool';
 
 var app;
 
@@ -13,7 +14,7 @@ before(function() {
 
     app = new App(`${__dirname}/assets/projects/voicemail`);
     global.connected = false;
-    return app.run();
+    return app.start();
 
 });
 
@@ -27,12 +28,11 @@ describe('Api', function() {
         global.requests = 24;
 
         it('should be connected', function() {
-
-            must(global.connected).equal(true);
+            must(Pool.main).equal(null);
 
         });
 
-        xit('GET /users/:user/messages', function() {
+        it('GET /users/:user/messages', function() {
             return request(app.server.toFramework()).
             get('/users/kav/messages').
             expect(200).
@@ -42,21 +42,21 @@ describe('Api', function() {
             });
         });
 
-        xit('POST /users/:user/messages', function() {
+        it('POST /users/:user/messages', function() {
 
             return request(app.server.toFramework()).
             post('/users/kyle/messages').
             send({
-                id: 2,
-                message: 'xit takes that many.'
+                id: 16,
+                message: 'it takes that many.'
             }).
             expect(201).
             then(res =>
-                must(global.messages.kyle).eql(['id:16 xit takes that many.']));
+                must(global.messages.kyle).eql(['id:16 it takes that many.']));
 
         });
 
-        xit('GET /users/count', function() {
+        it('GET /users/count', function() {
 
             return request(app.server.toFramework()).
             get('/users/count').
@@ -65,7 +65,7 @@ describe('Api', function() {
 
         });
 
-        xit('GET /users/messages', function() {
+        it('GET /users/messages', function() {
 
             global.requests = 20;
 
@@ -80,7 +80,7 @@ describe('Api', function() {
         });
     });
 
-    xit('GET /admin/controls', function() {
+    it('GET /admin/controls', function() {
 
         return request(app.server.toFramework()).
         get('/admin/controls').
@@ -88,7 +88,7 @@ describe('Api', function() {
 
     });
 
-    xit('GET /admin/panel', function() {
+    it('GET /admin/panel', function() {
 
         return request(app.server.toFramework()).
         get('/admin/panel').
@@ -97,7 +97,7 @@ describe('Api', function() {
 
     });
 
-    xit('GET /admin_demo', function() {
+    it('GET /admin_demo', function() {
 
         return request(app.server.toFramework()).
         get('/admin_demo').

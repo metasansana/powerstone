@@ -1,13 +1,13 @@
 export default {
 
-    '': {
+    '/': {
 
-      get:{handler: function(req, res) {
-
-            res.send(200);
-
+        get: {
+            middleware: ['flag'],
+            action: function(req, res) {
+                res.send(200);
+            }
         }
-      }
 
     }
 

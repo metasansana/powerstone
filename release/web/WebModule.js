@@ -18,6 +18,10 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
+var _commonConfiguration = require('../common/Configuration');
+
+var _commonConfiguration2 = _interopRequireDefault(_commonConfiguration);
+
 var _commonModule = require('../common/Module');
 
 var _commonModule2 = _interopRequireDefault(_commonModule);
@@ -33,10 +37,9 @@ var WebModule = (function (_Module) {
 
     _createClass(WebModule, [{
         key: '__submodule',
-        value: function __submodule(resource, framework, app) {
+        value: function __submodule(resource, app) {
 
-            var config = new Configuration('webconf.js', resource.path);
-            return new WebModule(name, config, (0, _express2['default'])(), app);
+            return new WebModule(resource.basename, new _commonConfiguration2['default']('webconf', resource.path), this.context, app);
         }
     }, {
         key: '__framework',
@@ -46,8 +49,8 @@ var WebModule = (function (_Module) {
         value: function __routing(point, parent) {
             var _this = this;
 
-            var path = this.configuration.readOrDefault(Configuration.keys.PATH, '/' + this.name);
-            var routes = this.configuration.readOrDefault(Configuration.keys.ROUTES, {});
+            var path = this.configuration.readOrDefault(_commonConfiguration2['default'].keys.PATH, '/' + this.name);
+            var routes = this.configuration.readOrDefault(_commonConfiguration2['default'].keys.ROUTES, {});
             var location = point + '/' + path;
             var action;
 

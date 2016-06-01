@@ -1,15 +1,15 @@
 export default {
     '/controls': {
         get: {
-            handler: function(req, res) {
+            action: function(req, res) {
                 res.send(200);
             }
         }
     },
     '/panel': {
         get: {
-            middleware: ['flag', 'admin_demo.register'],
-            handler: function(req, res) {
+            middleware: ['flag', 'demo_register'],
+            action: function(req, res) {
                 res.send(403);
             }
         }

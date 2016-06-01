@@ -14,15 +14,18 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var PropertyDelegate = (function () {
-    function PropertyDelegate(o) {
+    function PropertyDelegate(name, o) {
         _classCallCheck(this, PropertyDelegate);
 
         this._o = o;
+        this._name = name;
     }
 
     _createClass(PropertyDelegate, [{
         key: "resolve",
         value: function resolve(path) {
+
+            if (!this._o.hasOwnProperty(path)) throw new Error("Unknown " + name + " '" + path + "'!");
 
             return {
                 basename: path,
@@ -34,6 +37,9 @@ var PropertyDelegate = (function () {
     }, {
         key: "lookup",
         value: function lookup(path) {
+
+            if (!this._o.hasOwnProperty(path)) throw new Error("Unknown " + this._name + " '" + path + "'!");
+
             return {
                 basename: path,
                 dirname: null,

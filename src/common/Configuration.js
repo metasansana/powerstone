@@ -1,6 +1,7 @@
 import Property from 'property-seek';
 import merge from 'deepmerge';
 import fs from 'fs';
+import Path from 'path';
 
 function exists(path) {
 
@@ -29,7 +30,10 @@ class Configuration {
             config: `${path}/${dir}/config.js`,
             routes: `${path}/${dir}/routes.js`,
             modules: `${path}/modules`,
-            connectors: `${path}/connectors`
+            connectors: `${path}/connectors`,
+            filters: `${path}/filters`,
+            middleware: `${path}/app/middleware`,
+            controllers: `${path}/app/controllers`
         };
 
         this.options = (exists(this.paths.config)) ? require(this.paths.config) : {};
@@ -48,13 +52,50 @@ class Configuration {
         return merge(target, ret);
     }
 
+    /**
+     * require requires all files in a sub-directory into a single object
+     * @param {string} dir The  path.
+     * @param {object} merge An optional object functions can be merged into.
+     * @param {string} [prefix] A prefix that will be concatenated to the object's keys
+     * @returns {Object}
+     */
+    require(dir, merge, prefix) {
+
+        var files;
+        var extensions = extensions || ['.js', '.json'];
+
+        merge = merge || {};
+
+        prefix = prefix || '';
+        prefix = (prefix) ? prefix + '.' : prefix;
+        prefix = (prefix[0] === '/') ? prefix.replace('/', '') : prefix;
+        prefix = prefix.replace(/\//g, '.');
+
+        try {
+            files = fs.readdirSync(dir);
+        } catch (e) {
+            return merge || {};
+        }
+        if (Array.isArray(files))
+            files.forEach((pathToFile) => {
+
+                if (extensions.indexOf(Path.extname(pathToFile)) < 0) return;
+
+                Property.set(merge, prefix + Path.basename(pathToFile, Path.extname(pathToFile)),
+                    require(dir + '/' + pathToFile));
+
+            });
+
+        return merge;
+    }
+
 }
 
 Configuration.keys = {
     MODULES: 'modules',
-    CONNECTIONS: 'connections.open',
-    CONNECTORS: 'connections.connectors', 
+    CONNECTIONS: 'connections',
     MIDDLEWARE: 'middleware',
+    FILTERS: 'filters',
     PATH: 'path'
 };
 

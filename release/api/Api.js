@@ -34,21 +34,13 @@ var _ApiModule = require('./ApiModule');
 
 var _ApiModule2 = _interopRequireDefault(_ApiModule);
 
-var _commonPowerstoneServer = require('../common/PowerstoneServer');
-
-var _commonPowerstoneServer2 = _interopRequireDefault(_commonPowerstoneServer);
-
-var _commonManagedServer = require('../common/ManagedServer');
-
-var _commonManagedServer2 = _interopRequireDefault(_commonManagedServer);
-
 var _commonConfiguration = require('../common/Configuration');
 
 var _commonConfiguration2 = _interopRequireDefault(_commonConfiguration);
 
-var _commonContext = require('../common/Context');
+var _apiApiContext = require('../api/ApiContext');
 
-var _commonContext2 = _interopRequireDefault(_commonContext);
+var _apiApiContext2 = _interopRequireDefault(_apiApiContext);
 
 function handleException(req, res, next, err) {
 
@@ -65,26 +57,17 @@ var Api = (function (_Application) {
 
         _get(Object.getPrototypeOf(Api.prototype), 'constructor', this).call(this, path);
 
-        this.main = new _ApiModule2['default']('', new _commonConfiguration2['default']('apiconf', path), new _commonContext2['default'](), this);
+        this.main = new _ApiModule2['default']('', new _commonConfiguration2['default']('apiconf', path), new _apiApiContext2['default'](), this);
 
         this.frameworkApp = _restify2['default'].createServer(this.main.configuration.read('restify', null));
+        this.frameworkApp.on('uncaughtException', handleException);
     }
 
     _createClass(Api, [{
-        key: 'run',
-        value: function run() {
-            var _this = this;
+        key: '__createServer',
+        value: function __createServer() {
 
-            return this.main.load(this.frameworkApp).then(function () {
-
-                _this.frameworkApp.on('uncaughtException', handleException);
-
-                _this.server = new _commonManagedServer2['default'](_this.main.configuration.read('port', process.env.PORT || 3000), _this.main.configuration.read('host', process.env.HOST || '0.0.0.0'), new _commonPowerstoneServer2['default'](_this.frameworkApp));
-
-                return _this.server.start();
-            }).then(function (port) {
-                return console.log(port);
-            });
+            return this.frameworkApp;
         }
     }]);
 

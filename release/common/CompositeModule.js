@@ -35,9 +35,15 @@ var CompositeModule = (function () {
             });
         }
     }, {
+        key: "__autoload",
+        value: function __autoload() {
+            this.submodules.forEach(function (m) {
+                return m.__autoload();
+            });
+        }
+    }, {
         key: "__framework",
         value: function __framework() {
-
             this.submodules.forEach(function (m) {
                 return m.__framework();
             });
@@ -50,17 +56,17 @@ var CompositeModule = (function () {
             });
         }
     }, {
-        key: "__middleware",
-        value: function __middleware() {
+        key: "__filters",
+        value: function __filters(app, defaults) {
             return this.submodules.forEach(function (m) {
-                return m.__middleware();
+                return m.__filters(app, defaults);
             });
         }
     }, {
         key: "__routing",
-        value: function __routing() {
+        value: function __routing(path, app, actions) {
             return this.submodules.forEach(function (m) {
-                return m.__routing();
+                return m.__routing(path, app, actions);
             });
         }
     }]);

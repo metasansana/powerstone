@@ -18,20 +18,16 @@ var _commonResults = require('../common/Results');
 
 var _commonResults2 = _interopRequireDefault(_commonResults);
 
-/**
- * Results 
- */
+var Controller = (function (_Results) {
+    _inherits(Controller, _Results);
 
-var Results = (function (_BaseResults) {
-    _inherits(Results, _BaseResults);
+    function Controller() {
+        _classCallCheck(this, Controller);
 
-    function Results() {
-        _classCallCheck(this, Results);
-
-        _get(Object.getPrototypeOf(Results.prototype), 'constructor', this).apply(this, arguments);
+        _get(Object.getPrototypeOf(Controller.prototype), 'constructor', this).apply(this, arguments);
     }
 
-    _createClass(Results, [{
+    _createClass(Controller, [{
         key: 'send',
         value: function send(status, body) {
 
@@ -39,9 +35,9 @@ var Results = (function (_BaseResults) {
         }
     }]);
 
-    return Results;
+    return Controller;
 })(_commonResults2['default']);
 
-exports['default'] = Results;
+exports['default'] = Controller;
 module.exports = exports['default'];
 //# sourceMappingURL=Results.js.map

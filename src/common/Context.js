@@ -4,12 +4,14 @@
  */
 class Context {
 
-  constructor() {
+    constructor() {
 
-    this.connectors = {};
+      this.middleware = {};
+        this.connectors = {};
+        this.controllers = {};
+        this.filters = {};
 
-  }
+    }
 
 }
 export default Context
-

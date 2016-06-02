@@ -1,5 +1,3 @@
 export default {
-
-  prefix: 'admin_demo'
-
+    'power.routing.root': 'admin_demo'
 }

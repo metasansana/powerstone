@@ -1,17 +1,10 @@
 export default {
-    engine: 'nunjucks',
-    connections: {
-        connectors: {
-            null: 'null'
-        },
-        open: {
-            q: {
-                connector: 'null',
-                port: 1000
-            }
+    'power.web.views.engine': 'lib://nunjucks',
+    'power.connections': {
+        q: {
+            connector: 'fake',
+            port: 1000
         }
     },
-    modules: {
-        'admin': true
-    }
+    'power.modules': ['admin']
 };

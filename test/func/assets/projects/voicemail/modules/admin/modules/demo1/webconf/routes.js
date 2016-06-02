@@ -1,9 +1,9 @@
 export default {
 
-    '': {
+    '/': {
 
         get: {
-            handler: function(req, res) {
+            action: function(req, res) {
 
                 res.send(200);
 

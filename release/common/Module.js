@@ -10,47 +10,66 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
+var _Configuration = require('./Configuration');
+
+var _Configuration2 = _interopRequireDefault(_Configuration);
+
 var _CompositeModule = require('./CompositeModule');
 
 var _CompositeModule2 = _interopRequireDefault(_CompositeModule);
 
-var _PropertyDelegate = require('./PropertyDelegate');
+var _resourcePropertyResource = require('./resource/PropertyResource');
 
-var _PropertyDelegate2 = _interopRequireDefault(_PropertyDelegate);
+var _resourcePropertyResource2 = _interopRequireDefault(_resourcePropertyResource);
 
-var _RequireDelegate = require('./RequireDelegate');
+var _resourceRequireResource = require('./resource/RequireResource');
 
-var _RequireDelegate2 = _interopRequireDefault(_RequireDelegate);
+var _resourceRequireResource2 = _interopRequireDefault(_resourceRequireResource);
 
-var _SmartResourceDelegate = require('./SmartResourceDelegate');
+var _resourceModuleResource = require('./resource/ModuleResource');
 
-var _SmartResourceDelegate2 = _interopRequireDefault(_SmartResourceDelegate);
+var _resourceModuleResource2 = _interopRequireDefault(_resourceModuleResource);
+
+var _resourceSchemeResource = require('./resource/SchemeResource');
+
+var _resourceSchemeResource2 = _interopRequireDefault(_resourceSchemeResource);
 
 var _netPool = require('../net/Pool');
 
 var _netPool2 = _interopRequireDefault(_netPool);
 
-var _Configuration = require('./Configuration');
-
-var _Configuration2 = _interopRequireDefault(_Configuration);
-
-var _routeBulkAction = require('../route/BulkAction');
+var _routeBulkAction = require('./route/BulkAction');
 
 var _routeBulkAction2 = _interopRequireDefault(_routeBulkAction);
 
-var _routeMiddlewareAction = require('../route/MiddlewareAction');
+var _routeMiddlewareAction = require('./route/MiddlewareAction');
 
 var _routeMiddlewareAction2 = _interopRequireDefault(_routeMiddlewareAction);
 
-var _routeControllerAction = require('../route/ControllerAction');
+var _routeControllerAction = require('./route/ControllerAction');
 
 var _routeControllerAction2 = _interopRequireDefault(_routeControllerAction);
 
-var _routeViewAction = require('../route/ViewAction');
+var _routeView = require('./route/View');
 
-var _routeViewAction2 = _interopRequireDefault(_routeViewAction);
+var _routeView2 = _interopRequireDefault(_routeView);
 
 var _routeBulkAction3 = _interopRequireDefault(_routeBulkAction);
+
+var _UnknownConnectorError = require('./UnknownConnectorError');
+
+var _UnknownConnectorError2 = _interopRequireDefault(_UnknownConnectorError);
+
+var _UnknownFilterError = require('./UnknownFilterError');
+
+var _UnknownFilterError2 = _interopRequireDefault(_UnknownFilterError);
+
+var _UnknownModuleError = require('./UnknownModuleError');
+
+var _UnknownModuleError2 = _interopRequireDefault(_UnknownModuleError);
+
+var BASKET = {};
+var BOX = [];
 
 /**
  * Module
@@ -64,7 +83,8 @@ var _routeBulkAction3 = _interopRequireDefault(_routeBulkAction);
  * @property {Configuration} configuration
  * @property {object} context
  * @property {Application} application
- * @property {CompositeModule} submodules
+ * @property {CompositeModule} modules
+ * @property {string} [configDirectory='apiconf']
  */
 
 var Module = (function () {
@@ -75,28 +95,18 @@ var Module = (function () {
         this.configuration = config;
         this.context = context;
         this.application = app;
-        this.submodules = new _CompositeModule2['default']([]);
+        this.modules = new _CompositeModule2['default']([]);
+        this.configDirectory = 'apiconf';
     }
 
     /**
-     * __submodule is called to create a submodule for this module.
-     * @param {Resource} resource 
-     * @param {Application} app 
+     * __viewCallback provides a callback that will 
+     * handle view declarations.
+     * @param {string} view The view template
      * @abstract
-     * @returns {Module}
      */
 
     _createClass(Module, [{
-        key: '__submodule',
-        value: function __submodule(resource, app) {}
-
-        /**
-         * __viewCallback provides a callback that will 
-         * handle view declarations.
-         * @param {string} view The view template
-         * @abstract
-         */
-    }, {
         key: '__viewCallback',
         value: function __viewCallback(view) {}
 
@@ -108,24 +118,27 @@ var Module = (function () {
         value: function __init() {
             var _this = this;
 
-            var module;
-            var resource;
-            var submodules = this.configuration.read(_Configuration2['default'].keys.MODULES, {});
-            var delegate = new _SmartResourceDelegate2['default'](new _RequireDelegate2['default'](this.configuration.paths.modules));
+            var submodule;
+            var resource = new _resourceSchemeResource2['default'](new _resourceModuleResource2['default'](this));
 
-            delegate.add('require', new _RequireDelegate2['default']());
+            var submodules = this.configuration.read(this.configuration.keys.MODULES, BOX);
 
-            Object.keys(submodules).forEach(function (path) {
+            var prevented = this.configuration.read(this.configuration.keys.MODULES_PREVENTED, BOX);
 
-                resource = delegate.resolve(path);
-                module = _this.__submodule(resource, _this.application);
+            resource.add('require', new _resourceRequireResource2['default']());
 
-                if (submodules[path] === false) module.preventActions();
+            submodules.forEach(function (path) {
 
-                _this.submodules.add(module);
+                submodule = resource.find(path);
+
+                if (!submodule) throw new _UnknownModuleError2['default'](path);
+
+                if (prevented.indexOf(submodule.name) > -1) submodule.preventRouting();
+
+                _this.modules.add(submodule);
             });
 
-            this.submodules.__init();
+            this.modules.__init();
         }
 
         /**
@@ -136,21 +149,33 @@ var Module = (function () {
         value: function __autoload() {
             var _this2 = this;
 
-            var autos = this.configuration.read(_Configuration2['default'].keys.AUTOS, {});
-            var delegate = new _SmartResourceDelegate2['default'](new _RequireDelegate2['default']());
+            var resource = new _resourceSchemeResource2['default'](new _resourceRequireResource2['default']());
+            var autoloads;
+            var autokey;
+            var key;
 
-            delegate.add('require', new _RequireDelegate2['default']());
+            var o = {};
+            o[this.configuration.keys.CONNECTORS] = 'connectors';
+            o[this.configuration.keys.FILTERS] = 'filters';
+            o[this.configuration.keys.MIDDLEWARE] = 'middleware';
+            o[this.configuration.keys.CONTROLLERS] = 'controllers';
 
-            ['connectors', 'filters', 'middleware', 'controllers'].forEach(function (key) {
+            resource.add('require', new _resourceRequireResource2['default']());
 
-                if (autos.hasOwnProperty(key)) Object.keys(autos[key]).forEach(function (name) {
-                    return _this2.context[key][name] = delegate.lookup(autos[key][name]).module;
+            [this.configuration.keys.CONNECTORS, this.configuration.keys.FILTERS, this.configuration.keys.MIDDLEWARE, this.configuration.keys.CONTROLLERS].forEach(function (prefixedKey) {
+
+                key = o[prefixedKey];
+                autokey = 'power.autoload.' + key;
+                autoloads = _this2.configuration.read(autokey, BASKET);
+
+                Object.keys(autoloads).forEach(function (name) {
+                    return _this2.context[key][name] = resource.find(autoloads[autokey]);
                 });
 
                 _this2.configuration.require(_this2.configuration.paths[key], _this2.context[key]);
             });
 
-            this.submodules.__autoload();
+            this.modules.__autoload();
         }
 
         /**
@@ -168,20 +193,24 @@ var Module = (function () {
     }, {
         key: '__connections',
         value: function __connections() {
+            var _this3 = this;
 
             var config;
             var connector;
-            var connections = this.configuration.read(_Configuration2['default'].keys.CONNECTIONS, {});
-            var delegate = new _PropertyDelegate2['default']('connector', this.context.connectors);
+            var connections = this.configuration.read(this.configuration.keys.CONNECTIONS, BASKET);
+            var resource = new _resourcePropertyResource2['default'](this.context.connectors);
 
             return Object.keys(connections).map(function (key) {
 
                 config = connections[key];
-                connector = delegate.lookup(config.connector).module;
+                connector = resource.find(config.connector);
+
+                if (!connector) throw new _UnknownConnectorError2['default'](key, config.connector, _this3.context.connectors);
+
                 return connector(config.options).then(function (c) {
                     return _netPool2['default'][key] = c;
                 });
-            }).concat(this.submodules.__connections());
+            }).concat(this.modules.__connections());
         }
 
         /**
@@ -190,17 +219,23 @@ var Module = (function () {
     }, {
         key: '__filters',
         value: function __filters(app, defaults) {
-            var _this3 = this;
+            var _this4 = this;
 
-            var wares = this.configuration.read(_Configuration2['default'].keys.FILTERS, defaults);
-            var delegate = new _SmartResourceDelegate2['default'](new _PropertyDelegate2['default']('filter', this.context.filters));
+            var resource = new _resourceSchemeResource2['default'](new _resourcePropertyResource2['default'](this.context.filters));
 
-            delegate.add('require', new _RequireDelegate2['default']());
-            wares.forEach(function (m) {
-                return delegate.lookup(m).module.filter(app, _this3.configuration);
+            resource.add('require', new _resourceRequireResource2['default']());
+            app.use(this.handleRequest.bind(this));
+
+            this.configuration.read(this.configuration.keys.FILTERS, defaults).forEach(function (f) {
+
+                var filter = resource.find(f);
+
+                if (!filter) throw new _UnknownFilterError2['default'](_this4.name, f);
+
+                filter.apply(app, _this4.configuration);
             });
 
-            this.submodules.__filters(app, []);
+            this.modules.__filters(app, ['public']);
         }
 
         /**
@@ -215,15 +250,23 @@ var Module = (function () {
         value: function __routing(mountPoint, app, actions) {}
 
         /**
-         * handleRoute is called before any of the routes for this
+         * preventRouting disables routing for this module.
+         * Filters will still be applied but the chain will be blocked there.
+         */
+    }, {
+        key: 'preventRouting',
+        value: function preventRouting() {}
+
+        /**
+         * handleRequest is called before any of the routes for this
          * module are activated.
          * @param {Request} req 
          * @param {Response} res 
          * @param {function} next 
          */
     }, {
-        key: 'handleRoute',
-        value: function handleRoute(req, res, next) {
+        key: 'handleRequest',
+        value: function handleRequest(req, res, next) {
 
             next();
         }
@@ -234,18 +277,18 @@ var Module = (function () {
     }, {
         key: 'load',
         value: function load(app) {
-            var _this4 = this;
+            var _this5 = this;
 
             this.__init();
             this.__autoload();
 
             return Promise.all(this.__connections()).then(function () {
-                return _this4.application.onConnected(_netPool2['default']);
+                return _this5.application.onConnected(_netPool2['default']);
             }).then(function () {
 
-                _this4.__filters(app, ['default']);
-                _this4.__framework();
-                _this4.__routing('', app, new _routeBulkAction3['default']([new _routeMiddlewareAction2['default'](new _PropertyDelegate2['default']('middleware', _this4.context.middleware)), new _routeControllerAction2['default'](_this4.context.controllers), new _routeViewAction2['default'](_this4.__viewCallback)]));
+                _this5.__filters(app, ['default']);
+                _this5.__framework();
+                _this5.__routing('', app, new _routeBulkAction3['default']([new _routeMiddlewareAction2['default'](new _resourcePropertyResource2['default'](_this5.context.middleware)), new _routeControllerAction2['default'](_this5.context.controllers), new _routeView2['default'](_this5.viewEngine)]));
             });
         }
     }]);

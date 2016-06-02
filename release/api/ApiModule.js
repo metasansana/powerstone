@@ -22,9 +22,13 @@ var _commonModule = require('../common/Module');
 
 var _commonModule2 = _interopRequireDefault(_commonModule);
 
-var _routeRoute = require('../route/Route');
+var _commonRouteRoute = require('../common/route/Route');
 
-var _routeRoute2 = _interopRequireDefault(_routeRoute);
+var _commonRouteRoute2 = _interopRequireDefault(_commonRouteRoute);
+
+var _restify = require('restify');
+
+var _restify2 = _interopRequireDefault(_restify);
 
 /**
  * Module
@@ -42,16 +46,13 @@ var ApiModule = (function (_Module) {
         _classCallCheck(this, ApiModule);
 
         _get(Object.getPrototypeOf(ApiModule.prototype), 'constructor', this).call(this, name, config, context, app);
-        this.__defaultFilters = ['default'];
+
+        this.viewEngine = function () {
+            throw new Error('ApiModule does not support views!');
+        };
     }
 
     _createClass(ApiModule, [{
-        key: '__submodule',
-        value: function __submodule(resource, app) {
-
-            return new ApiModule(resource.basename, new _commonConfiguration2['default']('apiconf', resource.path), this.context, app);
-        }
-    }, {
         key: '__framework',
         value: function __framework() {}
     }, {
@@ -59,16 +60,16 @@ var ApiModule = (function (_Module) {
         value: function __routing(point, app, actions) {
             var _this = this;
 
-            var path = this.configuration.read(_commonConfiguration2['default'].keys.PATH, point + '/' + this.name);
+            var path = this.configuration.read(this.configuration.keys.PATH, point + '/' + this.name);
             var routes = this.configuration.routes;
 
             Object.keys(routes).forEach(function (route) {
                 return _this.routes = Object.keys(routes[route]).map(function (method) {
-                    return new _routeRoute2['default'](method, path + '/' + route, [_this.handleRoute.bind(_this)].concat(actions.generate(method, path + '/' + route, routes[route][method])), app);
+                    return new _commonRouteRoute2['default'](method, path + '/' + route, actions.generate(method, path + '/' + route, routes[route][method]), app);
                 });
             });
 
-            this.submodules.__routing(path, app, actions);
+            this.modules.__routing(path, app, actions);
         }
     }]);
 

@@ -26,6 +26,62 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
+var _crypto = require('crypto');
+
+var _crypto2 = _interopRequireDefault(_crypto);
+
+var _netPool = require('../net/Pool');
+
+var _netPool2 = _interopRequireDefault(_netPool);
+
+var _resourcePropertyResource = require('./resource/PropertyResource');
+
+var _resourcePropertyResource2 = _interopRequireDefault(_resourcePropertyResource);
+
+var _resourceRequireResource = require('./resource/RequireResource');
+
+var _resourceRequireResource2 = _interopRequireDefault(_resourceRequireResource);
+
+var _resourceStringResource = require('./resource/StringResource');
+
+var _resourceStringResource2 = _interopRequireDefault(_resourceStringResource);
+
+var _resourceSchemeResource = require('./resource/SchemeResource');
+
+var _resourceSchemeResource2 = _interopRequireDefault(_resourceSchemeResource);
+
+var keys = {
+    MODULES: 'power.modules',
+    MODULES_PREVENTED: 'power.modules.preventRouting',
+    CONNECTIONS: 'power.connections',
+    MIDDLEWARE: 'power.app.middleware',
+    CONTROLLERS: 'power.app.controllers',
+    PATH: 'power.routing.root',
+    WEB_FRAMEWORK_SETTINGS: 'power.web.framework.settings',
+    WEB_VIEWS_ENGINE: 'power.web.views.engine',
+    WEB_VIEWS_PATHS: 'power.web.views.paths',
+    FILTERS: 'power.filters',
+    FILTERS_PARSER_JSON_ENABLED: 'power.filters.parser.json.enabled',
+    FILTERS_PARSER_JSON_OPTIONS: 'power.filters.parser.json.options',
+    FILTERS_PARSER_URLENCODED_ENABLED: 'power.filters.parser.urlencoded.enabled',
+    FILTERS_PARSER_URLENCODED_OPTIONS: 'power.filters.parser.urlencoded.options',
+    FILTERS_PARSER_TEXT_ENABLED: 'power.filters.parser.text.enabled',
+    FILTERS_PARSER_TEXT_OPTIONS: 'power.filters.parser.text.options',
+    FILTERS_PARSER_RAW_ENABLED: 'power.filters.parser.raw.enabled',
+    FILTERS_PARSER_RAW_OPTIONS: 'power.filters.parser.raw.options',
+    FILTERS_CSRF_ENABLED: 'power.filters.csrf.enabled',
+    FILTERS_CSRF_OPTIONS: 'power.filters.csrf.options',
+    FILTERS_LOG_ENABLED: 'power.filters.log.enabled',
+    FILTERS_LOG_FORMAT: 'power.filters.log.format',
+    FILTERS_LOG_OPTIONS: 'power.filters.log.options',
+    FILTERS_ASSET_PATHS: 'power.filters.asset.paths',
+    FILTERS_ASSET_DIRECTORY: 'power.filters.asset.directory'
+};
+
+var defaults = {
+    SECRET: _crypto2['default'].randomBytes(32).toString('hex')
+};
+
 function exists(path) {
 
     try {
@@ -36,11 +92,13 @@ function exists(path) {
 }
 
 /**
- * Configuration
+ * Configuration provides an api for reading interesting values from a
+ * modules configuration.
  * @param {string} dir
  * @param {string} path 
  * @property {object} keys
  * @property {string} path
+ * TODO Document the properties of this class properly.
  */
 
 var Configuration = (function () {
@@ -55,25 +113,34 @@ var Configuration = (function () {
             connectors: path + '/connectors',
             filters: path + '/filters',
             middleware: path + '/app/middleware',
-            controllers: path + '/app/controllers'
+            controllers: path + '/app/controllers',
+            views: path + '/app/views',
+            lib: path + '/lib',
+            'public': path + '/public'
         };
 
+        this.keys = keys;
+        this.defaults = defaults;
         this.options = exists(this.paths.config) ? require(this.paths.config) : {};
         this.routes = exists(this.paths.routes) ? require(this.paths.routes) : {};
+        this._resources = new _resourceSchemeResource2['default'](new _resourceStringResource2['default']());
+        this._resources.add('require', new _resourceRequireResource2['default']());
+        this._resources.add('lib', new _resourceRequireResource2['default'](this.paths.lib + '/'));
+        this._resources.add('env', new _resourcePropertyResource2['default'](process.env));
+        this._resources.add('pool', new _resourcePropertyResource2['default'](_netPool2['default']));
     }
 
     _createClass(Configuration, [{
         key: 'read',
-        value: function read(key, defaults) {
-            var ret = _propertySeek2['default'].get(this.options, key);
-            if (ret) return ret;
-            return defaults;
-        }
-    }, {
-        key: 'readAndMerge',
-        value: function readAndMerge(key, target, defaults) {
-            var ret = this.readWithDefaults(key, defaults);
-            return (0, _deepmerge2['default'])(target, ret);
+        value: function read(key, defaults, merge) {
+
+            var ret = this.options.hasOwnProperty(key) ? this.options[key] : defaults;
+
+            if (typeof ret === 'string') return this._resources.find(ret);
+
+            if (merge) return (0, _deepmerge2['default'])(ret, merge);
+
+            return ret;
         }
 
         /**

@@ -10,9 +10,6 @@ export default {
             view: 'users/messages.html'
         },
         post: {
-            pipes: {
-                body: 'body'
-            },
             action: function(req, res) {
                 global.messages[req.params.user] = global.messages[req.params.user] || [];
                 global.messages[req.params.user].push(`id:${req.body.id} ${req.body.message}`);
@@ -23,7 +20,9 @@ export default {
         }
     },
     '/users/count': {
-        get: 'Users.count()'
+        get: {
+            action: 'Users.count()'
+        }
     },
     '/users/messages': {
         get: {

@@ -1,9 +1,9 @@
 export default {
-    connections: {
+    'power.connections': {
         admin: {
-            connector: 'null',
+            connector: 'fake',
             options: {}
         }
     },
-    modules:{'demo':true , 'demo1':true}
+    'power.modules':['demo', 'demo1']
 };

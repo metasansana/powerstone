@@ -26,45 +26,89 @@ var _commonModule = require('../common/Module');
 
 var _commonModule2 = _interopRequireDefault(_commonModule);
 
+var _commonRouteRoute = require('../common/route/Route');
+
+var _commonRouteRoute2 = _interopRequireDefault(_commonRouteRoute);
+
+var BASKET = {};
+
 var WebModule = (function (_Module) {
     _inherits(WebModule, _Module);
 
-    function WebModule() {
+    function WebModule(name, config, context, app) {
         _classCallCheck(this, WebModule);
 
-        _get(Object.getPrototypeOf(WebModule.prototype), 'constructor', this).apply(this, arguments);
+        _get(Object.getPrototypeOf(WebModule.prototype), 'constructor', this).call(this, name, config, context, app);
+
+        this._expressApp = (0, _express2['default'])();
+        this.configDirectory = 'webconf';
+
+        this.viewEngine = function (view, locals) {
+
+            return function render_web_view(req, res, next) {
+
+                res.render(view, locals, function (err, html) {
+
+                    if (err) next(err);
+                    res.send(html);
+                });
+            };
+        };
     }
 
     _createClass(WebModule, [{
-        key: '__submodule',
-        value: function __submodule(resource, app) {
-
-            return new WebModule(resource.basename, new _commonConfiguration2['default']('webconf', resource.path), this.context, app);
-        }
-    }, {
         key: '__framework',
-        value: function __framework() {}
-    }, {
-        key: '__routing',
-        value: function __routing(point, parent) {
+        value: function __framework() {
             var _this = this;
 
-            var path = this.configuration.readOrDefault(_commonConfiguration2['default'].keys.PATH, '/' + this.name);
-            var routes = this.configuration.readOrDefault(_commonConfiguration2['default'].keys.ROUTES, {});
-            var location = point + '/' + path;
-            var action;
+            var engine = this.configuration.read(this.configuration.keys.WEB_VIEWS_ENGINE, null);
+            var settings = this.configuration.read(this.configuration.keys.WEB_FRAMEWORK_SETTINGS, BASKET);
 
-            Object.keys(routes).forEach(function (path) {
+            switch (typeof engine) {
 
-                Object.keys(routes[path]).map(function (method) {
+                case 'function':
+                    engine(this._expressApp, this.configuration);
+                    break;
 
-                    actions = new Actions(method, path, Delegates.create(routes[path][method]));
-                    actions.apply(_this._handler);
+                case 'string':
+                    this._expressApp.set('views', this.configuration.read(this.configuration.keys.WEB_VIEWS_PATHS, this.configuration.paths.views));
+                    this._expressApp.set('view engine', engine);
+                    break;
+                case null:
+                    break;
+
+                default:
+                    break;
+
+            }
+
+            Object.keys(settings).forEach(function (key) {
+                return _this._expressApp.set(key, settings[key]);
+            });
+            this.modules.__framework();
+        }
+    }, {
+        key: '__filters',
+        value: function __filters(app, defaults) {
+
+            _get(Object.getPrototypeOf(WebModule.prototype), '__filters', this).call(this, this._expressApp, defaults);
+        }
+    }, {
+        key: '__routing',
+        value: function __routing(point, app, actions) {
+            var _this2 = this;
+
+            var path = this.configuration.read(_commonConfiguration2['default'].keys.PATH, '/' + this.name);
+            var routes = this.configuration.routes;
+
+            Object.keys(routes).forEach(function (route) {
+                return _this2.routes = Object.keys(routes[route]).map(function (method) {
+                    return new _commonRouteRoute2['default'](method, route, actions.generate(method, route, routes[route][method]), _this2._expressApp);
                 });
             });
 
-            this.submodules.__routing(location, this.handler);
-            parent.use(path, this.handler);
+            this.modules.__routing(path, this._expressApp, actions);
+            app.use(path, this._expressApp);
         }
     }]);
 

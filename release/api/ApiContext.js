@@ -24,7 +24,10 @@ var ApiContext = function ApiContext() {
     this.connectors = {};
     this.controllers = {};
     this.filters = {
-        'default': _filtersDefaultFilters2['default']
+        'default': _filtersDefaultFilters2['default'],
+        'public': {
+            apply: function apply() {}
+        }
     };
 };
 

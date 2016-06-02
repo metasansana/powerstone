@@ -12,7 +12,10 @@ class ApiContext {
         this.connectors = {};
         this.controllers = {};
         this.filters = {
-            default: DefaultFilters
+            default: DefaultFilters,
+            public: {
+                apply() {}
+            }
         };
 
     }

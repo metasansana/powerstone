@@ -1,6 +1,7 @@
 import request from 'supertest-as-promised';
 import must from 'must';
-import Web from '../../src/web/Web';
+import Web from 'libpowerstone/web/Web';
+import Pool from 'libpowerstone/net/Pool';
 
 var app;
 
@@ -31,11 +32,11 @@ describe('Application', function() {
 
         it('should be connected', function() {
 
-            must(global.connected).equal(true);
+            must(Pool.q).equal('fake');
 
         });
 
-        xit('GET /users/:user/messages', function() {
+        it('GET /users/:user/messages', function() {
             return request(app.server.toFramework()).
             get('/users/kav/messages').
             expect(200).
@@ -44,7 +45,7 @@ describe('Application', function() {
             });
         });
 
-        xit('POST /users/:user/messages', function() {
+        it('POST /users/:user/messages', function() {
 
             return request(app.server.toFramework()).
             post('/users/kyle/messages').
@@ -54,11 +55,11 @@ describe('Application', function() {
             }).
             expect(201).
             then(res =>
-                must(global.messages.kyle).eql(['id:16 xit takes that many.']));
+                must(global.messages.kyle).eql(['id:2 xit takes that many.']));
 
         });
 
-        xit('GET /users/count', function() {
+        it('GET /users/count', function() {
 
             return request(app.server.toFramework()).
             get('/users/count').
@@ -67,7 +68,7 @@ describe('Application', function() {
 
         });
 
-        xit('GET /users/messages', function() {
+        it('GET /users/messages', function() {
 
             global.requests = 20;
 
@@ -81,7 +82,7 @@ describe('Application', function() {
         });
     });
 
-    xit('GET /admin/controls', function() {
+    it('GET /admin/controls', function() {
 
         return request(app.server.toFramework()).
         get('/admin/controls').
@@ -89,7 +90,7 @@ describe('Application', function() {
 
     });
 
-    xit('GET /admin/panel', function() {
+    it('GET /admin/panel', function() {
 
         return request(app.server.toFramework()).
         get('/admin/panel').
@@ -101,10 +102,19 @@ describe('Application', function() {
         });
     });
 
-    xit('GET /admin/admin_demo', function() {
+    xit('GET /admin_demo/me', function() {
 
         return request(app.server.toFramework()).
-        get('/admin/admin_demo').
+        get('/admin/admin_demo/me.css').
+        expect(200);
+
+    });
+
+
+    it('GET /admin/demo/names.txt', function() {
+
+        return request(app.server.toFramework()).
+        get('/admin/demo/names.txt').
         expect(200);
 
     });

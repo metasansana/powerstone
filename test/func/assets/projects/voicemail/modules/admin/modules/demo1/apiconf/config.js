@@ -1,3 +1,3 @@
 export default {
-    path: '/admin_demo'
+    'power.routing.root': '/admin_demo'
 }

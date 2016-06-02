@@ -1,14 +1,21 @@
-import CompositeModule from './CompositeModule';
-import PropertyDelegate from './PropertyDelegate';
-import RequireDelegate from './RequireDelegate';
-import SmartResourceDelegate from './SmartResourceDelegate';
-import Pool from '../net/Pool';
 import Configuration from './Configuration';
-import RouteAction from '../route/BulkAction';
-import MiddlewareAction from '../route/MiddlewareAction';
-import ControllerAction from '../route/ControllerAction';
-import ViewAction from '../route/ViewAction';
-import BulkAction from '../route/BulkAction';
+import CompositeModule from './CompositeModule';
+import PropertyResource from './resource/PropertyResource';
+import RequireResource from './resource/RequireResource';
+import ModuleResource from './resource/ModuleResource';
+import SchemeResource from './resource/SchemeResource';
+import Pool from '../net/Pool';
+import RouteAction from './route/BulkAction';
+import MiddlewareAction from './route/MiddlewareAction';
+import ControllerAction from './route/ControllerAction';
+import View from './route/View';
+import BulkAction from './route/BulkAction';
+import UnknownConnectorError from './UnknownConnectorError';
+import UnknownFilterError from './UnknownFilterError';
+import UnknownModuleError from './UnknownModuleError';
+
+const BASKET = {};
+const BOX = [];
 
 /**
  * Module
@@ -22,7 +29,8 @@ import BulkAction from '../route/BulkAction';
  * @property {Configuration} configuration
  * @property {object} context
  * @property {Application} application
- * @property {CompositeModule} submodules
+ * @property {CompositeModule} modules
+ * @property {string} [configDirectory='apiconf']
  */
 class Module {
 
@@ -32,19 +40,8 @@ class Module {
         this.configuration = config;
         this.context = context;
         this.application = app;
-        this.submodules = new CompositeModule([]);
-
-    }
-
-    /**
-     * __submodule is called to create a submodule for this module.
-     * @param {Resource} resource 
-     * @param {Application} app 
-     * @abstract
-     * @returns {Module}
-     */
-    __submodule(resource, app) {
-
+        this.modules = new CompositeModule([]);
+        this.configDirectory = 'apiconf';
 
     }
 
@@ -63,27 +60,33 @@ class Module {
      */
     __init() {
 
-        var module;
-        var resource;
-        var submodules = this.configuration.read(Configuration.keys.MODULES, {});
-        var delegate = new SmartResourceDelegate(new RequireDelegate(this.configuration.paths.modules));
+        var submodule;
+        var resource = new SchemeResource(new ModuleResource(this));
 
-        delegate.add('require', new RequireDelegate());
+        var submodules = this.configuration.
+        read(this.configuration.keys.MODULES, BOX);
 
-        Object.keys(submodules).
+        var prevented = this.configuration.read(
+            this.configuration.keys.MODULES_PREVENTED, BOX);
+
+        resource.add('require', new RequireResource());
+
+        submodules.
         forEach(path => {
 
-            resource = delegate.resolve(path);
-            module = this.__submodule(resource, this.application);
+            submodule = resource.find(path);
 
-            if (submodules[path] === false)
-                module.preventActions();
+            if (!submodule)
+                throw new UnknownModuleError(path);
 
-            this.submodules.add(module);
+            if (prevented.indexOf(submodule.name) > -1)
+                submodule.preventRouting();
+
+            this.modules.add(submodule);
 
         });
 
-        this.submodules.__init();
+        this.modules.__init();
 
     }
 
@@ -92,23 +95,39 @@ class Module {
      */
     __autoload() {
 
-        var autos = this.configuration.read(Configuration.keys.AUTOS, {});
-        var delegate = new SmartResourceDelegate(new RequireDelegate());
+        var resource = new SchemeResource(new RequireResource());
+        var autoloads;
+        var autokey;
+        var key;
 
-        delegate.add('require', new RequireDelegate());
+        var o = {};
+        o[this.configuration.keys.CONNECTORS] = 'connectors';
+        o[this.configuration.keys.FILTERS] = 'filters';
+        o[this.configuration.keys.MIDDLEWARE] = 'middleware';
+        o[this.configuration.keys.CONTROLLERS] = 'controllers';
 
-        ['connectors', 'filters', 'middleware', 'controllers'].
-        forEach(key => {
+        resource.add('require', new RequireResource());
 
-            if (autos.hasOwnProperty(key))
-                Object.keys(autos[key]).forEach(name =>
-                    this.context[key][name] = delegate.lookup(autos[key][name]).module);
+        [
+            this.configuration.keys.CONNECTORS,
+            this.configuration.keys.FILTERS,
+            this.configuration.keys.MIDDLEWARE,
+            this.configuration.keys.CONTROLLERS
+        ].
+        forEach(prefixedKey => {
+
+            key = o[prefixedKey];
+            autokey = `power.autoload.${key}`;
+            autoloads = this.configuration.read(autokey, BASKET);
+
+            Object.keys(autoloads).forEach(name =>
+                this.context[key][name] = resource.find(autoloads[autokey]));
 
             this.configuration.require(this.configuration.paths[key], this.context[key]);
 
         });
 
-        this.submodules.__autoload();
+        this.modules.__autoload();
 
     }
 
@@ -128,17 +147,21 @@ class Module {
 
         var config;
         var connector;
-        var connections = this.configuration.read(Configuration.keys.CONNECTIONS, {});
-        var delegate = new PropertyDelegate('connector', this.context.connectors);
+        var connections = this.configuration.read(this.configuration.keys.CONNECTIONS, BASKET);
+        var resource = new PropertyResource(this.context.connectors);
 
         return Object.keys(connections).
         map(key => {
 
             config = connections[key];
-            connector = delegate.lookup(config.connector).module;
+            connector = resource.find(config.connector);
+
+            if (!connector)
+                throw new UnknownConnectorError(key, config.connector, this.context.connectors);
+
             return connector(config.options).then(c => Pool[key] = c);
 
-        }).concat(this.submodules.__connections());
+        }).concat(this.modules.__connections());
 
     }
 
@@ -147,14 +170,25 @@ class Module {
      */
     __filters(app, defaults) {
 
-        var wares = this.configuration.read(Configuration.keys.FILTERS, defaults);
-        var delegate = new SmartResourceDelegate(
-            new PropertyDelegate('filter', this.context.filters));
+        var resource = new SchemeResource(
+            new PropertyResource(this.context.filters));
 
-        delegate.add('require', new RequireDelegate());
-        wares.forEach(m => delegate.lookup(m).module.filter(app, this.configuration));
+        resource.add('require', new RequireResource());
+        app.use(this.handleRequest.bind(this));
 
-        this.submodules.__filters(app, []);
+        this.configuration.read(this.configuration.keys.FILTERS, defaults).
+        forEach(f => {
+
+            var filter = resource.find(f);
+
+            if (!filter)
+                throw new UnknownFilterError(this.name, f);
+
+            filter.apply(app, this.configuration);
+
+        });
+
+        this.modules.__filters(app, ['public']);
 
     }
 
@@ -171,13 +205,21 @@ class Module {
     }
 
     /**
-     * handleRoute is called before any of the routes for this
+     * preventRouting disables routing for this module.
+     * Filters will still be applied but the chain will be blocked there.
+     */
+    preventRouting() {
+
+    }
+
+    /**
+     * handleRequest is called before any of the routes for this
      * module are activated.
      * @param {Request} req 
      * @param {Response} res 
      * @param {function} next 
      */
-    handleRoute(req, res, next) {
+    handleRequest(req, res, next) {
 
         next();
 
@@ -198,9 +240,9 @@ class Module {
             this.__filters(app, ['default']);
             this.__framework();
             this.__routing('', app, new BulkAction([
-                new MiddlewareAction(new PropertyDelegate('middleware', this.context.middleware)),
+                new MiddlewareAction(new PropertyResource(this.context.middleware)),
                 new ControllerAction(this.context.controllers),
-                new ViewAction(this.__viewCallback)
+                new View(this.viewEngine)
             ]));
 
         });

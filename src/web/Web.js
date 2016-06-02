@@ -2,13 +2,9 @@ import Promise from 'bluebird';
 import express from 'express';
 import Application from '../common/Application';
 import Configuration from '../common/Configuration';
-import Context from '../common/Context';
+import WebContext from './WebContext';
 import WebModule from './WebModule';
 import ServerFactory from './ServerFactory';
-
-const defaultWares = ['public', 'serve-index', 'method-override', 'morgan',
-    'body-parser', 'cookie-parser', 'session', 'csrf'
-];
 
 class Web extends Application {
 
@@ -17,7 +13,7 @@ class Web extends Application {
         super(path);
 
         this.main = new WebModule('', new Configuration('webconf', path),
-            new Context(), this);
+            new WebContext(), this);
 
         this.frameworkApp = express();
 

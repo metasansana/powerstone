@@ -30,9 +30,9 @@ var _commonConfiguration = require('../common/Configuration');
 
 var _commonConfiguration2 = _interopRequireDefault(_commonConfiguration);
 
-var _commonContext = require('../common/Context');
+var _WebContext = require('./WebContext');
 
-var _commonContext2 = _interopRequireDefault(_commonContext);
+var _WebContext2 = _interopRequireDefault(_WebContext);
 
 var _WebModule = require('./WebModule');
 
@@ -42,8 +42,6 @@ var _ServerFactory = require('./ServerFactory');
 
 var _ServerFactory2 = _interopRequireDefault(_ServerFactory);
 
-var defaultWares = ['public', 'serve-index', 'method-override', 'morgan', 'body-parser', 'cookie-parser', 'session', 'csrf'];
-
 var Web = (function (_Application) {
     _inherits(Web, _Application);
 
@@ -52,7 +50,7 @@ var Web = (function (_Application) {
 
         _get(Object.getPrototypeOf(Web.prototype), 'constructor', this).call(this, path);
 
-        this.main = new _WebModule2['default']('', new _commonConfiguration2['default']('webconf', path), new _commonContext2['default'](), this);
+        this.main = new _WebModule2['default']('', new _commonConfiguration2['default']('webconf', path), new _WebContext2['default'](), this);
 
         this.frameworkApp = (0, _express2['default'])();
     }

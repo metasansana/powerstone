@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/mvc/Controller.js"],"names":[],"mappings":";;;;;;;;;;;;;;wBAAoB,WAAW;;;;IAEzB,UAAU;YAAV,UAAU;;WAAV,UAAU;0BAAV,UAAU;;+BAAV,UAAU;;;SAAV,UAAU;;;qBAID,UAAU","file":"Controller.js","sourcesContent":["import Results from './Results';\n\nclass Controller extends Results {\n\n\n}\nexport default Controller;\n"]}

@@ -10,17 +10,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _QueryParser = require('./QueryParser');
+var _ParserFilter = require('./ParserFilter');
 
-var _QueryParser2 = _interopRequireDefault(_QueryParser);
+var _ParserFilter2 = _interopRequireDefault(_ParserFilter);
 
-var _BodyParser = require('./BodyParser');
+var _AuthorizationFilter = require('./AuthorizationFilter');
 
-var _BodyParser2 = _interopRequireDefault(_BodyParser);
-
-var _AcceptParser = require('./AcceptParser');
-
-var _AcceptParser2 = _interopRequireDefault(_AcceptParser);
+var _AuthorizationFilter2 = _interopRequireDefault(_AuthorizationFilter);
 
 /**
  * DefaultFilters installs the default filters we
@@ -33,12 +29,10 @@ var DefaultFilters = (function () {
     }
 
     _createClass(DefaultFilters, [{
-        key: 'filter',
-        value: function filter(app, config) {
+        key: 'apply',
+        value: function apply(app, config) {
 
-            _QueryParser2['default'].filter(app, config);
-            _BodyParser2['default'].filter(app, config);
-            _AcceptParser2['default'].filter(app, config);
+            _ParserFilter2['default'].apply(app, config);
         }
     }]);
 

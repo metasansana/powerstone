@@ -28,7 +28,7 @@ describe('Api', function() {
         global.requests = 24;
 
         it('should be connected', function() {
-            must(Pool.main).equal(null);
+            must(Pool.main).equal('fake');
 
         });
 
@@ -101,6 +101,14 @@ describe('Api', function() {
 
         return request(app.server.toFramework()).
         get('/admin_demo').
+        expect(200);
+
+    });
+
+    xit('GET /demo/names.txt', function() {
+
+        return request(app.server.toFramework()).
+        get('/demo/names.txt').
         expect(200);
 
     });

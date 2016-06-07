@@ -124,14 +124,8 @@ var Configuration = (function () {
 
         this.keys = keys;
         this.defaults = defaults;
-        this.options = (exists(this.paths.config) ? require(this.paths.config) : {
-            config: {}
-        }).config;
-
-        this.routes = exists(this.paths.routes) ? require(this.paths.routes) : {
-            routes: {}
-        };
-
+        this.options = exists(this.paths.config) ? require(this.paths.config) : {};
+        this.routes = exists(this.paths.routes) ? require(this.paths.routes) : {};
         this._resources = new _resourceSchemeResource2['default'](new _resourceStringResource2['default']());
         this._resources.add('require', new _resourceRequireResource2['default']());
         this._resources.add('lib', new _resourceRequireResource2['default'](this.paths.lib + '/'));

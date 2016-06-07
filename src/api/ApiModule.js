@@ -32,7 +32,7 @@ class ApiModule extends Module {
     __routing(point, app, actions) {
 
         var path = this.configuration.read(this.configuration.keys.PATH, `${point}/${this.name}`);
-        var routes = this.configuration.routes.routes;
+        var routes = this.configuration.routes;
 
         Object.keys(routes).
         forEach(route =>

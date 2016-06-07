@@ -2,7 +2,7 @@ global.messages = {
     kav: ['Your subscription has expired']
 };
 
-export const routes =  {
+export default {
 
     '/users/:user/messages': {
         get: {

@@ -39,6 +39,20 @@ class Application {
     }
 
     /**
+     * onError is called when some seemingly unrecoverable error
+     * occurs, override it to handle errors on your own.
+     * @param {Error} err 
+     * @returns {null|Promise}
+     */
+    onError(err) {
+
+      console.error(err.stack);
+      process.exit(-1);
+      return null;
+      
+    }
+
+    /**
      * on 
      */
     on() {
@@ -70,7 +84,9 @@ class Application {
             return this.server.start();
 
         }).
-        then(port => console.log(port));
+        then(port => console.log(port)).
+        catch(e=>this.onError(e));
+        
 
     }
 }

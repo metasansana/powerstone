@@ -75,7 +75,10 @@ var keys = {
     FILTERS_LOG_FORMAT: 'power.filters.log.format',
     FILTERS_LOG_OPTIONS: 'power.filters.log.options',
     FILTERS_ASSET_PATHS: 'power.filters.asset.paths',
-    FILTERS_ASSET_DIRECTORY: 'power.filters.asset.directory'
+    FILTERS_ASSET_PATHS_OPTIONS: 'power.filters.asset.options',
+    FILTERS_ASSET_DIRECTORY: 'power.filters.asset.directory',
+    FILTERS_ASSET_DIRECTORY_OPTIONS: 'power.filters.asset.options'
+
 };
 
 var defaults = {
@@ -122,7 +125,11 @@ var Configuration = (function () {
         this.keys = keys;
         this.defaults = defaults;
         this.options = exists(this.paths.config) ? require(this.paths.config) : {};
-        this.routes = exists(this.paths.routes) ? require(this.paths.routes) : {};
+
+        this.routes = exists(this.paths.routes) ? require(this.paths.routes) : {
+            routes: {}
+        };
+
         this._resources = new _resourceSchemeResource2['default'](new _resourceStringResource2['default']());
         this._resources.add('require', new _resourceRequireResource2['default']());
         this._resources.add('lib', new _resourceRequireResource2['default'](this.paths.lib + '/'));

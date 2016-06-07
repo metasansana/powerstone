@@ -61,7 +61,7 @@ var ApiModule = (function (_Module) {
             var _this = this;
 
             var path = this.configuration.read(this.configuration.keys.PATH, point + '/' + this.name);
-            var routes = this.configuration.routes;
+            var routes = this.configuration.routes.routes;
 
             Object.keys(routes).forEach(function (route) {
                 return _this.routes = Object.keys(routes[route]).map(function (method) {

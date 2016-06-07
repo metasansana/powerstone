@@ -1,4 +1,4 @@
-export default {
+export const routes = {
     '/controls': {
         get: {
             action: function(req, res) {

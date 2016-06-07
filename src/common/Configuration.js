@@ -34,7 +34,10 @@ const keys = {
     FILTERS_LOG_FORMAT: 'power.filters.log.format',
     FILTERS_LOG_OPTIONS: 'power.filters.log.options',
     FILTERS_ASSET_PATHS: 'power.filters.asset.paths',
-    FILTERS_ASSET_DIRECTORY: 'power.filters.asset.directory'
+    FILTERS_ASSET_PATHS_OPTIONS: 'power.filters.asset.options',
+    FILTERS_ASSET_DIRECTORY: 'power.filters.asset.directory',
+    FILTERS_ASSET_DIRECTORY_OPTIONS: 'power.filters.asset.options'
+
 };
 
 const defaults = {
@@ -76,13 +79,17 @@ class Configuration {
             controllers: `${path}/app/controllers`,
             views: `${path}/app/views`,
             lib: `${path}/lib`,
-          public: `${path}/public`
+            public: `${path}/public`
         };
 
         this.keys = keys;
         this.defaults = defaults;
         this.options = (exists(this.paths.config)) ? require(this.paths.config) : {};
-        this.routes = (exists(this.paths.routes)) ? require(this.paths.routes) : {};
+
+        this.routes = (exists(this.paths.routes)) ? require(this.paths.routes) : {
+            routes: {}
+        };
+
         this._resources = new SchemeResource(new StringResource());
         this._resources.add('require', new RequireResource());
         this._resources.add('lib', new RequireResource(`${this.paths.lib}/`));

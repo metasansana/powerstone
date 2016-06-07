@@ -33,11 +33,11 @@ var AssetFilter = (function () {
         value: function apply(app, config) {
 
             config.read(config.keys.FILTERS_ASSET_PATHS, [config.paths['public']]).forEach(function (path) {
-                return app.use(_express2['default']['static'](path));
+                return app.use(_express2['default']['static'](path, config.read(config.keys.FILTERS_ASSET_PATH_OPTIONS, null)));
             });
 
             config.read(config.keys.FILTERS.ASSET_DIRECTORY, []).forEach(function (path) {
-                return app.use((0, _serveIndex2['default'])(path));
+                return app.use((0, _serveIndex2['default'])(path, config.read(config.keys.FILTERS_ASSET_DIRECTORY_OPTIONS, null)));
             });
         }
     }]);

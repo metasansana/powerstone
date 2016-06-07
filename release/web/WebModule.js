@@ -99,7 +99,7 @@ var WebModule = (function (_Module) {
             var _this2 = this;
 
             var path = this.configuration.read(_commonConfiguration2['default'].keys.PATH, '/' + this.name);
-            var routes = this.configuration.routes;
+            var routes = this.configuration.routes.routes;
 
             Object.keys(routes).forEach(function (route) {
                 return _this2.routes = Object.keys(routes[route]).map(function (method) {

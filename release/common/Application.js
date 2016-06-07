@@ -61,6 +61,21 @@ var Application = (function () {
         }
 
         /**
+         * onError is called when some seemingly unrecoverable error
+         * occurs, override it to handle errors on your own.
+         * @param {Error} err 
+         * @returns {null|Promise}
+         */
+    }, {
+        key: 'onError',
+        value: function onError(err) {
+
+            console.error(err.stack);
+            process.exit(-1);
+            return null;
+        }
+
+        /**
          * on 
          */
     }, {
@@ -92,6 +107,8 @@ var Application = (function () {
                 return _this.server.start();
             }).then(function (port) {
                 return console.log(port);
+            })['catch'](function (e) {
+                return _this.onError(e);
             });
         }
     }]);

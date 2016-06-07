@@ -1,4 +1,4 @@
-export default {
+export const config = {
     'power.connections': {
         admin: {
             connector: 'fake',

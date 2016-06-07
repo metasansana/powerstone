@@ -1,4 +1,4 @@
-export default {
+export const config = {
     'power.web.views.engine': 'lib://nunjucks',
     'power.connections': {
         q: {

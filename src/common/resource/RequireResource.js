@@ -10,12 +10,10 @@ class RequireResource {
 
     constructor(path) {
 
-            this._path = (path)? path : ''+`${path}/`;
+        this._path = (path) ? '' + `${path}/` : '';
 
         if (typeof this._path !== 'string')
             throw new TypeError(`The argument 'path' must be a string, got '${typeof  path}'!`);
-
-
 
     }
 

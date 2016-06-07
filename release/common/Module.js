@@ -207,6 +207,8 @@ var Module = (function () {
 
                 if (!connector) throw new _UnknownConnectorError2['default'](key, config.connector, _this3.context.connectors);
 
+                if (typeof connector !== 'function') throw new TypeError('Connector must be a function got \'' + typeof connector + '\'!');
+
                 return connector(config.options).then(function (c) {
                     return _netPool2['default'][key] = c;
                 });

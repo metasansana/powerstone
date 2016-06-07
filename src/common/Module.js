@@ -159,6 +159,9 @@ class Module {
             if (!connector)
                 throw new UnknownConnectorError(key, config.connector, this.context.connectors);
 
+            if (typeof connector !== 'function')
+                throw new TypeError(`Connector must be a function got '${typeof connector}'!`);
+
             return connector(config.options).then(c => Pool[key] = c);
 
         }).concat(this.modules.__connections());

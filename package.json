@@ -57,6 +57,7 @@
         "node": "4.2.5"
     },
     "files": [
-        "release"
+        "lib",
+        "build"
     ]
 }

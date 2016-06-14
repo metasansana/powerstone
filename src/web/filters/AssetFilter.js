@@ -7,7 +7,7 @@ import serve_index from 'serve-index';
 class AssetFilter {
 
     apply(app, config) {
-
+//TODO consider checking if the paths exists first
         config.read(config.keys.FILTERS_ASSET_PATHS, [config.paths.public]).
         forEach(path => app.use(express.static(path,
             config.read(config.keys.FILTERS_ASSET_PATH_OPTIONS, null))));

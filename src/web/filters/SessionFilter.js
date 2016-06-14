@@ -8,14 +8,14 @@ class SessionFilter {
 
     apply(app, config) {
 
-        if (config.read('power.filters.session.enabled', false)) {
+        if (config.read(config.keys.FILTERS_SESSION_ENABLED, false)) {
 
-            app.use(session(config.read('power.filters.session.options', {}, {
+            app.use(session(config.read(config.keys.FILTERS_SESSION_OPTIONS, {}, {
                 name: 'CRYINGZANGOLIE',
-                secret: config.read('power.secret', SECRET),
+                secret: config.read(config.keys.SECRET, config.defaults.SECRET),
                 resave: false,
                 saveUninitialized: true,
-                store: config.read('power.filters.session.store', null)
+                store: config.read(config.keys.FILTERS_SESSION_STORE, null)
             })));
 
         }

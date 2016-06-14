@@ -50,7 +50,7 @@
         "test": "npm run -s test-web; npm run -s test-api",
         "test-web": "./node_modules/.bin/mocha --opts mocha.opts test/func/web.js",
         "test-api": "./node_modules/.bin/mocha --opts mocha.opts test/func/api.js",
-        "build": "rm -R release; node_modules/.bin/babel -D -w src -s true -d release",
+        "build": "rm -R lib; node_modules/.bin/babel -D -w src -s inline -d lib",
         "api-docs": "rm -R docs/api; node_modules/.bin/jsdoc -c jsdoc.json"
     },
     "engines": {

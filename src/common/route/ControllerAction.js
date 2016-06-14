@@ -28,8 +28,8 @@ function resolveAction(action, controllers) {
     path = split.join('.');
     Controller = Property.get(controllers, path);
 
-    return function (req, res) {
-    (new Controller(req, res))[method]();
+    return function(req, res) {
+        (new Controller(req, res))[method]();
     }
     return Controller;
 }

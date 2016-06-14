@@ -15,6 +15,7 @@ const keys = {
     CONNECTIONS: 'power.connections',
     MIDDLEWARE: 'power.app.middleware',
     CONTROLLERS: 'power.app.controllers',
+    SECRET: 'power.secret',
     PATH: 'power.routing.root',
     WEB_FRAMEWORK_SETTINGS: 'power.web.framework.settings',
     WEB_VIEWS_ENGINE: 'power.web.views.engine',
@@ -36,7 +37,12 @@ const keys = {
     FILTERS_ASSET_PATHS: 'power.filters.asset.paths',
     FILTERS_ASSET_PATHS_OPTIONS: 'power.filters.asset.options',
     FILTERS_ASSET_DIRECTORY: 'power.filters.asset.directory',
-    FILTERS_ASSET_DIRECTORY_OPTIONS: 'power.filters.asset.options'
+    FILTERS_ASSET_DIRECTORY_OPTIONS: 'power.filters.asset.options',
+    FILTERS_SESSION_ENABLED: 'power.filters.session.enabled',
+    FILTERS_SESSION_OPTIONS: 'power.filters.session.options',
+    FILTERS_SESSION_STORE: 'power.filters.session.store'
+
+
 
 };
 
@@ -87,6 +93,7 @@ class Configuration {
         this.options = (exists(this.paths.config)) ? require(this.paths.config) : {};
         this.routes = (exists(this.paths.routes)) ? require(this.paths.routes) : {};
         this._resources = new SchemeResource(new StringResource());
+
         this._resources.add('require', new RequireResource());
         this._resources.add('lib', new RequireResource(`${this.paths.lib}/`));
         this._resources.add('env', new PropertyResource(process.env));
@@ -102,7 +109,7 @@ class Configuration {
             return this._resources.find(ret);
 
         if (merge)
-            return deepmerge(ret, merge);
+            return deepmerge(merge, ret);
 
         return ret;
 

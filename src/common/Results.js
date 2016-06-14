@@ -28,7 +28,13 @@ class Results {
 
     accepted() {
 
-        this.send(204);
+        this.send(202);
+
+    }
+
+    noContent() {
+
+      this.send(204);
 
     }
 

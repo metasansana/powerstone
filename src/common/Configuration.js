@@ -16,6 +16,7 @@ const keys = {
     MIDDLEWARE: 'power.app.middleware',
     CONTROLLERS: 'power.app.controllers',
     SECRET: 'power.secret',
+    PORT: 'power.port',
     PATH: 'power.routing.root',
     WEB_FRAMEWORK_SETTINGS: 'power.web.framework.settings',
     WEB_VIEWS_ENGINE: 'power.web.views.engine',

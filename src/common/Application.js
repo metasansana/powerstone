@@ -46,10 +46,10 @@ class Application {
      */
     onError(err) {
 
-      console.error(err.stack);
-      process.exit(-1);
-      return null;
-      
+        console.error(err.stack);
+        process.exit(-1);
+        return null;
+
     }
 
     /**
@@ -77,16 +77,21 @@ class Application {
 
 
             this.server = new ManagedServer(
-                this.main.configuration.read('port', process.env.PORT || 3000),
-                this.main.configuration.read('host', process.env.HOST || '0.0.0.0'),
+
+                this.main.configuration.read(this.configuration.keys.PORT,
+                    process.env.PORT || 3000),
+
+                this.main.configuration.read(this.configuration.keys.PORT,
+                    process.env.HOST || '0.0.0.0'),
+
                 new PowerstoneServer(this.__createServer()));
 
             return this.server.start();
 
         }).
         then(port => console.log(port)).
-        catch(e=>this.onError(e));
-        
+        catch(e => this.onError(e));
+
 
     }
 }

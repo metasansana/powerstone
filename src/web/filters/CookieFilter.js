@@ -6,11 +6,14 @@ import cookieParser from 'cookie-parser';
  */
 class CookieFilter {
 
-  apply(app, config) {
+    apply(app, config) {
 
-    app.use(cookieParser(config.read(config.keys.SECRET, config.defaults.SECRET)));
+        app.use(cookieParser(
+            config.read(config.keys.SECRET, config.defaults.SECRET),
+            config.read(config.keys.filters.cookie_parser, {})
+        ));
 
-  }
+    }
 
 
 }

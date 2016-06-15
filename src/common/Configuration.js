@@ -41,7 +41,8 @@ const keys = {
     FILTERS_ASSET_DIRECTORY_OPTIONS: 'power.filters.asset.options',
     FILTERS_SESSION_ENABLED: 'power.filters.session.enabled',
     FILTERS_SESSION_OPTIONS: 'power.filters.session.options',
-    FILTERS_SESSION_STORE: 'power.filters.session.store'
+    FILTERS_SESSION_STORE: 'power.filters.session.store',
+    FILTERS_COOKIES_OPTIONS: 'power.filters.cookies.options'
 
 
 

@@ -1,19 +1,16 @@
 import 'source-map-support/register';
 import request from 'supertest-as-promised';
 import must from 'must';
-import Api from 'libpowerstone/api/Api';
+import Web from 'libpowerstone/web/Web';
 import Pool from 'libpowerstone/net/Pool';
 
 var app;
 
-class App extends Api {
-
-
-}
+class App extends Web {}
 
 before(function() {
 
-    app = new App(`${__dirname}/assets/projects/voicemail`);
+    app = new Web(`${__dirname}/assets/projects/voicemail`);
     global.connected = false;
     return app.start();
 
@@ -23,13 +20,20 @@ beforeEach(function() {
     global.count = 0;
 });
 
-describe('Api', function() {
+after(function() {
+
+    global.flag = null;
+
+});
+
+describe('Application', function() {
     describe('.run()', function() {
 
         global.requests = 24;
 
         it('should be connected', function() {
-            must(Pool.main).equal('fake');
+
+            must(Pool.q).equal('fake');
 
         });
 
@@ -38,7 +42,6 @@ describe('Api', function() {
             get('/users/kav/messages').
             expect(200).
             then(res => {
-                must(res.body).eql(global.messages.kav);
                 must(global.requests).equal(25);
             });
         });
@@ -48,12 +51,12 @@ describe('Api', function() {
             return request(app.server.toFramework()).
             post('/users/kyle/messages').
             send({
-                id: 16,
-                message: 'it takes that many.'
+                id: 2,
+                message: 'xit takes that many.'
             }).
             expect(201).
             then(res =>
-                must(global.messages.kyle).eql(['id:16 it takes that many.']));
+                must(global.messages.kyle).eql(['id:2 xit takes that many.']));
 
         });
 
@@ -75,7 +78,6 @@ describe('Api', function() {
             expect(200).
             then(res => {
                 must(global.requests).equal(21);
-                must(res.body.messages).eql('Not enabled');
             });
 
         });
@@ -94,22 +96,26 @@ describe('Api', function() {
         return request(app.server.toFramework()).
         get('/admin/panel').
         expect(403).
-        then(res => must(global.flag).eql('set'));
+        then(res => {
 
+            must(global.flag).eql('set');
+
+        });
     });
 
-    it('GET /admin_demo', function() {
+    xit('GET /admin_demo/me', function() {
 
         return request(app.server.toFramework()).
-        get('/admin_demo').
+        get('/admin/admin_demo/me.css').
         expect(200);
 
     });
 
-    xit('GET /demo/names.txt', function() {
+
+    it('GET /admin/demo/names.txt', function() {
 
         return request(app.server.toFramework()).
-        get('/demo/names.txt').
+        get('/admin/demo/names.txt').
         expect(200);
 
     });

@@ -1,6 +1,7 @@
 import Property from 'property-seek';
 import PowerstoneServer from '../common/PowerstoneServer';
 import ManagedServer from '../common/ManagedServer';
+import StateManager from './StateManager';
 
 /**
  * Application is the main class of the framework.
@@ -25,7 +26,16 @@ class Application {
         this.models = {};
         this.middleware = {};
         this.connectors = {};
+        this._stateManager = new StateManager(this, Application.states.INITIAL);
 
+    }
+
+    /**
+     * getState returns the current state of the Application
+     * @return {string} 
+     */
+    getState() {
+        return this._stateManager.state;
     }
 
     /**
@@ -69,31 +79,34 @@ class Application {
      */
     start() {
 
-        if (this.server !== null)
-            return this.server.start();
-
-        return this.main.load(this.frameworkApp).
+        return this._stateManager.setState(Application.states.BOOTSTRAP).
+        then(() => this.main.load(this.frameworkApp)).
+        then(() => this._stateManager.setState(Application.states.CONNECTED)).
         then(() => {
-
 
             this.server = new ManagedServer(
 
-                this.main.configuration.read(this.configuration.keys.PORT,
-                    process.env.PORT || 3000),
-
-                this.main.configuration.read(this.configuration.keys.PORT,
-                    process.env.HOST || '0.0.0.0'),
-
+                this.main.configuration.read('port', process.env.PORT || 3000),
+                this.main.configuration.read('host', process.env.HOST || '0.0.0.0'),
                 new PowerstoneServer(this.__createServer()));
 
             return this.server.start();
 
         }).
-        then(port => console.log(port)).
-        catch(e => this.onError(e));
-
+        then(() => this._stateManager.setState(Application.states.LISTENING)).
+        catch(e => {
+            console.error(e.stack);
+            process.exit(1);
+        });
 
     }
 }
+
+Application.states = {
+    INITIAL: 'initial',
+    BOOTSTRAP: 'bootstrap',
+    CONNECTED: 'connected',
+    LISTENING: 'listening'
+};
 
 export default Application;

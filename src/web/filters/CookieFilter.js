@@ -10,7 +10,7 @@ class CookieFilter {
 
         app.use(cookieParser(
             config.read(config.keys.SECRET, config.defaults.SECRET),
-            config.read(config.keys.filters.cookie_parser, {})
+            config.read(config.keys.FILTERS.cookie_parser, {})
         ));
 
     }

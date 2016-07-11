@@ -1,4 +1,3 @@
-import 'source-map-support/register';
 import request from 'supertest-as-promised';
 import must from 'must';
 import Api from 'libpowerstone/api/Api';

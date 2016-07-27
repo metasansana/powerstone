@@ -2,6 +2,7 @@ import Property from 'property-seek';
 import PowerstoneServer from '../common/PowerstoneServer';
 import ManagedServer from '../common/ManagedServer';
 import StateManager from './StateManager';
+import Scheduler from '../tasks/Scheduler';
 
 /**
  * Application is the main class of the framework.
@@ -79,7 +80,18 @@ class Application {
      */
     start() {
 
-        return this._stateManager.setState(Application.states.BOOTSTRAP).
+        return this._stateManager.addListener(Scheduler).
+        addListener({
+
+            onStateChange(app) {
+
+                if (app.getState() === 'listening')
+                    console.log(`Server started ${app.server.host}:${app.server.port}.`);
+
+            }
+
+        }).
+        setState(Application.states.BOOTSTRAP).
         then(() => this.main.load(this.frameworkApp)).
         then(() => this._stateManager.setState(Application.states.CONNECTED)).
         then(() => {

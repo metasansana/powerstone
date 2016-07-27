@@ -4,14 +4,15 @@ import Promise from 'bluebird';
  * StateManager manages multiple StateChangeListener on behalf
  * of the Application.
  * @param {Application} app 
+ * @param {string} state 
  */
 class StateManager {
 
-    constructor(app) {
+    constructor(app, state) {
 
         this._app = app;
         this._list = [];
-        this._state = 'initial';
+        this._state = state;
 
     }
 

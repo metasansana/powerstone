@@ -15,6 +15,7 @@ const keys = {
     CONNECTIONS: 'power.connections',
     MIDDLEWARE: 'power.app.middleware',
     CONTROLLERS: 'power.app.controllers',
+    MODELS:'power.app.models',
     SECRET: 'power.secret',
     PORT: 'power.port',
     PATH: 'power.routing.root',
@@ -85,6 +86,7 @@ class Configuration {
             filters: `${path}/filters`,
             middleware: `${path}/app/middleware`,
             controllers: `${path}/app/controllers`,
+            models: `${path}/app/models`,
             views: `${path}/app/views`,
             lib: `${path}/lib`,
             public: `${path}/public`

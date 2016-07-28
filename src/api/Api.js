@@ -8,7 +8,7 @@ import ApiContext from '../api/ApiContext';
 
 function handleException(req, res, next, err) {
 
-    console.error(err.stack);
+    console.error(err.stack ? err.stack : e);
     res.status(500);
     res.end();
 

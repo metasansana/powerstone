@@ -23,7 +23,6 @@ class ApiModule extends Module {
 
     }
 
-
     __framework() {
 
 
@@ -37,9 +36,9 @@ class ApiModule extends Module {
         Object.keys(routes).
         forEach(route =>
             this.routes = Object.keys(routes[route]).map(method =>
-                new Route(method, `${path}/${route}`,
+                new Route(method, `${path}/${route}`, routes[route][method],
                     actions.generate(method, `${path}/${route}`,
-                        routes[route][method]), app)));
+                        routes[route][method], this.application), app)));
 
         this.modules.__routing(path, app, actions);
 

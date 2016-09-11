@@ -77,8 +77,8 @@ class WebModule extends Module {
         Object.keys(routes).
         forEach(route =>
             this.routes = Object.keys(routes[route]).map(method =>
-                new Route(method, route,
-                    actions.generate(method, route, routes[route][method]),
+                new Route(method, route, routes[route][method],
+                    actions.generate(method, route, routes[route][method], this.application),
                     this._expressApp)));
 
         this.modules.__routing(path, this._expressApp, actions);

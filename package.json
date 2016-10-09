@@ -26,7 +26,8 @@
     "serve-index": "^1.7.2"
   },
   "devDependencies": {
-    "babel": "^5.8.34",
+    "babel-cli": "^6.16.0",
+    "babel-plugin-transform-export-extensions": "^6.8.0",
     "jsdoc": "^3.4.0",
     "libpowerstone": "file:src",
     "mocha": "^2.2.1",

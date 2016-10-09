@@ -20,7 +20,7 @@ class MiddlewareAction {
 
     }
 
-    generate(method, path, route) {
+    generate(method, path, route, main) {
 
         if (Array.isArray(route.middleware))
             return route.middleware.map(middleware => {

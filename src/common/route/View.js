@@ -10,7 +10,7 @@ class View {
 
     }
 
-    generate(method, path, route) {
+    generate(method, path, route, main) {
 
         if (typeof route.view === 'string')
           return this._callback(route.view, route.locals || {});

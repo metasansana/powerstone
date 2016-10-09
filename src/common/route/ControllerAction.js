@@ -2,7 +2,7 @@ import Property from 'property-seek';
 
 //TODO Someday we will parse the action string with arguments and all, until then,
 //bare with me.
-function resolveAction(action, controllers) {
+function resolveAction(action, controllers, application, route) {
 
     var split;
     var Controller;
@@ -29,9 +29,11 @@ function resolveAction(action, controllers) {
     Controller = Property.get(controllers, path);
 
     return function(req, res) {
-        (new Controller(req, res))[method]();
+        (new Controller(req, res, application, route))[method]();
     }
+
     return Controller;
+
 }
 
 /**
@@ -46,11 +48,13 @@ class ControllerAction {
 
     }
 
-    generate(method, path, route) {
-
+    generate(method, path, route, application) {
 
         if (typeof route.action === 'string')
-            return resolveAction(route.action, this._controllers);
+            return resolveAction(route.action, 
+                this._controllers,
+                application,
+            route);
 
         if (typeof route.action === 'function')
             return route.action;

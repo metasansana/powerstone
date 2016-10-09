@@ -20,7 +20,9 @@ class UnsupportedMethodError extends PowerError {
  */
 class Route {
 
-    constructor(method, path, actions, app) {
+    constructor(method, path, spec, actions, app) {
+
+        this.spec = spec;
 
         actions.unshift(this.handleRoute.bind(this));
 
@@ -32,6 +34,12 @@ class Route {
     }
 
     handleRoute(req, res, next) {
+
+      req.power = {
+
+        route: this.spec
+
+      };
 
         next();
 

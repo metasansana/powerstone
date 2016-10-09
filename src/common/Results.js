@@ -34,7 +34,7 @@ class Results {
 
     noContent() {
 
-      this.send(204);
+        this.send(204);
 
     }
 

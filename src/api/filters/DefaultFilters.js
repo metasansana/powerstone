@@ -1,5 +1,6 @@
 import ParserFilter from './ParserFilter';
 import AuthorizationFilter from './AuthorizationFilter';
+import AuditFilter from './AuditFilter';
 
 /**
  * DefaultFilters installs the default filters we
@@ -10,6 +11,7 @@ class DefaultFilters {
     apply(app, config) {
 
         ParserFilter.apply(app, config);
+        AuditFilter.apply(app, config);
 
     }
 

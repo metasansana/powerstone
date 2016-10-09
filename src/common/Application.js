@@ -107,7 +107,7 @@ class Application {
         }).
         then(() => this._stateManager.setState(Application.states.LISTENING)).
         catch(e => {
-            console.error(e.stack);
+            console.error(e.stack?e.stack:e);
             process.exit(1);
         });
 

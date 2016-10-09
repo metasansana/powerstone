@@ -12,16 +12,16 @@ class BulkAction {
 
     }
 
-    generate(method, path, route) {
+    generate(method, path, route, main) {
 
         var all = [];
 
         this._actions.forEach(a => {
 
-            var action = a.generate(method, path, route);
+            var action = a.generate(method, path, route, main);
 
             if (Array.isArray(action)) {
-                all.push.apply(all, a.generate(method, path, route));
+                all.push.apply(all, a.generate(method, path, route, main));
             } else {
                 all.push(action);
             }

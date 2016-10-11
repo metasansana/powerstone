@@ -53,7 +53,10 @@ class SchemeResource extends Resource {
             delegate = this._delegates[scheme];
             path = parts[1];
         }
-if(!delegate) console.log(this._delegates, scheme);
+
+        if (!delegate)
+            throw new ReferenceError(`SchemeResource: no delegates installed for '${parts[0]}'!`);
+
         return delegate.find(path);
 
     }

@@ -18,10 +18,17 @@ class OutputFiltering {
 
     static prepare(def, action, resource) {
 
-        if (typeof def.out !== 'string') return;
+        var output = def.output;
 
-        def.out.split(',').
-        forEach(o => {
+        if (!output) return;
+
+        if (typeof output === 'string')
+            output = output.split(',');
+
+        if (!Array.isArray(output))
+            throw new TypeError('The \'output\' directive must be a string or array!');
+
+        output.forEach(o => {
 
             var Filter = resource.find(o);
             var filter;
@@ -31,9 +38,9 @@ class OutputFiltering {
                     action.route.module.application.context.outputFilters);
 
             if (typeof Filter !== 'function')
-                throw new TypeError(`OutputFiltering must be a constructor function! For '${m}'`);
+                throw new TypeError(`OutputFiltering: invalid constructor function for: '${m}'!`);
 
-            action.outputs.push(new Filter(action, action.route.module, action.route.module.app));
+            action.output = action.output.and(new Filter(action, action.route, action.route.module));
 
         });
 

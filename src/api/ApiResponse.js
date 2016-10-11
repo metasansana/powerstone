@@ -10,7 +10,9 @@ class ApiResponse extends Response {
 
         beof({ status }).number();
 
-        this.response.send(status, body);
+        this.action.output.apply(body, this.request, this).
+        then(body => this.response.send(status,body)).
+        catch(e => this.error(e));
 
     }
 

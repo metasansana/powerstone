@@ -5,6 +5,7 @@ import Controllers from './Controllers';
 import Route from './Route';
 import HttpFactory from '../HttpFactory';
 import OutputFiltering from './OutputFiltering';
+import LameFilter from '../filters/LameFilter';
 
 /**
  * Action repsents the various tasks that will be performed when a route
@@ -26,7 +27,7 @@ class Action {
         this.def = def;
         this.route = null;
         this.callbacks = [];
-        this.outputs = [];
+        this.output = new LameFilter();
         this.factory = factory;
 
     }

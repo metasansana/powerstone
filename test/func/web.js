@@ -77,6 +77,15 @@ describe('Application', function() {
             get('/users/messages').
             expect(200).
             then(res => {
+
+                must(res.body).eql({
+
+                    messages: 'Not enabled',
+                    status: 'ok',
+                    poweredBy: 'pwr'
+
+                });
+
                 must(global.requests).equal(21);
             });
 
@@ -118,7 +127,7 @@ describe('Application', function() {
 
             app.main.find('/disabled').redirect('http://example.org');
 
-            return request(app.server.server).get('/disabled/home').expect(301);
+            return request(app.server.server).get('/disabled/home').expect(302);
         }).
         then(res => {
             console.log(res.header);

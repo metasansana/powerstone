@@ -315,14 +315,18 @@ class Module {
         then(() => {
 
             var resource;
-
+            var scheme = new SchemeResource(new RequireResource());
 
             this.__filters(app, ['default']);
             this.__framework();
             this.__viewEngine();
 
+
+            scheme.add('module', new RequireResource(this.configuration.paths.root));
+
             resource = new PropertyResource(this.application.context.middleware);
-            resource = resource.or(new PropertyResource(this.application.context.controllers)).or(new SchemeResource(new PropertyResource(this.application.context)));
+            resource = resource.or(new PropertyResource(this.application.context.controllers)).
+            or(scheme);
 
             this.__routing('', app, resource);
 

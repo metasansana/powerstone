@@ -27,13 +27,13 @@ describe('Api', function() {
 
         global.requests = 24;
 
-        xit('should be connected', function() {
+        it('should be connected', function() {
 
             must(Pool.main).equal('fake');
 
         });
 
-        xit('GET /users/:user/messages', function() {
+        it('GET /users/:user/messages', function() {
             return request(app.server.server).
             get('/users/kav/messages').
             expect(200).
@@ -43,7 +43,7 @@ describe('Api', function() {
             });
         });
 
-        xit('POST /users/:user/messages', function() {
+        it('POST /users/:user/messages', function() {
 
             return request(app.server.server).
             post('/users/kyle/messages').
@@ -57,7 +57,7 @@ describe('Api', function() {
 
         });
 
-        xit('GET /users/count', function() {
+        it('GET /users/count', function() {
 
             return request(app.server.server).
             get('/users/count').
@@ -66,7 +66,7 @@ describe('Api', function() {
 
         });
 
-        xit('GET /users/messages', function() {
+        it('GET /users/messages', function() {
 
             global.requests = 20;
 
@@ -80,7 +80,7 @@ describe('Api', function() {
 
         });
 
-        xit('GET /admin/controls', function() {
+        it('GET /admin/controls', function() {
 
             return request(app.server.server).
             get('/admin/controls').
@@ -88,7 +88,7 @@ describe('Api', function() {
 
         });
 
-        xit('GET /admin/panel', function() {
+        it('GET /admin/panel', function() {
 
             return request(app.server.server).
             get('/admin/panel').
@@ -97,7 +97,7 @@ describe('Api', function() {
 
         });
 
-        xit('GET /admin_demo', function() {
+        it('GET /admin_demo', function() {
 
             return request(app.server.server).
             get('/admin_demo').
@@ -112,7 +112,7 @@ describe('Api', function() {
 
                 app.main.find('/disabled').redirect('http://example.org');
 
-                return request(app.server.server).get('/disabled/home').expects(302);
+                return request(app.server.server).get('/disabled/home').expect(302);
             }).
             then(res => {
                 must(res.header.location).be('http://example.org');

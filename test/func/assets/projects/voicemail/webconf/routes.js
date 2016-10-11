@@ -21,7 +21,8 @@ export default {
     '/users/messages': {
         get: {
             middleware: 'count',
-            action: 'Users.messages()'
+            action: 'Users.messages()',
+            output: ['module://lib/Status', 'module://lib/PoweredBy']
         }
     }
 

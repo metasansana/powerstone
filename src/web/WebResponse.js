@@ -10,7 +10,9 @@ class WebResponse extends Response {
 
         beof({ status }).number();
 
-        this.response.status(status).send(body);
+        this.action.output.apply(body, this.request, this).
+            then(body=> this.response.status(status).send(body)).
+            catch(e=>this.error(e));
 
     }
 

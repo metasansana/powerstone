@@ -9,9 +9,10 @@ export default {
             middleware: 'count',
             action: 'Users.sendUser()'
         },
-    post: {
-        action: 'Users.createMessage()'
-    }},
+        post: {
+            action: 'Users.createMessage()'
+        }
+    },
     '/users/count': {
         get: {
             action: 'Users.count()'
@@ -20,7 +21,8 @@ export default {
     '/users/messages': {
         get: {
             middleware: 'count',
-            action: 'Users.messages()'
+            action: 'Users.messages()',
+            output: ['module://lib/Status', 'module://lib/PoweredBy']
         }
     }
 

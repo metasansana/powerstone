@@ -16,7 +16,7 @@ class Views {
 
             action.callbacks.push(function(req, res) {
 
-                action.factory.response(res, action).render(def.view, def.locals);
+                action.factory.response(req, res, action).render(def.view, def.locals);
 
             });
 

@@ -34,8 +34,8 @@ class Middleware {
 
             mware = new Mware(action, action.route.module, action.route.module.application);
             action.callbacks.push((req, res, next) =>
-                mware.apply(action.factory.request(req, action),
-                    action.factory.response(res, action), next));
+                mware.apply(action.factory.request(req, res, action),
+                    action.factory.response(req, res, action), next));
 
         });
 

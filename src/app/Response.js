@@ -1,6 +1,5 @@
 import beof from 'beof';
 import Action from './route/Action';
-import Route from './route/Route';
 import Module from './Module';
 
 /**
@@ -8,16 +7,16 @@ import Module from './Module';
  */
 class Response {
 
-    constructor(response, action, route, module) {
+    constructor(request, response, action, module) {
 
+        beof({ request }).object();
         beof({ response }).object();
         beof({ action }).instance(Action);
-        beof({ route }).instance(Route);
         beof({ module }).instance(Module);
 
+        this.request = request;
         this.response = response;
         this.action = action;
-        this.route = route;
         this.module = module;
 
     }

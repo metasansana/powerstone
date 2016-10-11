@@ -29,8 +29,8 @@ class Controllers {
 
         action.callbacks.push((req, res, next) =>
             instance[method](
-                action.factory.request(req, action),
-                action.factory.response(res, action),
+                action.factory.request(req, res, action),
+                action.factory.response(req, res, action),
                 next));
 
     }

@@ -8,12 +8,13 @@ import Action from '../app/route/Action';
  */
 class WebHttpFactory extends HttpFactory {
 
-    response(res, action) {
+    response(req, res, action) {
 
+        beof({req}).object();
         beof({ res }).object();
         beof({ action }).instance(Action);
 
-        return new WebResponse(res, action, action.route, action.route.module);
+        return new WebResponse(req, res, action,  action.route.module);
 
     }
 

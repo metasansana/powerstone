@@ -8,12 +8,13 @@ import Action from '../app/route/Action';
  */
 class ApiHttpFactory extends HttpFactory {
 
-    response(res, action) {
+    response(req, res, action) {
 
+        beof({req}).object();
         beof({ res }).object();
         beof({ action }).instance(Action);
 
-        return new ApiResponse(res, action, action.route, action.route.module);
+        return new ApiResponse(req, res, action, action.route.module);
 
     }
 

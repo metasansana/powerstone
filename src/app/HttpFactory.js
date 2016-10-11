@@ -19,10 +19,11 @@ class HttpFactory {
     /**
      * request returns a wrapped version of the Request object
      * @param {http.Request} req
+     * @param {http.Response} res
      * @param {Action} action
      * @returns {Request}
      */
-    request(req, action) {
+    request(req, res,  action) {
 
         return req;
 
@@ -30,10 +31,11 @@ class HttpFactory {
 
     /**
      * response returns a wrapped version of the Response object
+     * @param {http.Request} req
      * @param {http.Response} res
      * @param {Action} action
      */
-    response(res, action) {
+    response(req, res, action) {
 
         return res;
 

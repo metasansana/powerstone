@@ -1,10 +1,10 @@
 export default {
-    'power.web.views.engine': 'lib://nunjucks',
+    'power.views.engine': 'module://lib/Nunjucks',
     'power.connections': {
         q: {
             connector: 'fake',
             port: 1000
         }
     },
-    'power.modules': ['admin']
+    'power.modules': ['admin', 'disabled']
 };

@@ -6,18 +6,11 @@ export default {
 
     '/users/:user/messages': {
         get: {
-            middleware: ['count'],
-            action: function(req, res) {
-                res.send(global.messages[req.params.user]);
-            }
+            middleware: 'count',
+            action: 'Users.sendUser()'
         },
         post: {
-            action: function(req, res) {
-                global.messages[req.params.user] = global.messages[req.params.user] || [];
-                global.messages[req.params.user].push(`id:${req.body.id} ${req.body.message}`);
-                res.send(201);
-            }
-
+            action: 'Users.createMessage()'
         }
     },
     '/users/count': {
@@ -27,8 +20,9 @@ export default {
     },
     '/users/messages': {
         get: {
-            middleware: ['count'],
-            action: 'Users.messages()'
+            middleware: 'count',
+            action: 'Users.messages()',
+            output: ['module://lib/Status', 'module://lib/PoweredBy']
         }
     }
 

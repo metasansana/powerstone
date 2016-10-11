@@ -7,11 +7,8 @@ export default {
     },
     '/panel': {
         get: {
-            middleware: ['flag', 'demo_register'],
-            action: function(req, res) {
-                res.status(403);
-                res.send();
-            }
+            middleware: 'flag,demo_register',
+            action: 'Users.nok()'
         }
     }
 };

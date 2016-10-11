@@ -1,17 +1,14 @@
 export default {
     '/controls': {
         get: {
-            action: function(req, res) {
-                res.send(200);
-            }
+            action: 'Users.ok()'
         }
     },
     '/panel': {
         get: {
-            middleware: ['flag', 'demo_register'],
-            action: function(req, res) {
-                res.send(403);
-            }
+            middleware: 'flag,demo_register',
+            action: 'Users.nok()'
         }
     }
+
 };

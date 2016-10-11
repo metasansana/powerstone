@@ -1,7 +1,7 @@
 import request from 'supertest-as-promised';
 import must from 'must';
-import Api from 'libpowerstone/api/Api';
-import Pool from 'libpowerstone/net/Pool';
+import Api from 'pwr/api/Api';
+import Pool from 'pwr/net/Pool';
 
 var app;
 
@@ -28,12 +28,13 @@ describe('Api', function() {
         global.requests = 24;
 
         it('should be connected', function() {
+
             must(Pool.main).equal('fake');
 
         });
 
         it('GET /users/:user/messages', function() {
-            return request(app.server.toFramework()).
+            return request(app.server.server).
             get('/users/kav/messages').
             expect(200).
             then(res => {
@@ -44,7 +45,7 @@ describe('Api', function() {
 
         it('POST /users/:user/messages', function() {
 
-            return request(app.server.toFramework()).
+            return request(app.server.server).
             post('/users/kyle/messages').
             send({
                 id: 16,
@@ -58,7 +59,7 @@ describe('Api', function() {
 
         it('GET /users/count', function() {
 
-            return request(app.server.toFramework()).
+            return request(app.server.server).
             get('/users/count').
             expect(200).
             then(res => must(res.body.count).eql(Object.keys(global.messages).length));
@@ -69,7 +70,7 @@ describe('Api', function() {
 
             global.requests = 20;
 
-            return request(app.server.toFramework()).
+            return request(app.server.server).
             get('/users/messages').
             expect(200).
             then(res => {
@@ -78,39 +79,53 @@ describe('Api', function() {
             });
 
         });
+
+        it('GET /admin/controls', function() {
+
+            return request(app.server.server).
+            get('/admin/controls').
+            expect(200);
+
+        });
+
+        it('GET /admin/panel', function() {
+
+            return request(app.server.server).
+            get('/admin/panel').
+            expect(403).
+            then(res => must(global.flag).eql('set'));
+
+        });
+
+        it('GET /admin_demo', function() {
+
+            return request(app.server.server).
+            get('/admin_demo').
+            expect(200);
+
+        });
+
+        it('GET /disabled/home', function() {
+
+            return request(app.server.server).get('/disabled/home').expect(200).
+            then(() => {
+
+                app.main.find('/disabled').redirect('http://example.org');
+
+                return request(app.server.server).get('/disabled/home').expect(302);
+            }).
+            then(res => {
+                must(res.header.location).be('http://example.org');
+            });
+
+        });
+
+        xit('GET /demo/names.txt', function() {
+
+            return request(app.server.server).
+            get('/demo/names.txt').
+            expect(200);
+
+        });
     });
-
-    it('GET /admin/controls', function() {
-
-        return request(app.server.toFramework()).
-        get('/admin/controls').
-        expect(200);
-
-    });
-
-    it('GET /admin/panel', function() {
-
-        return request(app.server.toFramework()).
-        get('/admin/panel').
-        expect(403).
-        then(res => must(global.flag).eql('set'));
-
-    });
-
-    it('GET /admin_demo', function() {
-
-        return request(app.server.toFramework()).
-        get('/admin_demo').
-        expect(200);
-
-    });
-
-    xit('GET /demo/names.txt', function() {
-
-        return request(app.server.toFramework()).
-        get('/demo/names.txt').
-        expect(200);
-
-    });
-
 });

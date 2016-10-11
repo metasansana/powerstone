@@ -1,65 +1,30 @@
+import Path from 'path';
 import express from 'express';
-import Configuration from '../common/Configuration';
-import Module from '../common/Module';
-import Route from '../common/route/Route';
+import Configuration from '../app/Configuration';
+import Module from '../app/Module';
+import Route from '../app/route/Route';
+import WebHttpFactory from './WebHttpFactory';
 
 const BASKET = {};
 
 class WebModule extends Module {
 
-    constructor(name, config, context, app) {
+    constructor(name, config, app, parent) {
 
-        super(name, config, context, app);
+        super(name, config, app, parent);
 
         this._expressApp = express();
         this.configDirectory = 'webconf';
-
-        this.viewEngine = function(view, locals) {
-
-            return function render_web_view(req, res, next) {
-
-                res.render(view, locals, function(err, html) {
-
-                    if (err) next(err);
-                    res.send(html);
-
-                });
-
-            }
-
-        };
 
     }
 
     __framework() {
 
-        var engine = this.configuration.read(this.configuration.keys.WEB_VIEWS_ENGINE, null);
         var settings = this.configuration.read(this.configuration.keys.WEB_FRAMEWORK_SETTINGS,
             BASKET);
 
-        switch (typeof engine) {
-
-            case 'function':
-                engine(this._expressApp, this.configuration)
-                break;
-
-            case 'string':
-                this._expressApp.set('views',
-                    this.configuration.read(this.configuration.keys.WEB_VIEWS_PATHS,
-                        this.configuration.paths.views));
-                this._expressApp.set('view engine', engine);
-                break;
-            case null:
-                break;
-
-            default:
-                break;
-
-        }
-
         Object.keys(settings).forEach(key => this._expressApp.set(key, settings[key]));
         this.modules.__framework();
-
 
     }
 
@@ -69,20 +34,18 @@ class WebModule extends Module {
 
     }
 
-    __routing(point, app, actions) {
+    __routing(point, app, resource) {
 
-        var path = this.configuration.read(Configuration.keys.PATH, `/${this.name}`);
+        var path = this.configuration.read(Configuration.keys.PATH, Path.join('/', this.name));
         var routes = this.configuration.routes;
 
-        Object.keys(routes).
-        forEach(route =>
-            this.routes = Object.keys(routes[route]).map(method =>
-                new Route(method, route,
-                    actions.generate(method, route, routes[route][method]),
-                    this._expressApp)));
+        this.routes = Object.keys(routes).
+        map(key => Route.fromDef(routes[key], key,
+            new WebHttpFactory(this.application.context), this).prepare(this._expressApp, resource));
 
-        this.modules.__routing(path, this._expressApp, actions);
+        this.modules.__routing(path, this._expressApp, resource);
         app.use(path, this._expressApp);
+
     }
 
 }

@@ -1,47 +1,30 @@
-import Configuration from '../common/Configuration';
-import Module from '../common/Module';
-import Route from '../common/route/Route';
+import Path from 'path';
+import Configuration from '../app/Configuration';
+import Module from '../app/Module';
+import Route from '../app/route/Route';
+import ApiHttpFactory from './ApiHttpFactory';
 import restify from 'restify';
 
-/**
- * Module
- * @param {string} fqn The name of the module prefixed with its parent modules 
- * @param {string} path 
- * @param {Configuration} config 
- * @param {Loader} loader 
- * @param {Application} app 
- */
 class ApiModule extends Module {
 
-    constructor(name, config, context, app) {
+    constructor(name, config, app, parent) {
 
-        super(name, config, context, app);
-
-        this.viewEngine = function() {
-            throw new Error('ApiModule does not support views!');
-        }
+        super(name, config, app, parent);
 
     }
 
+    __routing(point, app, resource) {
 
-    __framework() {
+        var path = this.configuration.read(this.configuration.keys.PATH,
+            Path.join('/', point, this.name));
 
-
-    }
-
-    __routing(point, app, actions) {
-
-        var path = this.configuration.read(this.configuration.keys.PATH, `${point}/${this.name}`);
         var routes = this.configuration.routes;
 
-        Object.keys(routes).
-        forEach(route =>
-            this.routes = Object.keys(routes[route]).map(method =>
-                new Route(method, `${path}/${route}`,
-                    actions.generate(method, `${path}/${route}`,
-                        routes[route][method]), app)));
+        this.routes = Object.keys(routes).
+        map(key => Route.fromDef(routes[key], Path.join(path, key),
+            new ApiHttpFactory(this.application.context), this).prepare(app, resource));
 
-        this.modules.__routing(path, app, actions);
+        this.modules.__routing(path, app, resource);
 
     }
 

@@ -3,11 +3,7 @@ export default  {
     '/': {
 
         get: {
-            action: function(req, res) {
-
-                res.send(200);
-
-            }
+            action: 'Users.ok()'
         }
 
     }

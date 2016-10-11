@@ -1,7 +1,8 @@
+import 'source-map-support/register';
 import request from 'supertest-as-promised';
 import must from 'must';
-import Web from 'libpowerstone/web/Web';
-import Pool from 'libpowerstone/net/Pool';
+import Web from 'pwr/web/Web';
+import Pool from 'pwr/net/Pool';
 
 var app;
 
@@ -37,7 +38,7 @@ describe('Application', function() {
         });
 
         it('GET /users/:user/messages', function() {
-            return request(app.server.toFramework()).
+            return request(app.server.server).
             get('/users/kav/messages').
             expect(200).
             then(res => {
@@ -47,7 +48,7 @@ describe('Application', function() {
 
         it('POST /users/:user/messages', function() {
 
-            return request(app.server.toFramework()).
+            return request(app.server.server).
             post('/users/kyle/messages').
             send({
                 id: 2,
@@ -61,7 +62,7 @@ describe('Application', function() {
 
         it('GET /users/count', function() {
 
-            return request(app.server.toFramework()).
+            return request(app.server.server).
             get('/users/count').
             expect(200).
             then(res => must(res.body.count).eql(Object.keys(global.messages).length));
@@ -72,10 +73,19 @@ describe('Application', function() {
 
             global.requests = 20;
 
-            return request(app.server.toFramework()).
+            return request(app.server.server).
             get('/users/messages').
             expect(200).
             then(res => {
+
+                must(res.body).eql({
+
+                    messages: 'Not enabled',
+                    status: 'ok',
+                    poweredBy: 'pwr'
+
+                });
+
                 must(global.requests).equal(21);
             });
 
@@ -84,7 +94,7 @@ describe('Application', function() {
 
     it('GET /admin/controls', function() {
 
-        return request(app.server.toFramework()).
+        return request(app.server.server).
         get('/admin/controls').
         expect(200);
 
@@ -92,7 +102,7 @@ describe('Application', function() {
 
     it('GET /admin/panel', function() {
 
-        return request(app.server.toFramework()).
+        return request(app.server.server).
         get('/admin/panel').
         expect(403).
         then(res => {
@@ -104,16 +114,32 @@ describe('Application', function() {
 
     xit('GET /admin_demo/me', function() {
 
-        return request(app.server.toFramework()).
+        return request(app.server.server).
         get('/admin/admin_demo/me.css').
         expect(200);
 
     });
 
+    it('GET /disabled/home', function() {
+
+        return request(app.server.server).get('/disabled/home').expect(200).
+        then(() => {
+
+            app.main.find('/disabled').redirect('http://example.org');
+
+            return request(app.server.server).get('/disabled/home').expect(302);
+        }).
+        then(res => {
+            console.log(res.header);
+            must(res.header.location).be('http://example.org');
+
+        });
+
+    });
 
     it('GET /admin/demo/names.txt', function() {
 
-        return request(app.server.toFramework()).
+        return request(app.server.server).
         get('/admin/demo/names.txt').
         expect(200);
 

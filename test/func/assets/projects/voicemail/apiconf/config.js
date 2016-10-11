@@ -5,5 +5,5 @@ export default  {
             port: 1000
         }
     },
-    'power.modules': ['admin']
+    'power.modules': ['admin','disabled']
 };

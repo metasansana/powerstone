@@ -1,14 +1,34 @@
-var must = require('must');
-var supertest = require('supertest');
-var express = require('express');
-var http = require('http');
-var ManagedServer = require('../../../src/common/ManagedServer');
+import must from 'must';
+import supertest from 'supertest';
+import express from 'express';
+import http from 'http';
+import ManagedServer from 'pwr/net/ManagedServer';
 
 var server;
 var app;
 var request;
 var impl;
-var DO_NOT_CLOSE = false;
+
+function newImpl() {
+
+    return {
+
+        server: http.createServer(app),
+
+        listen: function() {
+            this.server.listen(7777);
+        },
+
+        on: function() {
+            this.server.on.apply(this.server, arguments);
+        },
+
+        close: function(cb) {
+            this.server.close(cb);
+        }
+    };
+
+}
 
 describe('ManagedServer', function() {
 
@@ -20,39 +40,19 @@ describe('ManagedServer', function() {
             res.status(204).send();
         });
 
-        impl = {
-
-            server: http.createServer(app),
-
-            listen: function() {
-                this.server.listen(7777);
-            },
-
-            on: function() {
-                this.server.on.apply(this.server, arguments);
-            },
-
-            close: function(cb) {
-                this.server.close(cb);
-            }
-        };
+        impl = newImpl();
 
         request = supertest(app);
-        server = new ManagedServer(impl);
+        server = new ManagedServer(2333, '0.0.0.0', impl);
         done();
 
     });
 
     afterEach(function(done) {
-        if (DO_NOT_CLOSE) return done();
         return impl.server.close(done);
     });
 
-    afterEach(function() {
-        DO_NOT_CLOSE = false;
-    });
-
-    xit('must be able to start', function(done) {
+    it('must be able to start', function(done) {
         server.start().
         then(function() {
             request.get('/').
@@ -61,34 +61,40 @@ describe('ManagedServer', function() {
         });
     });
 
-    xit('must be able to restart', function(done) {
+    it('must be able to restart', function(done) {
 
-        server.start().
-        then(function(server) {
-            return server.restart();
-        }).
+        return server.start().
+        then(() => server.restart()).
         then(function() {
             request.get('/').
             expect(204).
             end(done);
-        }).
-        catch(done);
+        });
 
     });
 
     xit('must be able to be shutdown', function(done) {
 
-        DO_NOT_CLOSE = true;
+        //There has to be a better way to test if the server is shutdown.
+        app = express();
+
+        app.get('/', function(req, res) {
+            res.status(204).send();
+        });
+
+        impl = newImpl();
+        request = supertest(app);
+        server = new ManagedServer(2333, '0.0.0.0', impl);
 
         return server.start().
-        then(function(server) {
-            return server.shutdown();
-        }).
+        then(() => server.shutdown()).
         then(function() {
             request.get('/').
-            end(function(err) {
-                must(true).be.true();
+            end(function(err, res) {
+
+                must(err).not.be(null);
                 done();
+
             });
         })
     })

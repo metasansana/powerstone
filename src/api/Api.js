@@ -1,39 +1,31 @@
 import Promise from 'bluebird';
 import restify from 'restify';
 import deep_merge from 'deepmerge';
-import Application from '../common/Application';
+import Application from '../app/Application';
 import ApiModule from './ApiModule';
-import Configuration from '../common/Configuration';
+import Configuration from '../app/Configuration';
 import ApiContext from '../api/ApiContext';
-
-function handleException(req, res, next, err) {
-
-    console.error(err.stack ? err.stack : err);
-    res.status(500);
-    res.end();
-
-}
 
 class Api extends Application {
 
-    constructor(path) {
-
-        super(path);
-
-        this.main = new ApiModule('', new Configuration('apiconf', path),
-            new ApiContext(), this);
-
-        this.frameworkApp = restify.createServer(this.main.configuration.read('restify', null));
-        this.frameworkApp.on('uncaughtException', handleException);
-
-    }
-
     __createServer() {
 
-        return this.frameworkApp;
+        return this.framework;
 
     }
 
+    start() {
+
+        this.main = new ApiModule('', new Configuration('apiconf', this.path), this);
+        this.context = new ApiContext();
+        this.framework = restify.createServer(this.main.configuration.read('restify', null));
+
+        this.framework.on('uncaughtException', (req, res, route, err) =>
+            this.onRouteErrorListener.onError(err, req, res, route));
+
+        return super.start();
+
+    }
 
 }
 

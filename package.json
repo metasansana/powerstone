@@ -7,6 +7,7 @@
     "url": "https://github.com/metasansana/powerstone.git"
   },
   "dependencies": {
+    "beof": "^0.1.0",
     "bluebird": "~2.9.24",
     "body-parser": "~1.12.2",
     "bunyan": "^1.8.1",
@@ -14,8 +15,10 @@
     "cookie-parser": "~1.3.4",
     "csurf": "^1.8.2",
     "deepmerge": "^0.2.10",
+    "es6-error": "^4.0.0",
     "express": "~4.12.3",
     "express-session": "~1.10.4",
+    "lodash.startswith": "^4.2.1",
     "method-override": "~2.3.2",
     "morgan": "^1.6.1",
     "node-cron": "^1.1.1",
@@ -26,13 +29,17 @@
     "serve-index": "^1.7.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.16.0",
+    "babel-cli": "^6.14.0",
+    "babel-core": "^6.14.0",
     "babel-plugin-transform-export-extensions": "^6.8.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-register": "^6.16.3",
+    "jison": "^0.4.17",
     "jsdoc": "^3.4.0",
-    "libpowerstone": "file:src",
     "mocha": "^2.2.1",
     "must": ">= 0.12 < 1",
     "nunjucks": "^1.3.4",
+    "pwr": "./lib",
     "sinon": "^1.15.3",
     "source-map-support": "^0.4.1",
     "supertest": "^1.1.0",
@@ -52,9 +59,10 @@
   },
   "scripts": {
     "test": "npm run -s test-web; npm run -s test-api",
-    "test-web": "./node_modules/.bin/mocha --opts mocha.opts lib/test/func/web.js",
-    "test-api": "./node_modules/.bin/mocha --opts mocha.opts lib/test/func/api.js",
+    "test-web": "./node_modules/.bin/mocha --opts mocha.opts test/func/web.js",
+    "test-api": "./node_modules/.bin/mocha --opts mocha.opts test/func/api.js",
     "build": "rm -R lib; node_modules/.bin/babel -D -w src -s inline -d lib",
+    "parser": "./bin/node_modules/.bin/jison -o src/app/route/Parser src/app/route/lang.y",
     "api-docs": "rm -R docs/api; node_modules/.bin/jsdoc -c jsdoc.json"
   },
   "engines": {

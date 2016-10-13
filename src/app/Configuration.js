@@ -90,8 +90,8 @@ class Configuration {
 
         this.paths = {
             root: path,
-            config: `${path}/${dir}/config`,
-            routes: `${path}/${dir}/routes`,
+            config: `${path}/${dir}/config.js`,
+            routes: `${path}/${dir}/routes.js`,
             modules: `${path}/modules`,
             connectors: `${path}/connectors`,
             filters: `${path}/filters`,

@@ -1,3 +1,5 @@
+import Promise from 'bluebird';
+
 class Controllers {
 
     static prepare(def, action, resource) {
@@ -28,10 +30,12 @@ class Controllers {
                 `does not have a method '${method}'!`);
 
         action.callbacks.push((req, res, next) =>
-            instance[method](
+
+            Promise.resolve(instance[method](
                 action.factory.request(req, res, action),
                 action.factory.response(req, res, action),
-                next));
+                next)).catch(e =>
+                action.route.module.application.onRouteErrorListener.onRouteError(e, req, res, next)))
 
     }
 

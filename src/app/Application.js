@@ -65,13 +65,13 @@ class OnRouteListener {
 class OnRouteErrorListener {
 
     /**
-     * onError handles the error
+     * onRouteError handles the error
      * @param {Error} err
      * @param {Request} req
      * @param {Response} res
      * @param {function} next
      */
-    onError() {
+    onRouteError() {
 
     }
 
@@ -96,7 +96,7 @@ class Application {
         this.onServerListener = new OnServerListener();
         this.onRouteListener = { onRoute(req, res, next) { next(); } };
         this.onRouteErrorListener = {
-            onError(err, req, res, next) {
+            onRouteError(err, req, res, next) {
                 console.error(err.stack ? err.stack : err);
                 res.status(500);
                 res.end();

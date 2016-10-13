@@ -4,6 +4,7 @@ import Api from 'powerstone/api/Api';
 import Pool from 'powerstone/net/Pool';
 
 var app;
+var error;
 
 class App extends Api {
 
@@ -13,16 +14,29 @@ class App extends Api {
 before(function() {
 
     app = new App(`${__dirname}/assets/projects/voicemail`);
+    app.setOnRouteErrorListener({
+
+        onRouteError(e, req, res) {
+            error = e;
+            res.status(500);
+            res.end();
+        }
+
+    });
     global.connected = false;
     return app.start();
 
 });
 
 beforeEach(function() {
+
     global.count = 0;
+    error = null;
+
 });
 
 describe('Api', function() {
+
     describe('.run()', function() {
 
         global.requests = 24;
@@ -105,7 +119,7 @@ describe('Api', function() {
 
         });
 
-        it('GET /disabled/home', function() {
+        xit('GET /disabled/home', function() {
 
             return request(app.server.server).get('/disabled/home').expect(200).
             then(() => {
@@ -127,5 +141,16 @@ describe('Api', function() {
             expect(200);
 
         });
+
+        it('GET /error', function() {
+
+            return request(app.server.server).
+            get('/error').
+            expect(500).
+            then(() => must(error).be.instanceOf(Error));
+
+        });
+
     });
+
 });

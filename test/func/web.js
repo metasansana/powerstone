@@ -5,12 +5,27 @@ import Web from 'powerstone/web/Web';
 import Pool from 'powerstone/net/Pool';
 
 var app;
+var error;
 
 class App extends Web {}
 
 before(function() {
 
     app = new Web(`${__dirname}/assets/projects/voicemail`);
+
+    app.setOnRouteErrorListener({
+
+        onRouteError(err, req, res) {
+
+            error = err;
+            res.status(500);
+            res.end();
+
+        }
+
+    });
+
+    error = null;
     global.connected = false;
     return app.start();
 
@@ -144,5 +159,15 @@ describe('Application', function() {
         expect(200);
 
     });
+
+    it('GET /error', function() {
+
+        return request(app.server.server).
+        get('/error').
+        expect(500).
+        then(() => must(error).be.instanceOf(Error));
+
+    });
+
 
 });

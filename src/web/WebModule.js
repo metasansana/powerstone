@@ -46,6 +46,12 @@ class WebModule extends Module {
         this.modules.__routing(path, this._expressApp, resource);
         app.use(path, this._expressApp);
 
+        if (!this.parent)
+            app.use((err, req, res, next) =>
+                    this.application.
+                onRouteErrorListener.
+                onRouteError(err, req, res, next));
+
     }
 
 }

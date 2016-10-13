@@ -24,6 +24,13 @@ export default {
             action: 'Users.messages()',
             output: ['module://lib/Status', 'module://lib/PoweredBy']
         }
+    },
+    '/error': {
+
+        get: { action: 'Users.error()' }
+
     }
+
+
 
 };

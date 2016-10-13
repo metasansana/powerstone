@@ -1,3 +1,4 @@
+import Promise from 'bluebird';
 import Controller from 'powerstone/app/Controller';
 
 /**
@@ -43,6 +44,12 @@ class Users extends Controller {
         res.send(200, {
             messages: 'Not enabled'
         });
+    }
+
+    error(req, res) {
+
+        return Promise.reject(new Error('error'));
+
     }
 
 }

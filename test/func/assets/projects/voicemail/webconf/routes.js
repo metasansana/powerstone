@@ -3,7 +3,6 @@ global.messages = {
 };
 
 export default {
-
     '/users/:user/messages': {
         get: {
             middleware: 'count',
@@ -24,6 +23,14 @@ export default {
             action: 'Users.messages()',
             output: ['module://lib/Status', 'module://lib/PoweredBy']
         }
+    },
+
+    '/error': {
+
+        get: { action: 'Users.error()' }
+
     }
+
+
 
 };

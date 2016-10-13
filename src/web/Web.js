@@ -16,7 +16,6 @@ class Web extends Application {
 
         this.main = new WebModule('', new Configuration('webconf', this.path), this, null);
         this.framework = express();
-        this.framework.use(this.onRouteErrorListener.onError.bind(this.onRouteErrorListener));
         this.context = new WebContext();
         return super.start();
 

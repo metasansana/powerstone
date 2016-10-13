@@ -2,7 +2,7 @@ import must from 'must';
 import supertest from 'supertest';
 import express from 'express';
 import http from 'http';
-import ManagedServer from 'pwr/net/ManagedServer';
+import ManagedServer from 'powerstone/net/ManagedServer';
 
 var server;
 var app;

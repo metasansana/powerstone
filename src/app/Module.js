@@ -190,12 +190,13 @@ class Module {
             connector = resource.find(config.connector);
 
             if (!connector)
-                throw new UnknownConnectorError(key, config.connector, this.app.context.connectors);
+                throw new UnknownConnectorError(key, config.connector,
+                    this.application.context.connectors);
 
             if (typeof connector !== 'function')
                 throw new TypeError(`Connector must be a function got '${typeof connector}'!`);
 
-            return connector(config.options).then(c => this.application.connections[key] = c);
+            return connector(config.options).then(c => this.application.context.connections[key] = c);
 
         }).concat(this.modules.__connections());
 

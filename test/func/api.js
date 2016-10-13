@@ -1,7 +1,7 @@
 import request from 'supertest-as-promised';
 import must from 'must';
-import Api from 'pwr/api/Api';
-import Pool from 'pwr/net/Pool';
+import Api from 'powerstone/api/Api';
+import Pool from 'powerstone/net/Pool';
 
 var app;
 

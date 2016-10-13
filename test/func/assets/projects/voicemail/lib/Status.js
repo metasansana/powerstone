@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import OutputFilter from 'pwr/app/filters/OutputFilter';
+import OutputFilter from 'powerstone/app/filters/OutputFilter';
 
 class Status extends OutputFilter {
 

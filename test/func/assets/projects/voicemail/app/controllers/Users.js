@@ -1,4 +1,4 @@
-import Controller from 'pwr/app/Controller';
+import Controller from 'powerstone/app/Controller';
 
 /**
  * Users

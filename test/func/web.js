@@ -1,8 +1,8 @@
 import 'source-map-support/register';
 import request from 'supertest-as-promised';
 import must from 'must';
-import Web from 'pwr/web/Web';
-import Pool from 'pwr/net/Pool';
+import Web from 'powerstone/web/Web';
+import Pool from 'powerstone/net/Pool';
 
 var app;
 
@@ -82,7 +82,7 @@ describe('Application', function() {
 
                     messages: 'Not enabled',
                     status: 'ok',
-                    poweredBy: 'pwr'
+                    poweredBy: 'powerstone'
 
                 });
 

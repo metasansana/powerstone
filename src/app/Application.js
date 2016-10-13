@@ -1,6 +1,5 @@
 import beof from 'beof';
 import ManagedServer from '../net/ManagedServer';
-import Pool from '../net/Pool';
 
 /**
  * OnServiceListener is implemented to respond to
@@ -93,7 +92,6 @@ class Application {
         this.main = null;
         this.server = null;
         this.context = null;
-        this.connections = Pool;
         this.onServiceListener = new OnServiceListener();
         this.onServerListener = new OnServerListener();
         this.onRouteListener = { onRoute(req, res, next) { next(); } };
@@ -166,7 +164,7 @@ class Application {
      */
     start() {
 
-        this.framework.use((req, res, next)=>this.onRouteListener.onRoute(req, res, next));
+        this.framework.use((req, res, next) => this.onRouteListener.onRoute(req, res, next));
 
         return this.main.load(this.framework).
         then(() => {

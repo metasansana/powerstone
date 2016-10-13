@@ -1,11 +1,11 @@
 import Promise from 'bluebird';
-import OutputFilter from 'pwr/app/filters/OutputFilter';
+import OutputFilter from 'powerstone/app/filters/OutputFilter';
 
 class PoweredBy extends OutputFilter {
 
     apply(out, req, res) {
 
-        out.poweredBy = 'pwr';
+        out.poweredBy = 'powerstone';
         return Promise.resolve(out);
 
     }

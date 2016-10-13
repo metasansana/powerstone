@@ -1,3 +1,5 @@
+import Pool from '../net/Pool';
+
 /**
  * Context represents the Application context, ie all the various
  * modules autoloaded.
@@ -11,6 +13,7 @@ class Context {
         this.connectors = {};
         this.controllers = {};
         this.outputFilters = {};
+        this.connections = Pool;
         this.filters = {};
 
     }

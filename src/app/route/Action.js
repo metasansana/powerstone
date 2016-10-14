@@ -57,6 +57,7 @@ class Action {
         Controllers.prepare(this.def, this, resource);
         OutputFiltering.prepare(this.def, this, resource);
 
+        this.callbacks.unshift(this.route.module.preRouting.bind(this.route.module));
         this.callbacks.unshift(path);
         framework[this.method].apply(framework, this.callbacks);
 
@@ -64,7 +65,7 @@ class Action {
 
     toString() {
 
-        return `${this.method.toUpperCase()} `+
+        return `${this.method.toUpperCase()} ` +
             `${this.route.module.parentMount?this.route.module.parentMount : ''}` +
             `${this.route.path}`;
 

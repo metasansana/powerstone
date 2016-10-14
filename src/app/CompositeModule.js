@@ -53,18 +53,15 @@ class CompositeModule {
     find(path) {
 
         var subs = this.submodules.slice();
-        var m;
 
         var next = function(sub) {
 
             if (!sub) return null;
 
-            m = sub.find(path);
+            if ((sub.isChild(path)) || (sub.path() === path))
+                return sub.find(path);
 
-            if (!m)
-                return next(subs.pop());
-
-            return m;
+            return next(subs.pop());
 
         }
 

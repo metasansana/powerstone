@@ -46,7 +46,7 @@ class Module {
 
     }
 
-    _preRouting(req, res, next) {
+    preRouting(req, res, next) {
 
         if (this.redirecting) {
             res.writeHead(this.redirectStatus, { 'Location': this.redirectUrl });
@@ -212,8 +212,6 @@ class Module {
 
         resource.add('require', new RequireResource());
 
-        app.use((req, res, next) => this._preRouting(req, res, next));
-
         this.configuration.read(this.configuration.keys.FILTERS, defaults).
         forEach(f => {
 
@@ -280,6 +278,16 @@ class Module {
     }
 
     /**
+     * isChild checks if a path is a child module of this module
+     * @param {string} path
+     */
+    isChild(path) {
+
+        return startswith(path, this.path());
+
+    }
+
+    /**
      * find retrieves a module or null if it is not found.
      * @param {string} path
      * @returns {Module|null}
@@ -291,7 +299,7 @@ class Module {
         if (path === this.path())
             return this;
 
-        if (startswith(path, this.path()))
+        if (this.isChild(path))
             return this.modules.find(path);
 
         if (this.parent)

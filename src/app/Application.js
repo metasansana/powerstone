@@ -99,9 +99,9 @@ class Application {
         this.onRouteListener = { onRoute(req, res, next) { next(); } };
         this.onRouteErrorListener = {
             onRouteError(err, req, res, next) {
-                console.error(err.stack ? err.stack : err);
-                res.status(500);
-                res.end();
+
+                res.error(err);
+
             }
         };
         this.framework = null;

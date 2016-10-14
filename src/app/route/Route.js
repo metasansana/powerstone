@@ -49,7 +49,6 @@ class Route {
 
         beof({ def }).instance(Object);
         beof({ path }).string();
-
         return new Route(path, module,
             METHODS.map(m => (def.hasOwnProperty(m)) ?
                 new Action(m, def[m], factory) : null).filter(m => m));
@@ -69,9 +68,7 @@ class Route {
 
     toString() {
 
-            return this.actions.map(action =>
-                    `${this.method} ${this.path} ${action.middleware?action.middleware:''}` +
-                    ` ${action.action?action.action:''} ${action.output?action.output:''}`).join('\n');
+        return this.actions.map(action => action.toString()).join('\n');
 
     }
 

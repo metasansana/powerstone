@@ -19,7 +19,7 @@ const keys = {
     MODELS: 'power.app.models',
     SECRET: 'power.secret',
     PORT: 'power.port',
-    PATH: 'power.routing.root',
+    PATH: 'power.routing.path',
     WEB_FRAMEWORK_SETTINGS: 'power.web.framework.settings',
     WEB_VIEWS_ENGINE: 'power.web.views.engine',
     WEB_VIEWS_PATHS: 'power.web.views.paths',
@@ -168,12 +168,5 @@ class Configuration {
 
 }
 
-Configuration.keys = {
-    MODULES: 'modules',
-    CONNECTIONS: 'connections',
-    MIDDLEWARE: 'middleware',
-    FILTERS: 'filters',
-    PATH: 'path'
-};
 
 export default Configuration

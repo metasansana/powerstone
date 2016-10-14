@@ -62,6 +62,14 @@ class Action {
 
     }
 
+    toString() {
+
+        return `${this.method.toUpperCase()} `+
+            `${this.route.module.parentMount?this.route.module.parentMount : ''}` +
+            `${this.route.path}`;
+
+    }
+
 }
 
 export default Action

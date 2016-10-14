@@ -36,9 +36,11 @@ class WebModule extends Module {
 
     __routing(point, app, resource) {
 
-        var path = this.configuration.read(Configuration.keys.PATH, Path.join('/', this.name));
+        var path = this.configuration.read(this.configuration.keys.PATH, Path.join('/', this.name));
         var routes = this.configuration.routes;
         var factory = new WebHttpFactory(this);
+
+        this.parentMount = point;
 
         this.routes = Object.keys(routes).
         map(key => Route.fromDef(routes[key], key,

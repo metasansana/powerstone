@@ -86,7 +86,9 @@ class OnRouteErrorListener {
  */
 class Application {
 
-    constructor(path = __dirname) {
+    constructor(path) {
+
+        beof({path}).string();
 
         this.path = path;
         this.main = null;

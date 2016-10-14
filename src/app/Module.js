@@ -322,7 +322,6 @@ class Module {
             this.__framework();
             this.__viewEngine();
 
-
             scheme.add('module', new RequireResource(this.configuration.paths.root));
 
             resource = new PropertyResource(this.application.context.middleware);

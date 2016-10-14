@@ -88,7 +88,7 @@ class Application {
 
     constructor(path) {
 
-        beof({path}).string();
+        beof({ path }).string();
 
         this.path = path;
         this.main = null;
@@ -172,7 +172,7 @@ class Application {
         then(() => {
 
             this.server = new ManagedServer(
-                this.main.configuration.read('port', process.env.PORT || 2407),
+                Number(this.main.configuration.read('port', process.env.PORT || 2407)),
                 this.main.configuration.read('host', process.env.HOST || '0.0.0.0'),
                 this.__createServer());
 

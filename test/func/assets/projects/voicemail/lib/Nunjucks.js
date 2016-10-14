@@ -12,11 +12,9 @@ class Nunjucks {
 
     }
 
-    render(view, context, response) {
+    render(view, context) {
 
-        response.response.setHeader('Content-Type', 'text/html');
-        response.response.write(this._env.render(view, context));
-        response.response.end();
+        return this._env.render(view, context);
 
     }
 

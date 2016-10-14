@@ -13,10 +13,9 @@ class Views {
                 throw new ReferenceError(`No view engine is installed for this module ` +
                     `'${action.route.module.configuration.paths.root}'!`);
 
-
             action.callbacks.push(function(req, res) {
 
-                action.factory.response(req, res, action).render(def.view, def.locals);
+                action.factory.response(req, res, action.output).render(def.view, def.locals);
 
             });
 

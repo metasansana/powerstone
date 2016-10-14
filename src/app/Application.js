@@ -169,7 +169,7 @@ class Application {
         return this.main.load(this.framework).
         then(() => {
 
-            this.server = new ManagedServer(
+           this.server = new ManagedServer(
                 this.main.configuration.read('port', process.env.PORT || 2407),
                 this.main.configuration.read('host', process.env.HOST || '0.0.0.0'),
                 this.__createServer());

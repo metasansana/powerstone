@@ -17,9 +17,10 @@ before(function() {
     app.setOnRouteErrorListener({
 
         onRouteError(e, req, res) {
+
             error = e;
-            res.status(500);
-            res.end();
+            res.error(e);
+
         }
 
     });

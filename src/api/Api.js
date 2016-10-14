@@ -19,10 +19,6 @@ class Api extends Application {
         this.main = new ApiModule('', new Configuration('apiconf', this.path), this);
         this.context = new ApiContext();
         this.framework = restify.createServer(this.main.configuration.read('restify', null));
-
-        this.framework.on('uncaughtException', (req, res, route, err) =>
-            this.onRouteErrorListener.onError(err, req, res, route));
-
         return super.start();
 
     }

@@ -1,18 +1,18 @@
 import beof from 'beof';
-import Context from './Context';
+import Module from './Module';
 
 /**
  * HttpFactory is a class for creating wrapped versions of request and response
  * passed to controllers and middleware.
- * @param {Context} context
+ * @param {Module} module
  */
 class HttpFactory {
 
-    constructor(context) {
+    constructor(module) {
 
-        beof({ context }).instance(Context);
+        beof({ module }).instance(Module);
 
-        this._context = context;
+        this.module = module;
 
     }
 
@@ -20,10 +20,10 @@ class HttpFactory {
      * request returns a wrapped version of the Request object
      * @param {http.Request} req
      * @param {http.Response} res
-     * @param {Action} action
+     * @param {OutputFilter} filter
      * @returns {Request}
      */
-    request(req, res,  action) {
+    request(req, res) {
 
         return req;
 
@@ -33,9 +33,10 @@ class HttpFactory {
      * response returns a wrapped version of the Response object
      * @param {http.Request} req
      * @param {http.Response} res
-     * @param {Action} action
+     * @param {OutputFilter} filter
+     * @returns {Response}
      */
-    response(req, res, action) {
+    response(req, res) {
 
         return res;
 

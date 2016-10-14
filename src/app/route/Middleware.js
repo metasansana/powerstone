@@ -24,7 +24,7 @@ class Middleware {
         forEach(m => {
 
             var Mware = resource.find(m);
-            var mware
+            var mware;
 
             if (!Mware)
                 throw new UnknownMiddlewareError(m, action.route.module.application.context.middleware);
@@ -33,9 +33,17 @@ class Middleware {
                 throw new TypeError(`Middleware must be constructor functions! For '${m}'`);
 
             mware = new Mware(action, action.route.module, action.route.module.application);
-            action.callbacks.push((req, res, next) =>
-                mware.apply(action.factory.request(req, res, action),
-                    action.factory.response(req, res, action), next));
+
+            action.callbacks.push((req, res, next) => {
+
+                var preq = action.factory.request(req, res, action.output);
+                var pres = action.factory.response(req, res, action.output);
+
+                Promise.resolve(mware.apply(preq, pres, next)).catch(e =>
+                    action.route.module.application.onRouteErrorListener.onRouteError(e,
+                        preq, pres, next));
+
+            });
 
         });
 

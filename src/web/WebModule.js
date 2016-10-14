@@ -38,19 +38,19 @@ class WebModule extends Module {
 
         var path = this.configuration.read(Configuration.keys.PATH, Path.join('/', this.name));
         var routes = this.configuration.routes;
+        var factory = new WebHttpFactory(this);
 
         this.routes = Object.keys(routes).
         map(key => Route.fromDef(routes[key], key,
-            new WebHttpFactory(this.application.context), this).prepare(this._expressApp, resource));
+            factory, this).prepare(this._expressApp, resource));
 
         this.modules.__routing(path, this._expressApp, resource);
         app.use(path, this._expressApp);
 
         if (!this.parent)
             app.use((err, req, res, next) =>
-                    this.application.
-                onRouteErrorListener.
-                onRouteError(err, req, res, next));
+                this.application.onRouteErrorListener.onRouteError(err,
+                    factory.request(req, res), factory.response(req, res)));
 
     }
 

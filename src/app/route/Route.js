@@ -67,6 +67,14 @@ class Route {
 
     }
 
+    toString() {
+
+            return this.actions.map(action =>
+                    `${this.method} ${this.path} ${action.middleware?action.middleware:''}` +
+                    ` ${action.action?action.action:''} ${action.output?action.output:''}`).join('\n');
+
+    }
+
 }
 
 export default Route

@@ -1,5 +1,6 @@
 import beof from 'beof';
-import Action from './route/Action';
+import Promise from 'bluebird';
+import LameFilter from './filters/LameFilter';
 import Module from './Module';
 
 /**
@@ -7,23 +8,28 @@ import Module from './Module';
  */
 class Response {
 
-    constructor(request, response, action, module) {
+    constructor(request, response, module, filter = new LameFilter()) {
 
         beof({ request }).object();
         beof({ response }).object();
-        beof({ action }).instance(Action);
         beof({ module }).instance(Module);
 
         this.request = request;
         this.response = response;
-        this.action = action;
         this.module = module;
+        this.filter = filter;
 
     }
 
-    ok() {
+    status() {
 
-        this.send(200);
+        this.response.status.apply(this.response, arguments);
+
+    }
+
+    ok(body) {
+
+        this.send(200, body);
 
     }
 
@@ -76,15 +82,24 @@ class Response {
 
     }
 
-    render(view, locals) {
+    /**
+     * render a view using the installed view engine.
+     * @param {string} view
+     * @param {object} context
+     * @return {Promise}
+     */
+    render(view, context) {
 
         beof({ view }).string();
-        beof({ locals }).optional().object();
+        beof({ context }).optional().object();
 
         if (!this.module.viewEngine)
             return this.error(new ReferenceError('No view engine installed!'));
 
-        this.module.viewEngine.render(view, locals, this);
+        return Promise.resolve(this.module.viewEngine.render(view, context)).
+        then(result => this.ok(result)).
+        catch(e =>
+            this.module.application.onRouteErrorListener.onRouteError(e, this.request, this));
 
     }
 

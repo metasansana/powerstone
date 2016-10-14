@@ -29,13 +29,15 @@ class Controllers {
             throw new ReferenceError(`Controller '${instance.constructor.name}' ` +
                 `does not have a method '${method}'!`);
 
-        action.callbacks.push((req, res, next) =>
+        action.callbacks.push((req, res, next) => {
 
-            Promise.resolve(instance[method](
-                action.factory.request(req, res, action),
-                action.factory.response(req, res, action),
-                next)).catch(e =>
-                action.route.module.application.onRouteErrorListener.onRouteError(e, req, res, next)))
+            var preq = action.factory.request(req, res, action.output);
+            var pres = action.factory.response(req, res, action.output);
+
+            Promise.resolve(instance[method](preq, pres, next)).catch(e =>
+                action.route.module.application.onRouteErrorListener.onRouteError(e, preq, pres, next));
+
+        });
 
     }
 

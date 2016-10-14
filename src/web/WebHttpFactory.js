@@ -1,6 +1,7 @@
 import beof from 'beof';
 import HttpFactory from '../app/HttpFactory';
 import WebResponse from './WebResponse';
+import OutputFilter from '../app/filters/OutputFilter';
 import Action from '../app/route/Action';
 
 /**
@@ -8,16 +9,16 @@ import Action from '../app/route/Action';
  */
 class WebHttpFactory extends HttpFactory {
 
-    response(req, res, action) {
+    response(req, res, output) {
 
-        beof({req}).object();
+        beof({ req }).object();
         beof({ res }).object();
-        beof({ action }).instance(Action);
 
-        return new WebResponse(req, res, action,  action.route.module);
+        return new WebResponse(req, res, this.module, output);
 
     }
 
 
 }
+
 export default WebHttpFactory

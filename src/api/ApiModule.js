@@ -19,12 +19,19 @@ class ApiModule extends Module {
             Path.join('/', point, this.name));
 
         var routes = this.configuration.routes;
+        var factory = new ApiHttpFactory(this);
 
         this.routes = Object.keys(routes).
         map(key => Route.fromDef(routes[key], Path.join(path, key),
-            new ApiHttpFactory(this.application.context), this).prepare(app, resource));
+            factory, this).prepare(app, resource));
 
         this.modules.__routing(path, app, resource);
+
+        if (!this.parent)
+            app.on('uncaughtException', (req, res, route, err) =>
+                this.onRouteErrorListener.onRouteError(err,
+                    factory.request(req, res),
+                    factory.response(req, res)));
 
     }
 

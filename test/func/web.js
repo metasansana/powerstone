@@ -18,8 +18,7 @@ before(function() {
         onRouteError(err, req, res) {
 
             error = err;
-            res.status(500);
-            res.end();
+            res.error(err);
 
         }
 
@@ -168,6 +167,5 @@ describe('Application', function() {
         then(() => must(error).be.instanceOf(Error));
 
     });
-
 
 });

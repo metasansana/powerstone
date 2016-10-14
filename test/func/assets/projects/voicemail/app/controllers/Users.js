@@ -48,7 +48,7 @@ class Users extends Controller {
 
     error(req, res) {
 
-        return Promise.reject(new Error('error'));
+        return Promise.reject(new Error('Some error'));
 
     }
 

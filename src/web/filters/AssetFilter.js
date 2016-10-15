@@ -3,12 +3,12 @@ import Path from 'path';
 import express from 'express';
 import serve_index from 'serve-index';
 /**
- * AssetFilter 
+ * AssetFilter
  * @implements {Filter}
  */
 class AssetFilter {
 
-    apply(app, config) {
+    static apply(app, config) {
 
         config.read(config.keys.FILTERS_ASSET_PATHS, [config.paths.public]).
         forEach(path => {
@@ -30,4 +30,4 @@ class AssetFilter {
 
 }
 
-export default new AssetFilter()
+export default AssetFilter

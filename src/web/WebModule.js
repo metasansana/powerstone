@@ -4,6 +4,7 @@ import Configuration from '../app/Configuration';
 import Module from '../app/Module';
 import Route from '../app/route/Route';
 import WebHttpFactory from './WebHttpFactory';
+import AssetFilter from './filters/AssetFilter';
 
 const BASKET = {};
 
@@ -48,6 +49,9 @@ class WebModule extends Module {
 
         this.modules.__routing(path, this._expressApp, resource);
         app.use(path, this._expressApp);
+
+            //When we unify the filter api, this hack will go away
+            AssetFilter.apply(app, this.configuration);
 
         if (!this.parent)
             app.use((err, req, res, next) =>

@@ -91,8 +91,8 @@ class Application {
         beof({ path }).string();
 
         //@todo Refactor this in the future.
-        process.on('unhandledRejection', e => this.handleCriticalError(e));
-        process.on('unhandledException', e => this.handlerCriticalError(e));
+        process.on('unhandledRejection', e=>this.handleCriticalError(e));
+        process.on('unhandledException', e=>this.handlerCriticalError(e));
 
         this.path = path;
         this.main = null;
@@ -188,14 +188,14 @@ class Application {
     }
 
     /**
-     * handleCriticalError
+     * handlerCriticalError
      */
-    handleCriticalError(e) {
+    handlerCriticalError(e) {
 
         //@todo refactor : note the idea here was to make room for shutting down
         //connections before terminating etc.
 
-        console.error(e.stack ? e.stack : e);
+        console.error(e.stack?e.stack:e);
         process.exit(-1);
 
     }

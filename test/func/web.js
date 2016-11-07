@@ -69,8 +69,10 @@ describe('Application', function() {
                 message: 'xit takes that many.'
             }).
             expect(201).
-            then(res =>
-                must(global.messages.kyle).eql(['id:2 xit takes that many.']));
+            then(res => {
+                must(global.messages.kyle).eql(['id:2 xit takes that many.'])
+                must(global.sendUserFilter).be(true);
+            });
 
         });
 

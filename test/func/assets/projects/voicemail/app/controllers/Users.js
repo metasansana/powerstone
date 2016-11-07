@@ -6,6 +6,27 @@ import Controller from 'powerstone/app/Controller';
  */
 class Users extends Controller {
 
+    constructor(action, module, app) {
+
+        super(action, module, app);
+
+        this.filters = {
+
+            'sendUser': {
+
+                apply(req, res, next) {
+
+                    global.sendUserFilter = true;
+                    next();
+
+                }
+
+            }
+
+        };
+
+    }
+
     ok(req, res) {
 
         res.send(200);

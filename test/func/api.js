@@ -67,8 +67,10 @@ describe('Api', function() {
                 message: 'it takes that many.'
             }).
             expect(201).
-            then(res =>
-                must(global.messages.kyle).eql(['id:16 it takes that many.']));
+            then(res => {
+                must(global.messages.kyle).eql(['id:16 it takes that many.'])
+                must(global.sendUserFilter).be(true);
+            });
 
         });
 

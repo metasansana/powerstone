@@ -57,6 +57,12 @@ class Response {
 
     }
 
+    unauthorized(body) {
+
+        this.send(401, body);
+
+    }
+
     forbidden(body) {
 
         this.send(403, body);

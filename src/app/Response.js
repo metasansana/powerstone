@@ -89,6 +89,17 @@ class Response {
     }
 
     /**
+     * redirect
+     * @param {string} url
+     * @param {number} [status=302]
+     */
+    redirect() {
+
+        this.response.redirect(...arguments);
+
+    }
+
+    /**
      * render a view using the installed view engine.
      * @param {string} view
      * @param {object} context

@@ -9,7 +9,9 @@ import ServerFactory from './ServerFactory';
 class Web extends Application {
 
     __createServer() {
+
         return ServerFactory.createWebServer(this.framework, this.main);
+
     }
 
     start() {

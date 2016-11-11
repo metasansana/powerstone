@@ -1,7 +1,7 @@
 import cookieParser from 'cookie-parser';
 
 /**
- * CookieFilter 
+ * CookieFilter
  * @implements {Filter}
  */
 class CookieFilter {
@@ -9,7 +9,7 @@ class CookieFilter {
     apply(app, config) {
 
         app.use(cookieParser(
-            config.read(config.keys.SECRET, config.defaults.SECRET),
+            config.read(config.keys.SECRET, process.env.SECRET || config.defaults.SECRET),
             config.read(config.keys.FILTERS.cookie_parser, {})
         ));
 

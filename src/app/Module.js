@@ -257,9 +257,9 @@ class Module {
     }
 
     /**
-     * stopRedirect disables redirecting
+     * stopRedirecting disables redirecting
      */
-    stopRedirect() {
+    stopRedirecting() {
 
         this.redirecting = false;
 
@@ -310,9 +310,9 @@ class Module {
     }
 
     /**
-     * load this module
+     * connect
      */
-    load(app) {
+    connect() {
 
         this.__init();
         this.__autoload();
@@ -320,7 +320,16 @@ class Module {
         return Promise.all(this.__connections()).
         then(() => (this.parent === null) ?
             this.application.onServiceListener.onConnected(this.application) :
-            null).
+            null);
+
+    }
+
+    /**
+     * load this module
+     */
+    load(app) {
+
+        this.connect().
         then(() => {
 
             var resource;

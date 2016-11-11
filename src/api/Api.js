@@ -14,6 +14,14 @@ class Api extends Application {
 
     }
 
+    connect() {
+
+        this.main = new ApiModule('', new Configuration('apiconf', this.path), this);
+        this.context = new ApiContext();
+        return super.connect();
+
+    }
+
     start() {
 
         this.main = new ApiModule('', new Configuration('apiconf', this.path), this);

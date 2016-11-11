@@ -14,6 +14,14 @@ class Web extends Application {
 
     }
 
+    connect() {
+
+        this.main = new WebModule('', new Configuration('webconf', this.path), this, null);
+        this.context = new WebContext();
+        return super.connect();
+
+    }
+
     start() {
 
         this.main = new WebModule('', new Configuration('webconf', this.path), this, null);

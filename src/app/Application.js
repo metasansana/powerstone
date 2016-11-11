@@ -165,6 +165,17 @@ class Application {
     }
 
     /**
+     * connect the application to it's databases and other services
+     * but do not setup routing and the http server.
+     * @returns {Promise}
+     */
+    connect() {
+
+        return this.main.connect();
+
+    }
+
+    /**
      * start the server for this Application
      * @return {Promise}
      */

@@ -1,5 +1,6 @@
 import Error from 'es6-error';
 import property from 'property-seek';
+import Throws from '../../util/Throws';
 
 class UnknownMiddlewareError extends Error {
 
@@ -18,7 +19,11 @@ class Middleware {
 
     static prepare(def, action, resource) {
 
-        if (typeof def.middleware !== 'string') return;
+        if(! def.middleware)
+        return;
+
+        if (typeof def.middleware !== 'string')
+            Throws.fromModule('Middleware must be a string!', action.route.module, TypeError);
 
         def.middleware.split(',').
         forEach(m => {

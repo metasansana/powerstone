@@ -118,7 +118,6 @@ class Response {
 
         if (this.response.locals)
             args.push(this.response.locals);
-
         context = merge.apply(null, args);
 
         if (!this.module.viewEngine)

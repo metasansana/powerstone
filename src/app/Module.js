@@ -329,7 +329,7 @@ class Module {
      */
     load(app) {
 
-        this.connect().
+ return       this.connect().
         then(() => {
 
             var resource;

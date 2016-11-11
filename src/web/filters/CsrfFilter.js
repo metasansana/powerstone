@@ -1,7 +1,7 @@
 import csrf from 'csurf';
 
 /**
- * CsrfFilter 
+ * CsrfFilter
  * @implements {Filter}
  */
 class CsrfFilter {
@@ -10,30 +10,36 @@ class CsrfFilter {
 
         if (config.read(config.keys.FILTERS_CSRF_ENABLED, false)) {
 
-                app.use(csrf(config.read(config.keys.FILTERS_CSRF_OPTIONS, {
-                    cookie: true
-                })));
+            var header = config.read(config.keys.FILTERS_CSRF_TOKEN_HEADER, 'x-csrf-token');
+            var key = config.read(config.keys.FILTERS_CSRF_TOKEN_KEY, '_csrf');
 
-                app.use(function send_csrf_token(req, res, next) {
+            app.use(csrf(config.read(config.keys.FILTERS_CSRF_OPTIONS, {}, {
+                cookie: true,
+                value: req => req.body[key] || req.query[key] || req.headers[header]
+            })));
 
-                    res.set('x-csrf-token', req.csrfToken());
-                    res.cookie('x-csrf-token', req.csrfToken());
-                    res.locals._csrf = req.csrfToken();
-                    next();
+            app.use(function send_csrf_token(req, res, next) {
 
-                });
+                var tok = req.csrfToken();
 
-                //TODO allow client code to hook into this instead of this lame handler
-                app.use(function if_csrf_error(err, req, res, next) {
+                res.set(header, tok);
+                res.cookie(header, tok);
+                res.locals[key] = tok;
+                next();
 
-                    if (err.code !== 'EBADCSRFTOKEN') return next(err);
-                    res.status(403);
-                    res.send('INVALID TOKEN');
+            });
 
-                });
+            //TODO allow client code to hook into this instead of this lame handler
+            app.use(function if_csrf_error(err, req, res, next) {
 
-            }
+                if (err.code !== 'EBADCSRFTOKEN') return next(err);
+                res.status(403);
+                res.send('INVALID TOKEN');
+
+            });
+
         }
     }
+}
 
-    export default new CsrfFilter()
+export default new CsrfFilter()

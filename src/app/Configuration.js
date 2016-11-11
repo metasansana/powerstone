@@ -112,6 +112,7 @@ class Configuration {
         this._resources.add('module', new RequireResource(Path.resolve(this.paths.root)));
         this._resources.add('require', new RequireResource());
         this._resources.add('env', new PropertyResource(process.env));
+        this._resources.add('pool', new PropertyResource(Pool));
 
     }
 

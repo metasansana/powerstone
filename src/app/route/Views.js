@@ -6,7 +6,6 @@ class Views {
 
     static prepare(def, action, resource) {
 
-
         if (typeof def.view === 'string') {
 
             if (!action.route.module.viewEngine)
@@ -15,7 +14,15 @@ class Views {
 
             action.callbacks.push(function(req, res) {
 
-                action.factory.response(req, res, action.output).render(def.view, def.locals);
+                var context = {};
+
+                if (res.locals)
+                    Object.keys(res.locals).forEach(k => context[k] = res.locals[k]);
+
+                if (def.locals)
+                    Object.keys(def.locals).forEach(k => context[k] = def[k]);
+
+                action.factory.response(req, res, action.output).render(def.view, context);
 
             });
 

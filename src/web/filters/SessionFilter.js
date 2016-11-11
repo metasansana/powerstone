@@ -1,7 +1,7 @@
 import session from 'express-session';
 
 /**
- * SessionFilter 
+ * SessionFilter
  * @implements {Filter}
  */
 class SessionFilter {
@@ -12,7 +12,8 @@ class SessionFilter {
 
             app.use(session(config.read(config.keys.FILTERS_SESSION_OPTIONS, {}, {
                 name: 'CRYINGZANGOLIE',
-                secret: config.read(config.keys.SECRET, config.defaults.SECRET),
+                secret: config.read(config.keys.SECRET, process.env.SECRET ||
+                    config.defaults.SECRET),
                 resave: false,
                 saveUninitialized: true,
                 store: config.read(config.keys.FILTERS_SESSION_STORE, null)

@@ -2,6 +2,7 @@ import beof from 'beof';
 import Promise from 'bluebird';
 import LameFilter from './filters/LameFilter';
 import Module from './Module';
+import { merge } from '../util';
 
 /**
  * Response provides helper methods for http responses.
@@ -102,13 +103,23 @@ class Response {
     /**
      * render a view using the installed view engine.
      * @param {string} view
-     * @param {object} context
+     * @param {object} [context...]
      * @return {Promise}
      */
-    render(view, context) {
+    render(view, context = {}) {
 
         beof({ view }).string();
         beof({ context }).optional().object();
+
+        var args = [];
+
+        for (var i = 1; i < arguments.length; ++i)
+            args[i] = arguments[i];
+
+        if (this.response.locals)
+            args.push(this.response.locals);
+
+        context = merge.apply(null, args);
 
         if (!this.module.viewEngine)
             return this.error(new ReferenceError('No view engine installed!'));

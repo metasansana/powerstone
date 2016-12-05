@@ -3,7 +3,7 @@ import nunjucks from 'nunjucks';
 export default {
     'power.connections': {
         admin: {
-            connector: 'fake',
+            connector: '../../test/func/assets/projects/voicemail/connectors/fake',
             options: {}
         }
     },

@@ -1,7 +1,7 @@
 export default  {
     'power.connections': {
         main: {
-            connector: 'fake',
+connector: '../../test/func/assets/projects/voicemail/connectors/fake',
             port: 1000
         }
     },

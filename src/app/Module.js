@@ -116,7 +116,6 @@ class Module {
         var key;
 
         var o = {};
-        o[this.configuration.keys.CONNECTORS] = 'connectors';
         o[this.configuration.keys.FILTERS] = 'filters';
         o[this.configuration.keys.MIDDLEWARE] = 'middleware';
         o[this.configuration.keys.CONTROLLERS] = 'controllers';
@@ -124,7 +123,6 @@ class Module {
         resource.add('require', new RequireResource());
 
         [
-            this.configuration.keys.CONNECTORS,
             this.configuration.keys.FILTERS,
             this.configuration.keys.MIDDLEWARE,
             this.configuration.keys.CONTROLLERS
@@ -181,17 +179,12 @@ class Module {
         var config;
         var connector;
         var connections = this.configuration.read(this.configuration.keys.CONNECTIONS, BASKET);
-        var resource = new PropertyResource(this.application.context.connectors);
 
         return Object.keys(connections).
         map(key => {
 
             config = connections[key];
-            connector = resource.find(config.connector);
-
-            if (!connector)
-                throw new UnknownConnectorError(key, config.connector,
-                    this.application.context.connectors);
+            connector = require(config.connector).default;
 
             if (typeof connector !== 'function')
                 throw new TypeError(`Connector must be a function got '${typeof connector}'!`);
@@ -315,7 +308,6 @@ class Module {
     connect() {
 
         this.__init();
-        this.__autoload();
 
         return Promise.all(this.__connections()).
         then(() => (this.parent === null) ?
@@ -329,12 +321,13 @@ class Module {
      */
     load(app) {
 
- return       this.connect().
+        return this.connect().
         then(() => {
 
             var resource;
             var scheme = new SchemeResource(new RequireResource());
 
+            this.__autoload();
             this.__filters(app, ['default']);
             this.__framework();
             this.__viewEngine();

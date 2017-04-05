@@ -65,6 +65,8 @@ class Controllers {
             var preq = action.factory.request(req, res, action.output);
             var pres = action.factory.response(req, res, action.output);
 
+            preq.action = action;
+
             Promise.try(function() { return instance[method](preq, pres) }).
             catch(function(e) {
 

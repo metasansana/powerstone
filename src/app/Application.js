@@ -206,6 +206,7 @@ class Application {
         //@todo refactor : note the idea here was to make room for shutting down
         //connections before terminating etc.
 
+        console.error('powerstone: error occured!');
         console.error(e.stack ? e.stack : e);
         process.exit(-1);
 

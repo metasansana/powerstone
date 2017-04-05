@@ -7,7 +7,7 @@ import ParserFilter from './ParserFilter';
 import AssetFilter from './AssetFilter';
 
 /**
- * DefaultFilters 
+ * DefaultFilters
  */
 class DefaultFilters {
 
@@ -18,8 +18,8 @@ class DefaultFilters {
         ParserFilter.apply(app, config);
         CookieFilter.apply(app, config);
         SessionFilter.apply(app, config);
-        CsrfFilter.apply(app, config);
         AssetFilter.apply(app, config);
+        CsrfFilter.apply(app, config);
 
     }
 

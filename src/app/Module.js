@@ -184,7 +184,7 @@ class Module {
         map(key => {
 
             config = connections[key];
-            connector = require(config.connector).default;
+            connector = require.main.require(config.connector).default;
 
             if (typeof connector !== 'function')
                 throw new TypeError(`Connector must be a function got '${typeof connector}'!`);

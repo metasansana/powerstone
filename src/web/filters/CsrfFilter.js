@@ -20,11 +20,11 @@ class CsrfFilter {
 
             app.use(function send_csrf_token(req, res, next) {
 
-                var tok = req.csrfToken();
+               var tok = req.csrfToken();
+                 res.set(header, tok);
+                  res.cookie(header, tok);
+                  res.locals[key] = tok;
 
-                res.set(header, tok);
-                res.cookie(header, tok);
-                res.locals[key] = tok;
                 next();
 
             });
